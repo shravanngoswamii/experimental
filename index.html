@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Footnote Preview</title>
+    <title>On Hover Footnote Preview</title>
     <style>
         .footnote-preview {
             display: none;
             position: absolute;
             z-index: 999;
             width: 300px;
-            background-color: #fff;
+            background-color: hsl(0, 3%, 19%);
             border: 1px solid #ccc;
             padding: 10px;
         }
@@ -21,11 +21,11 @@
 </head>
 <body>
     <p>
-        Here's some text with a <sup class="footnote-ref" id="fnref1">1</sup>
+        This is text with a <sup class="footnote-ref" id="fnref1">1</sup>
         footnote. Hover over the footnote reference to see the preview.
     </p>
     <span class="footnote-preview" id="fn1">
-        This is the footnote preview.
+        I do not know how to integrate this in documenter.jl
     </span>
 
     <script>
