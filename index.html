@@ -3,23 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>On Hover Footnote Preview</title>
-    <style>
+    <style> 
+        body {
+            background-color: #c5c4c4;
+        }
         .footnote-preview {
             display: none;
             position: absolute;
             z-index: 999;
             width: 300px;
-            background-color: hsl(0, 3%, 19%);
+            background-color: #969494;
             border: 1px solid #ccc;
             padding: 10px;
+            overflow-y: auto;
+            border-radius: 5px;
         }
-
+        .footnote-ref {
+            position: relative;
+        }
         .footnote-ref:hover + .footnote-preview {
             display: block;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
+    <center><h1>Documentation</h1></center>
     <p>
         This is text with a <sup class="footnote-ref" id="fnref1">1</sup>
         footnote. Hover over the footnote reference to see the preview.
@@ -34,7 +46,10 @@
         footnotes.forEach(function (footnote) {
             const preview = document.getElementById(footnote.getAttribute('id').replace('ref', ''));
             footnote.addEventListener('mouseenter', function () {
+                const rect = footnote.getBoundingClientRect();
                 preview.style.display = 'block';
+                preview.style.left = rect.left + 'px';
+                preview.style.top = (rect.top + rect.height) + 'px';
             });
             footnote.addEventListener('mouseleave', function () {
                 preview.style.display = 'none';
