@@ -1,0 +1,71 @@
+project:
+  type: website
+
+website:
+  title: "Turing.jl"
+  favicon: "assets/favicon.ico"
+  navbar:
+    search: true
+    left:
+      # - href: index.qmd
+      #   text: Home
+      - href: docs/using-turing/
+        text: Get Started
+      - href: docs/tutorials/
+        text: Tutorials
+    tools:
+      - icon: twitter
+        href: https://x.com/TuringLang
+        text: Turing Twitter
+      - icon: github
+        href: https://github.com/TuringLang/Turing.jl
+        text: Turing GitHub
+
+  sidebar:
+    - id: documentation
+      collapse-level: 1
+      contents: 
+        - section: "Documentation"
+          href: docs/docs.qmd
+          contents:
+          - section: "Using Turing"
+            collapse-level: 1
+            href: docs/using-turing/getting-started.qmd
+            contents: 
+              - docs/using-turing/getting-started.qmd
+
+          - section: "Tutorials"
+            href: docs/tutorials/00-introduction.qmd
+            contents: 
+              - docs/tutorials/00-introduction.qmd
+
+  
+  page-footer:
+    left: |
+      &copy; 2024 Turing.jl
+    center:
+      - text: "About"
+
+    right:
+      - icon: twitter
+        href: https://x.com/TuringLang
+        aria-label: Turing Twitter
+      - icon: github
+        href: https://github.com/TuringLang/Turing.jl
+        aria-label: Turing GitHub
+
+format:
+  html:
+    theme:
+      light: cosmo
+      # dark: [cosmo, theming/theme-dark.scss]
+    css: styles.css
+    toc: true
+    smooth-scroll: true
+    output-block-background: true
+    # code-block-border-left: true
+    # code-line-numbers: true
+# engine: julia
+
+
+

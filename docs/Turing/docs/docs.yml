@@ -1,0 +1,11 @@
+- title: Getting Started
+  subtitle: A Beginners Guide to Turing.jl
+  links:
+    - text: "Getting Started"
+      href: using-turing/getting-started.qmd
+
+- title: Tutorials
+  subtitle: Explore Turing.jl
+  links:
+    - text: "Introduction to Turing.jl"
+      href: tutorials/00-introduction.qmd
