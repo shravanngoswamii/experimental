@@ -1,5 +1,0 @@
----
-title: "About"
----
-
-Sample for Turing Site

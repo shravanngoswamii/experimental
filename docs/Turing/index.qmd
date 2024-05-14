@@ -1,7 +1,0 @@
----
-title: "Turing.jl"
----
-
-This is a Turing website.
-
-See [Get Started](docs/using-turing/getting-started.qmd) or [Tutorials](docs/tutorials/00-introduction.qmd)
