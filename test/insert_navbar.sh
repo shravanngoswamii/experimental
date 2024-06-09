@@ -15,14 +15,10 @@ if [ -z "$NAVBAR_HTML" ]; then
     exit 1
 fi
 
-# Escape special characters for inserting into HTML files
-NAVBAR_HTML_ESCAPED=$(printf '%s\n' "$NAVBAR_HTML" | sed -e 's/[\/&]/\\&/g' -e ':a;N;$!ba;s/\n/\\n/g')
-
 # Process each HTML file in the directory
 for file in $(find $HTML_DIR -name "*.html"); do
     if grep -q "<body>" "$file"; then
-        sed -i "/<body>/a\\
-$NAVBAR_HTML_ESCAPED" "$file"
+        perl -0777 -pi -e "s|<body>|<body>\n$NAVBAR_HTML|g" "$file"
         echo "Updated $file"
     else
         echo "<body> tag not found in $file"
