@@ -1,0 +1,65 @@
+brand:
+  name: "Turing.jl"
+  link: "https://turinglang.org/"
+  logo: "https://turinglang.org/assets/images/turing-logo.svg"
+
+links:
+  - name: "Get Started"
+    link: "https://turinglang.org/docs/tutorials/docs-00-getting-started/"
+  - name: "Tutorials"
+    link: "https://turinglang.org/docs/tutorials/00-introduction/"
+  - name: "Library API"
+    dropdown: true
+    sublinks:
+      - name: "Modelling languages"
+        dropdown: true
+        sublinks:
+          - name: "DynamicPPL"
+            link: "#"
+          - name: "JuliaBUGS"
+            link: "#"
+          - name: "TuringGLM"
+            link: "#"
+      - name: "MCMC"
+        dropdown: true
+        sublinks:
+          - name: "AdvancedHMC"
+            link: "#"
+          - name: "AbstractMCMC"
+            link: "#"
+          - name: "ThermodynamicIntegration"
+            link: "#"
+          - name: "AdvancedPS"
+            link: "#"
+          - name: "EllipticalSliceSampling"
+            link: "#"
+          - name: "NestedSamplers"
+            link: "#"
+      - name: "Diagnostics"
+        dropdown: true
+        sublinks:
+          - name: "MCMCChains"
+            link: "#"
+          - name: "MCMCDiagnosticTools"
+            link: "#"
+          - name: "ParetoSmooth"
+            link: "#"
+      - name: "Bijectors"
+        link: "#"
+      - name: "TuringCallbacks"
+        link: "#"
+      - name: "TuringBenchmarking"
+        link: "#"
+      - name: "Gaussian Processes"
+        dropdown: true
+        sublinks:
+          - name: "AbstractGPs"
+            link: "#"
+          - name: "KernelFunctions"
+            link: "#"
+          - name: "ApproximateGPs"
+            link: "#"
+  - name: "News"
+    link: "https://turinglang.org/news/"
+  - name: "Team"
+    link: "https://turinglang.org/team/"
