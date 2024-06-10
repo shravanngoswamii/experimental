@@ -237,9 +237,9 @@ EOF
     )
 
     # Read brand information
-    local brand_name=$(awk -F ': ' '/brand:/{flag=1;next}/links:/{flag=0}flag' $yaml_file | grep "name" | awk -F ': ' '{print $2}')
-    local brand_link=$(awk -F ': ' '/brand:/{flag=1;next}/logo:/{flag=0}flag' $yaml_file | grep "link" | awk -F ': ' '{print $2}')
-    local brand_logo=$(awk -F ': ' '/brand:/{flag=1;next}/links:/{flag=0}flag' $yaml_file | grep "logo" | awk -F ': ' '{print $2}')
+    local brand_name=$(awk -F ': ' '/brand:/{flag=1;next}/links:/{flag=0}flag' $yaml_file | grep "name" | awk -F ': ' '{print $2}' | tr -d '"')
+    local brand_link=$(awk -F ': ' '/brand:/{flag=1;next}/logo:/{flag=0}flag' $yaml_file | grep "link" | awk -F ': ' '{print $2}' | tr -d '"')
+    local brand_logo=$(awk -F ': ' '/brand:/{flag=1;next}/links:/{flag=0}flag' $yaml_file | grep "logo" | awk -F ': ' '{print $2}' | tr -d '"')
 
     # Add brand HTML
     navbar_html+="<nav class=\"navigation\">"
@@ -255,9 +255,9 @@ EOF
         local indent_level=$2
 
         while read line; do
-            local name=$(echo "$line" | awk -F ': ' '/name/ {print $2}')
-            local link=$(echo "$line" | awk -F ': ' '/link/ {print $2}')
-            local dropdown=$(echo "$line" | awk -F ': ' '/dropdown/ {print $2}')
+            local name=$(echo "$line" | awk -F ': ' '/name/ {print $2}' | tr -d '"')
+            local link=$(echo "$line" | awk -F ': ' '/link/ {print $2}' | tr -d '"')
+            local dropdown=$(echo "$line" | awk -F ': ' '/dropdown/ {print $2}' | tr -d '"')
 
             if [ "$dropdown" == "true" ]; then
                 navbar_html+="$(printf ' %.0s' $(seq 1 $indent_level))<li class=\"dropdown\">"
