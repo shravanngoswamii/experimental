@@ -7,15 +7,15 @@ HTML_DIR=$1
 ./generate_navbar.sh
 
 # Read the generated navbar HTML
-NAVBAR_HTML=$(cat navbar.html)
+NAVBAR_HTML=$(<navbar.html)
 
 # Process each HTML file in the directory
 for file in $(find $HTML_DIR -name "*.html"); do
     # Read the contents of the HTML file
-    file_contents=$(cat "$file")
+    file_contents=$(<"$file")
 
     # Insert the navbar HTML after the <body> tag
-    updated_contents="${file_contents/<body>/<body>\n$NAVBAR_HTML}"
+    updated_contents="${file_contents/<body>/<body>$NAVBAR_HTML}"
 
     # Write the updated contents back to the file
     echo "$updated_contents" > "$file"

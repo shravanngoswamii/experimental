@@ -13,7 +13,6 @@ generate_navbar_html() {
 
     # CSS Styles
     local css=$(cat <<EOF
-<!-- Insert CSS styles here -->
 <style>
     .dropdown-content {
         display: none;
@@ -254,7 +253,7 @@ EOF
         local yaml_data="$1"
         local indent_level=$2
 
-        while read line; do
+        while read -r line; do
             local name=$(echo "$line" | awk -F ': ' '/name/ {print $2}' | tr -d '"')
             local link=$(echo "$line" | awk -F ': ' '/link/ {print $2}' | tr -d '"')
             local dropdown=$(echo "$line" | awk -F ': ' '/dropdown/ {print $2}' | tr -d '"')
@@ -268,7 +267,9 @@ EOF
                 navbar_html+="$(printf ' %.0s' $(seq 1 $indent_level))</ul>"
                 navbar_html+="$(printf ' %.0s' $(seq 1 $indent_level))</li>"
             else
-                navbar_html+="$(printf ' %.0s' $(seq 1 $indent_level))<li><a class=\"nav-link\" href=\"$link\">$name</a></li>"
+                if [ -n "$name" ] && [ -n "$link" ]; then
+                    navbar_html+="$(printf ' %.0s' $(seq 1 $indent_level))<li><a class=\"nav-link\" href=\"$link\">$name</a></li>"
+                fi
             fi
         done <<< "$yaml_data"
     }
