@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# URL of the navbar_config.yml file
+CONFIG_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar_config.yml"
+
+# Download the navbar_config.yml file
+curl -sL $CONFIG_URL -o navbar_config.yml
+
 # Function to generate HTML for navigation bar
 generate_navbar_html() {
     local yaml_file=$1
