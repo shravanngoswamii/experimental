@@ -237,9 +237,9 @@ EOF
     )
 
     # Read brand information
-    local brand_name=$(awk '/brand:/{flag=1;next}/link:/{flag=0}flag' $yaml_file | grep "name" | awk '{print $2}')
-    local brand_link=$(awk '/brand:/{flag=1;next}/logo:/{flag=0}flag' $yaml_file | grep "link" | awk '{print $2}')
-    local brand_logo=$(awk '/brand:/{flag=1;next}/links:/{flag=0}flag' $yaml_file | grep "logo" | awk '{print $2}')
+    local brand_name=$(awk -F ': ' '/brand:/{flag=1;next}/links:/{flag=0}flag' $yaml_file | grep "name" | awk -F ': ' '{print $2}')
+    local brand_link=$(awk -F ': ' '/brand:/{flag=1;next}/logo:/{flag=0}flag' $yaml_file | grep "link" | awk -F ': ' '{print $2}')
+    local brand_logo=$(awk -F ': ' '/brand:/{flag=1;next}/links:/{flag=0}flag' $yaml_file | grep "logo" | awk -F ': ' '{print $2}')
 
     # Add brand HTML
     navbar_html+="<nav class=\"navigation\">"
@@ -249,54 +249,33 @@ EOF
     # Start nav links
     navbar_html+="<ul class=\"nav-links\">"
 
-    local indent=0
-
-    # Function to process sublinks
-    process_sublinks() {
-        local sublinks="$1"
+    # Function to process links and sublinks
+    process_links() {
+        local yaml_data="$1"
         local indent_level=$2
 
-        while read subline; do
-            if echo "$subline" | grep -q "name:"; then
-                sublink_name=$(echo "$subline" | awk '{print $2}')
-            fi
-            if echo "$subline" | grep -q "link:"; then
-                sublink_url=$(echo "$subline" | awk '{print $2}')
-                navbar_html+="$(printf ' %.0s' $(seq 1 $indent_level))<li><a class=\"nav-link\" href=\"$sublink_url\">$sublink_name</a></li>"
-            fi
-            if echo "$subline" | grep -q "dropdown:"; then
-                navbar_html+="$(printf ' %.0s' $(seq 1 $indent_level))<li class=\"sub-dropdown\">"
-                navbar_html+="$(printf ' %.0s' $(seq 1 $indent_level))<a class=\"nav-link sub-dropdown-toggle\" href=\"#\">$sublink_name▾</a>"
-                navbar_html+="$(printf ' %.0s' $(seq 1 $indent_level))<ul class=\"sub-dropdown-content\">"
-            fi
-            if echo "$subline" | grep -q "sublinks:"; then
-                process_sublinks "$sublinks" $((indent_level + 2))
-            fi
-        done <<< "$(awk -v level=$((indent_level / 2)) '/^ {0,2}/ {if (NR==1) next; indent=length($0)-length(ltrim($0)); if (indent<=level) exit; print $0}' <<< "$sublinks")"
+        while read line; do
+            local name=$(echo "$line" | awk -F ': ' '/name/ {print $2}')
+            local link=$(echo "$line" | awk -F ': ' '/link/ {print $2}')
+            local dropdown=$(echo "$line" | awk -F ': ' '/dropdown/ {print $2}')
 
-        navbar_html+="$(printf ' %.0s' $(seq 1 $((indent_level - 2))))</ul>"
-        navbar_html+="$(printf ' %.0s' $(seq 1 $((indent_level - 2))))</li>"
+            if [ "$dropdown" == "true" ]; then
+                navbar_html+="$(printf ' %.0s' $(seq 1 $indent_level))<li class=\"dropdown\">"
+                navbar_html+="$(printf ' %.0s' $(seq 1 $indent_level))<a class=\"nav-link dropdown-toggle\" href=\"#\">$name▾</a>"
+                navbar_html+="$(printf ' %.0s' $(seq 1 $indent_level))<ul class=\"dropdown-content\">"
+                local sublinks=$(awk -v start="sublinks:" '/dropdown: true/{flag=1;next}/- name:/{flag=0}flag' <<< "$line")
+                process_links "$sublinks" $((indent_level + 2))
+                navbar_html+="$(printf ' %.0s' $(seq 1 $indent_level))</ul>"
+                navbar_html+="$(printf ' %.0s' $(seq 1 $indent_level))</li>"
+            else
+                navbar_html+="$(printf ' %.0s' $(seq 1 $indent_level))<li><a class=\"nav-link\" href=\"$link\">$name</a></li>"
+            fi
+        done <<< "$yaml_data"
     }
 
     # Read navigation links
-    while read line; do
-        if echo "$line" | grep -q "name:"; then
-            link_name=$(echo "$line" | awk '{print $2}')
-        fi
-        if echo "$line" | grep -q "link:"; then
-            link_url=$(echo "$line" | awk '{print $2}')
-            navbar_html+="<li><a class=\"nav-link\" href=\"$link_url\">$link_name</a></li>"
-        fi
-        if echo "$line" | grep -q "dropdown:"; then
-            navbar_html+="<li class=\"dropdown\">"
-            navbar_html+="<a class=\"nav-link dropdown-toggle\" href=\"#\">$link_name▾</a>"
-            navbar_html+="<ul class=\"dropdown-content\">"
-        fi
-        if echo "$line" | grep -q "sublinks:"; then
-            sublinks=$(awk '/sublinks:/{flag=1;next}/^$/flag' <<< "$line")
-            process_sublinks "$sublinks" $((indent + 2))
-        fi
-    done < <(awk '/links:/{flag=1;next}/^$/{flag=0}flag' $yaml_file)
+    links=$(awk '/links:/{flag=1;next}/^$/{flag=0}flag' $yaml_file)
+    process_links "$links" 2
 
     # Close nav links and nav
     navbar_html+="</ul>"
