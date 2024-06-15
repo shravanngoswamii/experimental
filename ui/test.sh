@@ -18,13 +18,14 @@ add_deprecation_warning() {
             color: white;\
             padding: 10px;\
             text-align: center;\
+            font-size: 1.5em;\
         }\
         .deprecated a {\
             color: rgb(19, 7, 191);\
             text-decoration: underline;\
         }\
         header, body {\
-            margin-top: 44px;\
+            margin-top: 42px;\
         }\
     </style>\
     <div class="deprecated">\
