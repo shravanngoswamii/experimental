@@ -46,12 +46,17 @@ $(document).ready(function(){
     $(".dropdown > div.dropdown-menu > a").on("click", function() {
         var target_version = $(this).text().trim();
         if (target_version == url_parts[2]) return;
-        window.location.href = url_parts[1] + target_version + url_parts[3];
+        // Construct new URL replacing only the version segment
+        var new_url = window.location.href.replace(/\/ui\/[^\/]+/, "/ui/" + target_version);
+        window.location.href = new_url;
     });
-
+    
     $("select#version-selector").change(function() {
         var target_version = $("select#version-selector option:selected").text();
         if (target_version == url_parts[2]) return;
-        window.location.href = url_parts[1] + target_version + url_parts[3];
+        // Construct new URL replacing only the version segment
+        var new_url = window.location.href.replace(/\/ui\/[^\/]+/, "/ui/" + target_version);
+        window.location.href = new_url;
     });
+    
 });
