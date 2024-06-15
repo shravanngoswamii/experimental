@@ -23,6 +23,9 @@ add_deprecation_warning() {
             color: rgb(19, 7, 191);\
             text-decoration: underline;\
         }\
+        header, body {\
+            margin-top: 44px;\
+        }\
     </style>\
     <div class="deprecated">\
         This website is deprecated. Please visit our new website <a href="https://turinglang.org/docs">here</a>.\
