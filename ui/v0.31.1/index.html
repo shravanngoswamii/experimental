@@ -29,18 +29,18 @@
     <meta name="lang:search.result.one" content="1 matching document">
     <meta name="lang:search.result.other" content="# matching documents">
     <meta name="lang:search.tokenizer" content="[\s\-]+">
-    <script src="/versions.js"></script>
-    <script src="/v0.31/assets/js/modernizr.74668098.js"></script>
-    <link rel="shortcut icon" href="/v0.31/assets/img/favicon.ico">
-    <link rel="stylesheet" href="/v0.31/assets/css/main.css">
-    <link rel="stylesheet" href="/v0.31/assets/css/palette.css">
-    <link rel="stylesheet" href="/v0.31/assets/css/header.css">
+    <script src="versions.js"></script>
+    <script src="assets/js/modernizr.74668098.js"></script>
+    <link rel="shortcut icon" href="assets/img/favicon.ico">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/palette.css">
+    <link rel="stylesheet" href="assets/css/header.css">
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/v0.31/assets/css/index.css">
+    <link rel="stylesheet" href="assets/css/index.css">
     
 
     
@@ -49,24 +49,29 @@
 
   <body dir="ltr" data-md-color-primary="red" data-md-color-accent="red">
     <style>
-        .deprecated {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background-color: rgb(204, 138, 151);
-            color: white;
-            padding: 10px;
-            text-align: center;
-        }
-        .deprecated a {
-            color: rgb(19, 7, 191);
-            text-decoration: underline;
-        }
-    </style>
-    <div class="deprecated">
-        This website is deprecated. Please visit our new website <a href="https://turinglang.org/docs">here</a>.
-    </div>
+      .deprecated {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          background-color: rgb(204, 138, 151);
+          color: white;
+          padding: 10px;
+          text-align: center;
+          font-size:medium;
+          z-index: 1000;
+      }
+      .deprecated a {
+          color: rgb(19, 7, 191);
+          text-decoration: underline;
+      }
+      body, header {
+        margin-top: 44px !important;
+      }
+  </style>
+  <div class="deprecated">
+      This website is deprecated. Please visit our new website <a href="https://turinglang.org/docs">here</a>.
+  </div>
     
 
 <svg class="md-svg">
@@ -838,7 +843,7 @@
                 <div id="md-container-pancakes">
                 <div class="md-content full-width"> 
     <article class="md-content__inner md-typeset  full-width">
-    <div class="jumbotron" style="background-image: url('/v0.31/assets/images/turing-logo-wide.svg');">
+    <div class="jumbotron" style="background-image: url('assets/images/turing-logo-wide.svg');">
   <div class="container">
     <div class="row">
       <div class="col-lg-6 col-md-0 col-sm-0 col-xs-0"></div>
@@ -983,7 +988,7 @@
     <div class="row">
       <div class="col-sm-6 col-md-4 col-xl-4">
         <div class="archive__item-teaser">
-          <img src="/v0.31/assets/images/sampler.svg" alt="" style="max-width: 100%; max-height:100%;">
+          <img src="assets/images/sampler.svg" alt="" style="max-width: 100%; max-height:100%;">
         </div>
       </div>
       <div class="col-sm-6 col-md-8 col-xl-6">
@@ -1233,7 +1238,7 @@ $(document).ready(function() {
 </footer>
 
 
-    <script src="/v0.31/assets/js/application.js"></script>
+    <script src="assets/js/application.js"></script>
     
     <script>console.log('0')</script>
     <script>app.initialize({version:"0.17.4", url:{base:'/v0.31'}})</script>
@@ -1241,9 +1246,9 @@ $(document).ready(function() {
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="/v0.31/assets/js/index.js"></script>
+    <script src="assets/js/index.js"></script>
     
-    <script src="/v0.31/assets/js/version-switch.js"></script>
+    <script src="assets/js/version-switch.js"></script>
 
     <script>
  var headers = ["h1", "h2", "h3", "h4"]
