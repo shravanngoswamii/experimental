@@ -2,7 +2,7 @@ name: Update Navbar
 
 on:
   workflow_run:
-    workflows: ["Hello World Workflow"]  # add workflows that generates docs in this list like `workflows: ["Docs", "Previews]`
+    workflows: ["*"]  # add workflow names that generates docs in this list like `workflows: ["Docs Workflow", "Previews Workflow]`
     types: 
       - completed
   workflow_dispatch:  # Allows manual triggering
