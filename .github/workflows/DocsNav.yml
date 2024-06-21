@@ -2,7 +2,7 @@ name: Update Navbar
 
 on:
   workflow_run:
-    workflows: ["*"]  # add workflow names that generates docs in this list like `workflows: ["Docs Workflow", "Previews Workflow]`
+    workflows: ["*"]  # This will match all workflows
     types: 
       - completed
   workflow_dispatch:  # Allows manual triggering
@@ -15,7 +15,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout gh-pages
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
         with:
           ref: gh-pages
           fetch-depth: 0
@@ -25,20 +25,27 @@ jobs:
           curl -O https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/insert_navbar.sh
           chmod +x insert_navbar.sh
 
+      - name: Get navbar version
+        id: navbar_version
+        run: |
+          VERSION=$(curl -s https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html | grep -oP '(?<=<!-- NAVBAR START v)[^[:space:]]+(?= -->)')
+          echo "NAVBAR_VERSION=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Update Navbar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NAVBAR_VERSION: ${{ steps.navbar_version.outputs.NAVBAR_VERSION }}
         run: |
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
           
           # Update all HTML files in the current directory (gh-pages root)
-          ./insert_navbar.sh .
+          ./insert_navbar.sh . $NAVBAR_VERSION
           
           # Check if there are any changes
           if [[ -n $(git status -s) ]]; then
             git add .
-            git commit -m "Update navbar"
+            git commit -m "Update navbar to version $NAVBAR_VERSION"
             git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
           else
             echo "No changes to commit"
