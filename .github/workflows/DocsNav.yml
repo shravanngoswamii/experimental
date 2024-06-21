@@ -3,7 +3,7 @@ name: Update Navbar
 on:
   push:
     branches:
-      - main  # or master, depending on your default branch name
+      - gh-pages
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
