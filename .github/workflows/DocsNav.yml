@@ -1,18 +1,21 @@
-name: Update Navbar
+name: Add Navbar
 
 on:
   push:
     branches:
-      - gh-pages
+      - main
+  workflow_dispatch:  # Allows manual triggering
 
 jobs:
   update-navbar:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout gh-pages
+        uses: actions/checkout@v2
         with:
+          ref: gh-pages
           fetch-depth: 0
-      
+
       - name: Download insert_navbar.sh
         run: |
           curl -O https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/insert_navbar.sh
@@ -30,7 +33,7 @@ jobs:
           if [[ -n $(git status -s) ]]; then
             git add .
             git commit -m "add navbar"
-            git push
+            git push origin gh-pages
           else
             echo "No changes to commit"
           fi
