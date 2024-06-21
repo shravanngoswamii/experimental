@@ -1,19 +1,21 @@
 name: Update Navbar
 
 on:
-  push:
-    branches:
-      - gh-pages
+  workflow_run:
+    workflows: ["*"]  # This will match all workflows
+    types: 
+      - completed
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
   update-navbar:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: write
     steps:
       - name: Checkout gh-pages
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
         with:
           ref: gh-pages
           fetch-depth: 0
