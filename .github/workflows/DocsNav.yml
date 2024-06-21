@@ -1,0 +1,36 @@
+name: Update Navbar
+
+on:
+  push:
+    branches:
+      - gh-pages
+
+jobs:
+  update-navbar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      
+      - name: Download insert_navbar.sh
+        run: |
+          curl -O https://raw.githubusercontent.com/TuringLang/turinglang.github.io/main/assets/scripts/insert_navbar.sh
+          chmod +x insert_navbar.sh
+
+      - name: Update Navbar
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          
+          # Update all HTML files in the current directory (gh-pages root)
+          ./insert_navbar.sh .
+          
+          # Check if there are any changes
+          if [[ -n $(git status -s) ]]; then
+            git add .
+            git commit -m "Update navbar"
+            git push
+          else
+            echo "No changes to commit"
+          fi
