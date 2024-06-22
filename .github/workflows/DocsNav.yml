@@ -37,7 +37,8 @@ jobs:
           
           ./insert_navbar.sh .
           
-          if [[ -n $(git status -s) ]]; then
+          git_status=\$(git status --porcelain)
+          if [ -n "\$git_status" ]; then
             git add .
             git commit -m "Updated navbar"
             git push "https://\${GITHUB_ACTOR}:\${GITHUB_TOKEN}@github.com/\${GITHUB_REPOSITORY}.git" gh-pages
