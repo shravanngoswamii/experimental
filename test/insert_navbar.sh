@@ -25,9 +25,6 @@ fi
 
 echo "Current navbar version: $NAVBAR_VERSION"
 
-# Escape special characters in the navbar HTML for use with sed
-ESCAPED_NAVBAR_HTML=$(echo "$NAVBAR_HTML" | sed -e 's/[]\/$*.^[]/\\&/g')
-
 # Process each HTML file in the directory and its subdirectories
 find "$HTML_DIR" -name "*.html" | while read file; do
     # Check if any version of the navbar is present
@@ -38,17 +35,34 @@ find "$HTML_DIR" -name "*.html" | while read file; do
         if [ "$EXISTING_VERSION" != "$NAVBAR_VERSION" ]; then
             echo "Updating navbar in $file from v$EXISTING_VERSION to v$NAVBAR_VERSION"
             
-            # Remove the existing navbar
-            sed -i '/<!-- NAVBAR START v.*-->/,/<!--NAVBAR END -->/d' "$file"
-            
-            # Insert the new navbar HTML after the <body> tag
-            sed -i "/<body>/a $ESCAPED_NAVBAR_HTML" "$file"
+            # Use awk to replace the existing navbar with the new one
+            awk -v navbar="$NAVBAR_HTML" '
+                /<!-- NAVBAR START v.*-->/ {
+                    print navbar
+                    skip = 1
+                    next
+                }
+                /<!--NAVBAR END -->/ {
+                    skip = 0
+                    next
+                }
+                !skip {
+                    print
+                }
+            ' "$file" > "${file}.tmp" && mv "${file}.tmp" "$file"
         else
             echo "Skipped $file (navbar already up to date)"
         fi
     else
         echo "Adding navbar to $file"
-        # Insert the navbar HTML after the <body> tag
-        sed -i "/<body>/a $ESCAPED_NAVBAR_HTML" "$file"
+        # Use awk to insert the navbar after the <body> tag
+        awk -v navbar="$NAVBAR_HTML" '
+            /<body>/ {
+                print
+                print navbar
+                next
+            }
+            {print}
+        ' "$file" > "${file}.tmp" && mv "${file}.tmp" "$file"
     fi
 done
