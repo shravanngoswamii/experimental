@@ -1,28 +1,30 @@
 name: Add Navbar
 
 on:
-  workflow_run:
-    workflows: ["*"]  # add workflow names that generates docs in this list like `workflows: ["Docs Workflow", "Previews Workflow]`
-    types: 
-      - completed
+  branches:
+    - gh-pages
+  # workflow_run:
+  #   workflows: ["*"]  # add workflow names that generates docs in this list like `workflows: ["Docs Workflow", "Previews Workflow]`
+  #   types: 
+  #     - completed
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
   add-navbar:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: write
     steps:
       - name: Checkout gh-pages
         uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          fetch-depth: 0
+        # with:
+        #   ref: gh-pages
+        #   fetch-depth: 0
 
       - name: Download insert_navbar.sh
         run: |
-          curl -O https://raw.githubusercontent.com/TuringLang/turinglang.github.io/main/assets/scripts/insert_navbar.sh
+          curl -O https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/insert_navbar.sh
           chmod +x insert_navbar.sh
 
       - name: Update Navbar
