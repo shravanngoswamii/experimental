@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - main
-  workflow_run:
-    workflows: ["*"]  # add workflow names that generates docs in this list like `workflows: ["Docs Workflow", "Previews Workflow]`
-    types: 
-      - completed
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
