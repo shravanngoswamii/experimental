@@ -28,7 +28,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          bash -e << EOF
           #!/bin/bash
           set -e
           
@@ -37,12 +36,11 @@ jobs:
           
           ./insert_navbar.sh .
           
-          git_status=\$(git status --porcelain)
-          if [ -n "\$git_status" ]; then
+          git_status=$(git status --porcelain)
+          if [ -n "$git_status" ]; then
             git add .
             git commit -m "Updated navbar"
-            git push "https://\${GITHUB_ACTOR}:\${GITHUB_TOKEN}@github.com/\${GITHUB_REPOSITORY}.git" gh-pages
+            git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
           else
             echo "No changes to commit"
           fi
-          EOF

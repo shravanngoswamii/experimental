@@ -1,7 +1,6 @@
 #!/bin/bash
-# This script inserts or updates a top navigation bar (e.g., `navbar.html`) into Documenter.jl generated sites.
-# It checks all HTML files in the specified directory and its subdirectories.
-# The script always replaces the existing navbar with the new one.
+# This script inserts or updates a top navigation bar (e.g., `navbar.html`) into HTML files.
+# It preserves existing content while replacing or inserting the navbar.
 
 # URL of the navigation bar HTML file
 NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html"
@@ -21,15 +20,18 @@ fi
 # Process each HTML file in the directory and its subdirectories
 find "$HTML_DIR" -name "*.html" | while read file; do
     # Read the contents of the HTML file
-    file_contents=$(cat "$file")
+    content=$(cat "$file")
     
-    # Remove existing navbar if present
-    updated_contents=$(echo "$file_contents" | sed '/<body>/,/<!-- NAVBAR END -->/c\<body>')
-    
-    # Insert the new navbar HTML after the <body> tag
-    updated_contents="${updated_contents/<body>/<body>$NAVBAR_HTML}"
+    # Check if the navbar already exists
+    if grep -q "<!-- NAVBAR START -->" "$file"; then
+        # Replace existing navbar
+        updated_content=$(echo "$content" | sed -e '/<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/c\'"$NAVBAR_HTML"'')
+    else
+        # Insert new navbar after <body> tag
+        updated_content=$(echo "$content" | sed -e '/<body>/a\'"$NAVBAR_HTML"'')
+    fi
     
     # Write the updated contents back to the file
-    echo "$updated_contents" > "$file"
+    echo "$updated_content" > "$file"
     echo "Updated $file with new navbar"
 done
