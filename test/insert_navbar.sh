@@ -4,7 +4,7 @@
 # The script always replaces the existing navbar with the new one.
 
 # URL of the navigation bar HTML file
-NAVBAR_URL="https://raw.githubusercontent.com/TuringLang/turinglang.github.io/main/assets/scripts/navbar.html"
+NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html"
 
 # Directory containing HTML files (passed as the first argument to the script)
 HTML_DIR=$1
