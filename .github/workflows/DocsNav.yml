@@ -27,14 +27,14 @@ jobs:
         run: |
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
-         
+          
           # Update all HTML files in the current directory (gh-pages root)
           ./insert_navbar.sh .
-         
+          
           # Check if there are any changes
           if [[ -n $(git status -s) ]]; then
             git add .
-            git commit -m "Updated navbar to latest version"
+            git commit -m "Updated navbar to version $NAVBAR_VERSION"
             git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
           else
             echo "No changes to commit"
