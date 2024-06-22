@@ -1,10 +1,12 @@
 name: Add Navbar
+
 on:
   workflow_run:
     workflows: ["*"]  # add workflow names that generates docs in this list like `workflows: ["Docs Workflow", "Previews Workflow]`
-    types:
+    types: 
       - completed
   workflow_dispatch:  # Allows manual triggering
+
 jobs:
   add-navbar:
     runs-on: ubuntu-latest
@@ -17,10 +19,12 @@ jobs:
         with:
           ref: gh-pages
           fetch-depth: 0
+
       - name: Download insert_navbar.sh
         run: |
           curl -O https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/insert_navbar.sh
           chmod +x insert_navbar.sh
+
       - name: Update Navbar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -34,7 +38,7 @@ jobs:
           # Check if there are any changes
           if [[ -n $(git status -s) ]]; then
             git add .
-            git commit -m "Updated navbar to version $NAVBAR_VERSION"
+            git commit -m "added navbar"
             git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
           else
             echo "No changes to commit"
