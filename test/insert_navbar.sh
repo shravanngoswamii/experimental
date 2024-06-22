@@ -25,6 +25,9 @@ fi
 
 echo "Current navbar version: $NAVBAR_VERSION"
 
+# Escape special characters in the navbar HTML for use with sed
+ESCAPED_NAVBAR_HTML=$(echo "$NAVBAR_HTML" | sed -e 's/[]\/$*.^[]/\\&/g')
+
 # Process each HTML file in the directory and its subdirectories
 find "$HTML_DIR" -name "*.html" | while read file; do
     # Check if any version of the navbar is present
@@ -39,13 +42,13 @@ find "$HTML_DIR" -name "*.html" | while read file; do
             sed -i '/<!-- NAVBAR START v.*-->/,/<!--NAVBAR END -->/d' "$file"
             
             # Insert the new navbar HTML after the <body> tag
-            sed -i "/<body>/a $NAVBAR_HTML" "$file"
+            sed -i "/<body>/a $ESCAPED_NAVBAR_HTML" "$file"
         else
             echo "Skipped $file (navbar already up to date)"
         fi
     else
         echo "Adding navbar to $file"
         # Insert the navbar HTML after the <body> tag
-        sed -i "/<body>/a $NAVBAR_HTML" "$file"
+        sed -i "/<body>/a $ESCAPED_NAVBAR_HTML" "$file"
     fi
 done
