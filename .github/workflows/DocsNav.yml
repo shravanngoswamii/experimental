@@ -20,7 +20,7 @@ jobs:
 
       - name: Download insert_navbar.sh
         run: |
-          curl -O https://raw.githubusercontent.com/TuringLang/turinglang.github.io/main/assets/scripts/insert_navbar.sh
+          curl -O https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/insert_navbar.sh
           chmod +x insert_navbar.sh
 
       - name: Update Navbar
