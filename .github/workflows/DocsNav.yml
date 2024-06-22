@@ -1,8 +1,9 @@
 name: Add Navbar
 
 on:
-  branches:
-    - gh-pages
+  push:
+    branches:
+      - gh-pages
   # workflow_run:
   #   workflows: ["*"]  # add workflow names that generates docs in this list like `workflows: ["Docs Workflow", "Previews Workflow]`
   #   types: 
