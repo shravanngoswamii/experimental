@@ -1,9 +1,6 @@
 #!/bin/bash
-
-# This script inserts a top navigation bar (e.g., `navbar.html`) into Documenter.jl generated sites.
-# The resulting output is similar to MultiDocumenter's navigation menu. The navigation menu is
-# hard-coded at the moment, which could be improved in the future.
-# It checks all HTML files in the specified directory and its subdirectories.
+# This script inserts or updates a top navigation bar (e.g., `navbar.html`) into Documenter.jl generated sites.
+# It inserts the navbar after the <body> tag if it's not present, and replaces it if it's already there.
 
 # URL of the navigation bar HTML file
 NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html"
@@ -22,19 +19,18 @@ fi
 
 # Process each HTML file in the directory and its subdirectories
 find "$HTML_DIR" -name "*.html" | while read file; do
-    # Remove existing navbar if present
-    if grep -q "<!-- NAVBAR START -->" "$file"; then
-        awk '/<!-- NAVBAR START -->/{flag=1; next} /<!-- NAVBAR END -->/{flag=0; next} !flag' "$file" > "$file.tmp"
-        mv "$file.tmp" "$file"
-    fi
-
     # Read the contents of the HTML file
     file_contents=$(cat "$file")
-
-    # Insert the navbar HTML after the <body> tag
-    updated_contents="${file_contents/<body>/<body>$NAVBAR_HTML}"
-
-    # Write the updated contents back to the file
-    echo "$updated_contents" > "$file"
-    echo "Updated $file"
+    
+    if grep -q "<!-- NAVBAR START -->" "$file"; then
+        # If navbar is present, replace it
+        updated_contents=$(echo "$file_contents" | sed -e '/<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/c\'"$NAVBAR_HTML")
+        echo "$updated_contents" > "$file"
+        echo "Updated existing navbar in $file"
+    else
+        # If navbar is not present, insert it after the <body> tag
+        updated_contents="${file_contents/<body>/<body>$NAVBAR_HTML}"
+        echo "$updated_contents" > "$file"
+        echo "Inserted new navbar in $file"
+    fi
 done
