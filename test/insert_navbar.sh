@@ -25,14 +25,14 @@ ESCAPED_NAVBAR_HTML=$(printf '%s\n' "$NAVBAR_HTML" | sed -e 's/[\/&]/\\&/g' -e '
 find "$HTML_DIR" -name "*.html" | while read -r file; do
     if grep -q "<!-- NAVBAR START -->" "$file"; then
         # If navbar comments exist, replace the content between them
-        sed -i "/<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/{/<!-- NAVBAR START -->/{p; r /dev/stdin
-            }; /<!-- NAVBAR END -->/p; d}" "$file" <<<"<!-- NAVBAR START -->
-$ESCAPED_NAVBAR_HTML
-<!-- NAVBAR END -->"
+        sed -i "/<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/c\
+<!-- NAVBAR START -->\
+$NAVBAR_HTML\
+<!-- NAVBAR END -->" "$file"
         echo "Updated existing navbar in $file"
     else
-        # If navbar comments don't exist, insert after <body> tag, without assuming surrounding spaces
-        sed -i "s|<body>|<body><!-- NAVBAR START -->$ESCAPED_NAVBAR_HTML<!-- NAVBAR END -->|" "$file"
+        # If navbar comments don't exist, insert after <body> tag
+        sed -i "s|<body>|<body><!-- NAVBAR START -->$NAVBAR_HTML<!-- NAVBAR END -->|" "$file"
         echo "Inserted new navbar in $file"
     fi
 done
