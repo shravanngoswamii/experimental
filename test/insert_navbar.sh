@@ -17,13 +17,17 @@ update_navbar() {
     local file="$1"
     
     # Remove old navbar if it exists
-    sed -i '/<\!-- NAVBAR START -->/,/<\!-- NAVBAR END -->/d' "$file"
+    sed -i '/<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/d' "$file"
+    
+    # Escape the navbar content to avoid interpretation issues in sed
+    escaped_content=$(printf '%s\n' "$NAVBAR_CONTENT" | sed -e 's/[]\/$*.^[]/\\&/g')
     
     # Add new navbar after <body> tag
-    sed -i '/<body>/a '"$NAVBAR_CONTENT"'' "$file"
+    sed -i "/<body>/a $escaped_content" "$file"
     
     echo "Updated navbar in $file"
 }
+
 
 # Find all HTML files in the current directory and subdirectories
 find . -type f -name "*.html" | while read -r file; do
