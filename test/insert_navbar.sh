@@ -1,38 +1,38 @@
 #!/bin/bash
 
-# Fetch the navbar.html file
-wget -q -O navbar.html "https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html"
+# This script first removes any existing navigation bar section and then inserts a new navigation bar
+# into all HTML files in the specified directory and its subdirectories.
 
-# Check if wget was successful
-if [ $? -ne 0 ]; then
-    echo "Failed to fetch navbar.html"
+# URL of the navigation bar HTML file
+NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html"
+
+# Directory containing HTML files (passed as the first argument to the script)
+HTML_DIR=$1
+
+# Download the navigation bar HTML content
+NAVBAR_HTML=$(curl -s $NAVBAR_URL)
+
+# Check if the download was successful
+if [ -z "$NAVBAR_HTML" ]; then
+    echo "Failed to download navbar HTML"
     exit 1
 fi
 
-# Define the navbar start and end tags
-NAVBAR_START="<!-- NAVBAR START -->"
-NAVBAR_END="<!-- NAVBAR END -->"
-
-# Loop through all HTML files in the current directory and its subdirectories
-find . -type f -name "*.html" | while read -r file; do
-    # Create a temporary file
-    temp_file=$(mktemp)
-
-    # Check if the navbar is already in the file
-    if grep -q "$NAVBAR_START" "$file"; then
-        # Remove the old navbar
-        sed "/$NAVBAR_START/,/$NAVBAR_END/d" "$file" > "$temp_file"
-    else
-        cp "$file" "$temp_file"
+# Process each HTML file in the directory and its subdirectories
+find "$HTML_DIR" -name "*.html" | while read file; do
+    # Remove the existing navbar HTML section if present
+    if grep -q "<!-- NAVBAR START -->" "$file"; then
+        sed -i '/<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/d' "$file"
+        echo "Removed existing navbar from $file"
     fi
 
-    # Add the new navbar after the body tag
-    sed "/<body>/a $(cat navbar.html)" "$temp_file" > "$file.new"
-    mv "$file.new" "$file"
+    # Read the contents of the HTML file
+    file_contents=$(cat "$file")
 
-    # Remove the temporary file
-    rm "$temp_file"
+    # Insert the navbar HTML after the <body> tag
+    updated_contents="${file_contents/<body>/<body>$NAVBAR_HTML}"
+
+    # Write the updated contents back to the file
+    echo "$updated_contents" > "$file"
+    echo "Inserted new navbar into $file"
 done
-
-# Remove the temporary navbar.html file
-rm navbar.html
