@@ -17,20 +17,24 @@ if [ -z "$NAVBAR_HTML" ]; then
     exit 1
 fi
 
+# Escape special characters in the navbar HTML for use in sed
+ESCAPED_NAVBAR_HTML=$(echo "$NAVBAR_HTML" | sed -e 's/[\/&]/\\&/g')
+
 # Process each HTML file in the directory and its subdirectories
 find "$HTML_DIR" -name "*.html" | while read file; do
-    # Read the contents of the HTML file
-    file_contents=$(cat "$file")
-    
     if grep -q "<!-- NAVBAR START -->" "$file"; then
         # If navbar is present, replace it
-        updated_contents=$(echo "$file_contents" | sed -e '/<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/c\'"$NAVBAR_HTML")
-        echo "$updated_contents" > "$file"
+        sed -i '
+            /<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/c\
+            '"$ESCAPED_NAVBAR_HTML"'
+        ' "$file"
         echo "Updated existing navbar in $file"
     else
         # If navbar is not present, insert it after the <body> tag
-        updated_contents="${file_contents/<body>/<body>$NAVBAR_HTML}"
-        echo "$updated_contents" > "$file"
+        sed -i '
+            /<body>/a\
+            '"$ESCAPED_NAVBAR_HTML"'
+        ' "$file"
         echo "Inserted new navbar in $file"
     fi
 done
