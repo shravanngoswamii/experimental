@@ -1,5 +1,6 @@
 #!/bin/bash
-# This script inserts the navbar content after the <body> tag in all HTML files within the specified directory
+# This script inserts or updates a top navigation bar (e.g., `navbar.html`) into Documenter.jl generated sites.
+# It replaces the existing navbar content if present, or inserts a new navbar if not.
 
 # URL of the navigation bar HTML file
 NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html"
@@ -16,21 +17,30 @@ if [ -z "$NAVBAR_HTML" ]; then
     exit 1
 fi
 
-# Escape special characters in the navbar HTML for sed
-ESCAPED_NAVBAR=$(echo "$NAVBAR_HTML" | sed -e 's/[\/&]/\\&/g')
-
 # Process each HTML file in the directory and its subdirectories
 find "$HTML_DIR" -name "*.html" | while read file; do
-    # Remove any existing navbar
-    sed -i '
-    /<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/d
-    ' "$file"
+    # Use awk to replace or insert the navbar
+    awk -v navbar="$NAVBAR_HTML" '
+    /<body>/ {
+        print $0
+        print navbar
+        next
+    }
+    /<!-- NAVBAR START -->/ {
+        print $0
+        print navbar
+        in_navbar = 1
+        next
+    }
+    /<!-- NAVBAR END -->/ {
+        print $0
+        in_navbar = 0
+        next
+    }
+    !in_navbar {
+        print $0
+    }
+    ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
     
-    # Insert the new navbar after the <body> tag
-    sed -i '
-    /<body>/a\
-    '"$ESCAPED_NAVBAR"'
-    ' "$file"
-    
-    echo "Updated navbar in $file"
+    echo "Updated $file"
 done
