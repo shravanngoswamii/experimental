@@ -30,7 +30,7 @@ find "$HTML_DIR" -name "*.html" | while read file; do
     fi
 
     # Insert the navbar HTML after the <body> tag using perl with proper newlines
-    perl -i -pe 's|<body>|<body>\n'"$ESCAPED_NAVBAR_HTML"'\n|' "$file"
+    perl -i -pe 's|<body>|<body>\n'"$ESCAPED_NAVBAR_HTML"'|' "$file"
 
     echo "Inserted new navbar into $file"
 done
