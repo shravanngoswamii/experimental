@@ -31,10 +31,8 @@ $ESCAPED_NAVBAR_HTML
 <!-- NAVBAR END -->"
         echo "Updated existing navbar in $file"
     else
-        # If navbar comments don't exist, insert after <body> tag
-        sed -i "/<body>/a <!-- NAVBAR START -->\
-$ESCAPED_NAVBAR_HTML\
-<!-- NAVBAR END -->" "$file"
+        # If navbar comments don't exist, insert after <body> tag, without assuming surrounding spaces
+        sed -i "s|<body>|<body><!-- NAVBAR START -->$ESCAPED_NAVBAR_HTML<!-- NAVBAR END -->|" "$file"
         echo "Inserted new navbar in $file"
     fi
 done
