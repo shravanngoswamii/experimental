@@ -1,6 +1,6 @@
 #!/bin/bash
 # This script inserts or updates a top navigation bar (e.g., `navbar.html`) into Documenter.jl generated sites.
-# It replaces the existing navbar content if present, or inserts a new navbar if not.
+# It replaces the existing navbar content if present, or inserts a new navbar just after the <body> tag if not.
 
 # URL of the navigation bar HTML file
 NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html"
@@ -23,17 +23,21 @@ find "$HTML_DIR" -name "*.html" | while read file; do
     awk -v navbar="$NAVBAR_HTML" '
     /<body>/ {
         print $0
-        print navbar
+        if (!navbar_printed) {
+            print navbar
+            navbar_printed = 1
+        }
         next
     }
     /<!-- NAVBAR START -->/ {
-        print $0
-        print navbar
+        if (!navbar_printed) {
+            print navbar
+            navbar_printed = 1
+        }
         in_navbar = 1
         next
     }
     /<!-- NAVBAR END -->/ {
-        print $0
         in_navbar = 0
         next
     }
