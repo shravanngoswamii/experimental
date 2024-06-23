@@ -1,9 +1,8 @@
 #!/bin/bash
-# This script inserts or updates a top navigation bar (e.g., `navbar.html`) into HTML files.
-# It preserves existing content while replacing or inserting the navbar.
+# This script inserts the navbar content after the <body> tag in all HTML files within the specified directory
 
 # URL of the navigation bar HTML file
-NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html"
+NAVBAR_URL="https://raw.githubusercontent.com/TuringLang/turinglang.github.io/main/assets/scripts/navbar.html"
 
 # Directory containing HTML files (passed as the first argument to the script)
 HTML_DIR=$1
@@ -17,21 +16,21 @@ if [ -z "$NAVBAR_HTML" ]; then
     exit 1
 fi
 
+# Escape special characters in the navbar HTML for sed
+ESCAPED_NAVBAR=$(echo "$NAVBAR_HTML" | sed -e 's/[\/&]/\\&/g')
+
 # Process each HTML file in the directory and its subdirectories
 find "$HTML_DIR" -name "*.html" | while read file; do
-    # Read the contents of the HTML file
-    content=$(cat "$file")
+    # Remove any existing navbar
+    sed -i '
+    /<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/d
+    ' "$file"
     
-    # Check if the navbar already exists
-    if grep -q "<!-- NAVBAR START -->" "$file"; then
-        # Replace existing navbar
-        updated_content=$(echo "$content" | sed -e '/<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/c\'"$NAVBAR_HTML"'')
-    else
-        # Insert new navbar after <body> tag
-        updated_content=$(echo "$content" | sed -e '/<body>/a\'"$NAVBAR_HTML"'')
-    fi
+    # Insert the new navbar after the <body> tag
+    sed -i '
+    /<body>/a\
+    '"$ESCAPED_NAVBAR"'
+    ' "$file"
     
-    # Write the updated contents back to the file
-    echo "$updated_content" > "$file"
-    echo "Updated $file with new navbar"
+    echo "Updated navbar in $file"
 done
