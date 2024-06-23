@@ -18,20 +18,19 @@ if [ -z "$NAVBAR_HTML" ]; then
     exit 1
 fi
 
+# Escape special characters in NAVBAR_HTML for Perl
+ESCAPED_NAVBAR_HTML=$(echo "$NAVBAR_HTML" | perl -pe 's/([\/&])/\\$1/g')
+
 # Process each HTML file in the directory and its subdirectories
 find "$HTML_DIR" -name "*.html" | while read file; do
     # Remove the existing navbar HTML section if present using sed
     if grep -q "<!-- NAVBAR START -->" "$file"; then
-        sed -i '/<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/{
-            /<!-- NAVBAR START -->/!{ /<!-- NAVBAR END -->/!d; }
-            /<!-- NAVBAR START -->/s/<!-- NAVBAR START -->.*//g
-            /<!-- NAVBAR END -->/s/.*<!-- NAVBAR END -->//g
-        }' "$file"
+        sed -i '/<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/d' "$file"
         echo "Removed existing navbar from $file"
     fi
 
-    # Insert the navbar HTML after the <body> tag
-    updated_contents="${file_contents/<body>/<body>$NAVBAR_HTML}"
+    # Insert the navbar HTML after the <body> tag using perl with proper newlines
+    perl -i -pe 's|<body>|<body>\n'"$ESCAPED_NAVBAR_HTML"'\n|' "$file"
 
     echo "Inserted new navbar into $file"
 done
