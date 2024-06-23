@@ -19,7 +19,7 @@ if [ -z "$NAVBAR_HTML" ]; then
 fi
 
 # Escape special characters in the navbar HTML for sed
-ESCAPED_NAVBAR_HTML=$(printf '%s\n' "$NAVBAR_HTML" | sed 's/[\/&]/\\&/g; s/$/\\/')
+ESCAPED_NAVBAR_HTML=$(printf '%s\n' "$NAVBAR_HTML" | sed -e 's/[\/&]/\\&/g' -e 's/$/\\/')
 
 # Process each HTML file in the directory and its subdirectories
 find "$HTML_DIR" -name "*.html" | while read -r file; do
