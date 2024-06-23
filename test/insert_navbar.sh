@@ -15,14 +15,23 @@ NAVBAR_END="<!-- NAVBAR END -->"
 
 # Loop through all HTML files in the current directory and its subdirectories
 find . -type f -name "*.html" | while read -r file; do
+    # Create a temporary file
+    temp_file=$(mktemp)
+
     # Check if the navbar is already in the file
     if grep -q "$NAVBAR_START" "$file"; then
         # Remove the old navbar
-        sed -i "/$NAVBAR_START/,/$NAVBAR_END/d" "$file"
+        sed "/$NAVBAR_START/,/$NAVBAR_END/d" "$file" > "$temp_file"
+    else
+        cp "$file" "$temp_file"
     fi
 
     # Add the new navbar after the body tag
-    sed -i "/<body>/a $(cat navbar.html)" "$file"
+    sed "/<body>/a $(cat navbar.html)" "$temp_file" > "$file.new"
+    mv "$file.new" "$file"
+
+    # Remove the temporary file
+    rm "$temp_file"
 done
 
 # Remove the temporary navbar.html file
