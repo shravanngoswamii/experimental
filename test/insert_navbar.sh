@@ -20,9 +20,10 @@ fi
 
 # Process each HTML file in the directory and its subdirectories
 find "$HTML_DIR" -name "*.html" | while read file; do
-    # Remove the existing navbar HTML section if present
+    # Check if the navbar is present using the comment and remove it safely
     if grep -q "<!-- NAVBAR START -->" "$file"; then
-        sed -i '/<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/d' "$file"
+        # Use awk to safely remove the navbar section
+        awk '/<!-- NAVBAR START -->/{flag=1;next}/<!-- NAVBAR END -->/{flag=0;next}!flag' "$file" > tmp && mv tmp "$file"
         echo "Removed existing navbar from $file"
     fi
 
