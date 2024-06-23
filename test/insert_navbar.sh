@@ -2,7 +2,7 @@
 # This script inserts the navbar content after the <body> tag in all HTML files within the specified directory
 
 # URL of the navigation bar HTML file
-NAVBAR_URL="https://raw.githubusercontent.com/TuringLang/turinglang.github.io/main/assets/scripts/navbar.html"
+NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html"
 
 # Directory containing HTML files (passed as the first argument to the script)
 HTML_DIR=$1
