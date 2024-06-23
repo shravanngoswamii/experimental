@@ -20,21 +20,14 @@ fi
 
 # Process each HTML file in the directory and its subdirectories
 find "$HTML_DIR" -name "*.html" | while read file; do
-    # Remove the existing navbar HTML section if present
+    # Remove the existing navbar HTML section if present using perl
     if grep -q "<!-- NAVBAR START -->" "$file"; then
-        sed -i '/<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/d' "$file"
+        perl -i -ne 'print unless /<!-- NAVBAR START -->/ .. /<!-- NAVBAR END -->/' "$file"
         echo "Removed existing navbar from $file"
     fi
 
-    # Read the contents of the HTML file
-    file_contents=$(cat "$file")
+    # Insert the navbar HTML after the <body> tag using perl
+    perl -i -pe 's|<body>|<body>\n'"$NAVBAR_HTML"'\n|' "$file"
 
-    # Insert the navbar HTML after the <body> tag
-    updated_contents="${file_contents/<body>/<body>
-$NAVBAR_HTML
-}"
-
-    # Write the updated contents back to the file
-    echo "$updated_contents" > "$file"
     echo "Inserted new navbar into $file"
 done
