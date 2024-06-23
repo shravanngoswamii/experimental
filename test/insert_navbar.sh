@@ -1,38 +1,33 @@
 #!/bin/bash
-# This script inserts or updates a top navigation bar (e.g., `navbar.html`) into Documenter.jl generated sites.
-# It replaces the existing navbar content with the new navbar every time the script is run.
-# If the navbar is not present, it inserts it after the <body> tag.
 
-# URL of the navigation bar HTML file
+# URL of the navbar.html file
 NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html"
 
-# Directory containing HTML files (passed as the first argument to the script)
-HTML_DIR=$1
+# Fetch the navbar content
+NAVBAR_CONTENT=$(curl -s "$NAVBAR_URL")
 
-# Download the navigation bar HTML content
-NAVBAR_HTML=$(curl -s $NAVBAR_URL)
-
-# Check if the download was successful
-if [ -z "$NAVBAR_HTML" ]; then
-    echo "Failed to download navbar HTML"
+# Check if the curl command was successful
+if [ $? -ne 0 ]; then
+    echo "Failed to fetch the navbar content. Please check the URL and your internet connection."
     exit 1
 fi
 
-# Escape special characters in the navbar HTML for sed
-ESCAPED_NAVBAR_HTML=$(printf '%s\n' "$NAVBAR_HTML" | sed -e 's/[\/&]/\\&/g' -e ':a;N;$!ba;s/\n/\\n/g')
+# Function to update navbar in a file
+update_navbar() {
+    local file="$1"
+    
+    # Remove old navbar if it exists
+    sed -i '/<\!-- NAVBAR START -->/,/<\!-- NAVBAR END -->/d' "$file"
+    
+    # Add new navbar after <body> tag
+    sed -i '/<body>/a '"$NAVBAR_CONTENT"'' "$file"
+    
+    echo "Updated navbar in $file"
+}
 
-# Process each HTML file in the directory and its subdirectories
-find "$HTML_DIR" -name "*.html" | while read -r file; do
-    if grep -q "<!-- NAVBAR START -->" "$file"; then
-        # If navbar comments exist, replace the content between them
-        sed -i "/<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/c\\
-<!-- NAVBAR START -->\\
-$ESCAPED_NAVBAR_HTML\\
-<!-- NAVBAR END -->" "$file"
-        echo "Updated existing navbar in $file"
-    else
-        # If navbar comments don't exist, insert after <body> tag
-        sed -i "s|<body>|<body><!-- NAVBAR START -->$ESCAPED_NAVBAR_HTML<!-- NAVBAR END -->|" "$file"
-        echo "Inserted new navbar in $file"
-    fi
+# Find all HTML files in the current directory and subdirectories
+find . -type f -name "*.html" | while read -r file; do
+    update_navbar "$file"
 done
+
+echo "Navbar update complete."
