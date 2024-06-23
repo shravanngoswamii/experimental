@@ -19,15 +19,15 @@ if [ -z "$NAVBAR_HTML" ]; then
 fi
 
 # Escape special characters in the navbar HTML for sed
-ESCAPED_NAVBAR_HTML=$(printf '%s\n' "$NAVBAR_HTML" | sed -e 's/[\/&]/\\&/g' -e 's/$/\\n/g')
+ESCAPED_NAVBAR_HTML=$(printf '%s\n' "$NAVBAR_HTML" | sed -e 's/[\/&]/\\&/g' -e ':a;N;$!ba;s/\n/\\n/g')
 
 # Process each HTML file in the directory and its subdirectories
 find "$HTML_DIR" -name "*.html" | while read -r file; do
     if grep -q "<!-- NAVBAR START -->" "$file"; then
         # If navbar comments exist, replace the content between them
-        sed -i "/<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/c\
-<!-- NAVBAR START -->\
-$ESCAPED_NAVBAR_HTML\
+        sed -i "/<!-- NAVBAR START -->/,/<!-- NAVBAR END -->/c\\
+<!-- NAVBAR START -->\\
+$ESCAPED_NAVBAR_HTML\\
 <!-- NAVBAR END -->" "$file"
         echo "Updated existing navbar in $file"
     else
