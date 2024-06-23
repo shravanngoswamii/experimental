@@ -32,7 +32,8 @@ find "$HTML_DIR" -name "*.html" | while read file; do
 
     # Insert the navbar HTML after the <body> tag with a newline
     updated_contents="${file_contents/<body>/<body>
-    $NAVBAR_HTML}"
+$NAVBAR_HTML
+}"
 
     # Write the updated contents back to the file
     echo -e "$updated_contents" > "$file"
