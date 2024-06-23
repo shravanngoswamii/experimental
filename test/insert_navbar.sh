@@ -30,10 +30,10 @@ find "$HTML_DIR" -name "*.html" | while read file; do
     # Read the contents of the HTML file
     file_contents=$(cat "$file")
 
-    # Insert the navbar HTML after the <body> tag
-    updated_contents="${file_contents/<body>/<body>$NAVBAR_HTML}"
+    # Insert the navbar HTML after the <body> tag with a newline
+    updated_contents="${file_contents/<body>/<body>\n$NAVBAR_HTML}"
 
     # Write the updated contents back to the file
-    echo "$updated_contents" > "$file"
+    echo -e "$updated_contents" > "$file"
     echo "Inserted new navbar into $file"
 done
