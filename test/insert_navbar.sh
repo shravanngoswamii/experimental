@@ -20,9 +20,6 @@ if [ -z "$NAVBAR_HTML" ]; then
     exit 1
 fi
 
-# Add start and end comments to the navbar HTML
-NAVBAR_HTML="<!-- NAVBAR START -->$NAVBAR_HTML<!-- NAVBAR END -->"
-
 # Process each HTML file in the directory and its subdirectories
 find "$HTML_DIR" -name "*.html" | while read file; do
     # Remove existing navbar if present
