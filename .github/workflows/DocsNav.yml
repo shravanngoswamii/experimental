@@ -39,3 +39,4 @@ jobs:
             git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
           else
             echo "No changes to commit"
+          fi
