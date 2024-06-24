@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# ghjk
 # This script first removes any existing navigation bar section and then inserts a new navigation bar
 # into all HTML files in the specified directory and its subdirectories.
 
