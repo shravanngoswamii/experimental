@@ -26,17 +26,16 @@ find "$HTML_DIR" -name "*.html" | while read file; do
         echo "Removed existing navbar from $file"
     fi
 
+    # Insert the navbar HTML after the <body> tag using sed to handle special characters correctly
+    sed -i.bak -e "/<body>/a\\
+$NAVBAR_HTML
+" "$file"
+
     # Remove trailing blank lines from the file
     awk 'NF' "$file" > temp && mv temp "$file"
 
-    # Insert the navbar HTML after the <body> tag using awk
-    awk -v navbar="$NAVBAR_HTML" '{
-        sub(/<body>/, "&\n" navbar "\n");
-        print
-    }' "$file" > temp && mv temp "$file"
-
-    # # Remove trailing blank lines from the file
-    # awk 'NF' "$file" > temp && mv temp "$file"
-
     echo "Inserted new navbar into $file"
 done
+
+# Clean up backup files created by sed
+find "$HTML_DIR" -name "*.bak" -delete
