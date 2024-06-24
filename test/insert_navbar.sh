@@ -32,5 +32,8 @@ find "$HTML_DIR" -name "*.html" | while read file; do
         print
     }' "$file" > temp && mv temp "$file"
 
+    # Remove trailing blank lines from the file
+    awk 'NF' "$file" > temp && mv temp "$file"
+
     echo "Inserted new navbar into $file"
 done
