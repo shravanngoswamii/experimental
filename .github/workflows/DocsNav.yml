@@ -24,11 +24,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -e
+
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
 
           # Download and execute the insert_navbar.sh script
-          curl -s https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/insert_navbar.sh | bash
+          curl -s https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/insert_navbar.sh | bash -s .
 
           # Check if there are any changes
           if [[ -n $(git status -s) ]]; then
