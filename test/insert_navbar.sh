@@ -20,16 +20,22 @@ if [ ! -s "$TEMP_NAVBAR" ]; then
     exit 1
 fi
 
+# Read the navbar content into a variable
+NAVBAR_HTML=$(<"$TEMP_NAVBAR")
+
 # Process each HTML file in the directory and its subdirectories
-find "$HTML_DIR" -name "*.html" | while read file; do
+find "$HTML_DIR" -name "*.html" | while read -r file; do
     # Remove the existing navbar HTML section if present
     if grep -q "<!-- NAVBAR START -->" "$file"; then
         awk '/<!-- NAVBAR START -->/{flag=1;next}/<!-- NAVBAR END -->/{flag=0;next}!flag' "$file" > temp && mv temp "$file"
         echo "Removed existing navbar from $file"
     fi
 
-    # Insert the navbar HTML after the <body> tag using sed with a temporary file
-    sed -i.bak -e "/<body>/r $TEMP_NAVBAR" "$file"
+    # Insert the navbar HTML after the <body> tag using awk
+    awk -v navbar="$NAVBAR_HTML" '{
+        sub(/<body>/, "&\n" navbar "\n");
+        print
+    }' "$file" > temp && mv temp "$file"
 
     # Remove trailing blank lines from the file
     awk 'NF' "$file" > temp && mv temp "$file"
@@ -39,4 +45,3 @@ done
 
 # Clean up temporary files
 rm "$TEMP_NAVBAR"
-find "$HTML_DIR" -name "*.bak" -delete
