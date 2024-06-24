@@ -28,7 +28,7 @@ find "$HTML_DIR" -name "*.html" | while read file; do
 
     # Insert the navbar HTML after the <body> tag using awk
     awk -v navbar="$NAVBAR_HTML" '{
-        sub(/<body>/, "&\n" navbar);
+        sub(/<body>/, "&\n" navbar "\n");
         print
     }' "$file" > temp && mv temp "$file"
 
