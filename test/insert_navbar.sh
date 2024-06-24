@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# This script first removes any existing navigation bar section and then inserts a new navigation bar
-# into all HTML files in the specified directory and its subdirectories.
+# This script inserts a top navigation bar (e.g., `navbar.html`) into Documenter.jl generated sites.
+# The resulting output is similar to MultiDocumenter's navigation menu. The navigation menu is
+# hard-coded at the moment, which could be improved in the future. 
+# It checks all HTML files in the specified directory and its subdirectories.
 
 # URL of the navigation bar HTML file
 NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html"

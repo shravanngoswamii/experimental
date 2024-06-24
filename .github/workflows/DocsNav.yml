@@ -2,7 +2,7 @@ name: Add Navbar
 
 on:
   workflow_run:
-    workflows: ["Initial"]  # add workflow names that generates docs in this list like `workflows: ["Docs Workflow", "Previews Workflow]`
+    workflows: ["pages build and deployment"]  # add workflow names that generates docs in this list like `workflows: ["Docs Workflow", "Previews Workflow]`
     types: 
       - completed
   workflow_dispatch:  # Allows manual triggering
