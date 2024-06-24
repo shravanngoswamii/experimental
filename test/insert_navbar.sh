@@ -9,12 +9,14 @@ NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main
 # Directory containing HTML files (passed as the first argument to the script)
 HTML_DIR=$1
 
-# Download the navigation bar HTML content
-NAVBAR_HTML=$(curl -s $NAVBAR_URL)
+# Download the navigation bar HTML content to a temporary file
+TEMP_NAVBAR=$(mktemp)
+curl -s $NAVBAR_URL > "$TEMP_NAVBAR"
 
 # Check if the download was successful
-if [ -z "$NAVBAR_HTML" ]; then
+if [ ! -s "$TEMP_NAVBAR" ]; then
     echo "Failed to download navbar HTML"
+    rm "$TEMP_NAVBAR"
     exit 1
 fi
 
@@ -26,10 +28,8 @@ find "$HTML_DIR" -name "*.html" | while read file; do
         echo "Removed existing navbar from $file"
     fi
 
-    # Insert the navbar HTML after the <body> tag using sed to handle special characters correctly
-    sed -i.bak -e "/<body>/a\\
-$NAVBAR_HTML
-" "$file"
+    # Insert the navbar HTML after the <body> tag using sed with a temporary file
+    sed -i.bak -e "/<body>/r $TEMP_NAVBAR" "$file"
 
     # Remove trailing blank lines from the file
     awk 'NF' "$file" > temp && mv temp "$file"
@@ -37,5 +37,6 @@ $NAVBAR_HTML
     echo "Inserted new navbar into $file"
 done
 
-# Clean up backup files created by sed
+# Clean up temporary files
+rm "$TEMP_NAVBAR"
 find "$HTML_DIR" -name "*.bak" -delete
