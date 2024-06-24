@@ -26,14 +26,17 @@ find "$HTML_DIR" -name "*.html" | while read file; do
         echo "Removed existing navbar from $file"
     fi
 
+    # Remove trailing blank lines from the file
+    awk 'NF' "$file" > temp && mv temp "$file"
+
     # Insert the navbar HTML after the <body> tag using awk
     awk -v navbar="$NAVBAR_HTML" '{
         sub(/<body>/, "&\n" navbar "\n");
         print
     }' "$file" > temp && mv temp "$file"
 
-    # Remove trailing blank lines from the file
-    awk 'NF' "$file" > temp && mv temp "$file"
+    # # Remove trailing blank lines from the file
+    # awk 'NF' "$file" > temp && mv temp "$file"
 
     echo "Inserted new navbar into $file"
 done
