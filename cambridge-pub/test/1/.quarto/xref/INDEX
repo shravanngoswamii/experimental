@@ -1,0 +1,11 @@
+{
+  "templates/topic.md": {
+    "topic.html": "a37a881c"
+  },
+  "templates/author.md": {
+    "author.html": "6871a99e"
+  },
+  "templates/year.md": {
+    "year.html": "f06f4922"
+  }
+}

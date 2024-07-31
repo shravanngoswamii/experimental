@@ -1,0 +1,16 @@
+[
+  {
+    "objectID": "templates/year.html",
+    "href": "templates/year.html",
+    "title": "Publications in {{ year }}",
+    "section": "",
+    "text": "Publications in {{ year }}\n{% for entry in entries %} - {{ entry.title }} by {{ entry.author }} {% endfor %}"
+  },
+  {
+    "objectID": "templates/author.html",
+    "href": "templates/author.html",
+    "title": "Publications by {{ author }}",
+    "section": "",
+    "text": "Publications by {{ author }}\n{% for entry in entries %} - {{ entry.title }} ({{ entry.year }}) {% endfor %}"
+  }
+]
