@@ -33,7 +33,7 @@ jobs:
           NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html"
           
           # Define paths to exclude (comma-separated list)
-          EXCLUDE_PATHS="path/to/exclude1,path/to/exclude2"
+          EXCLUDE_PATHS="test.html,v0.3.9,dev"
           
           # Update all HTML files in the current directory (gh-pages root), excluding specified paths
           ./insert_navbar.sh . $NAVBAR_URL --exclude "$EXCLUDE_PATHS"
