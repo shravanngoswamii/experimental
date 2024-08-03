@@ -3,6 +3,8 @@ name: Add Navbar
 on:
   page_build:  # Triggers the workflow on push events to gh-pages branch
   workflow_dispatch:  # Allows manual triggering
+  schedule:
+    - cron: '0 0 * * 0'  # Runs every week on Sunday at midnight (UTC)
 
 jobs:
   add-navbar:
@@ -29,10 +31,17 @@ jobs:
           git config user.email github-actions[bot]@users.noreply.github.com
 
           # Define the URL of the navbar to be used
-          NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/juliagp.html"
+          NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html"
+         
+          # Define the patterns to skip, if needed (comma-separated list)
+          # SKIP_PATTERNS="folder1,file2.html,folder3/subfolder"
          
           # Update all HTML files in the current directory (gh-pages root)
-          ./insert_navbar.sh . $NAVBAR_URL
+          if [ -n "$SKIP_PATTERNS" ]; then
+            ./insert_navbar.sh . $NAVBAR_URL $SKIP_PATTERNS
+          else
+            ./insert_navbar.sh . $NAVBAR_URL
+          fi
          
           # Remove the insert_navbar.sh file
           rm insert_navbar.sh
