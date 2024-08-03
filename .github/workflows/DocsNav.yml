@@ -1,5 +1,4 @@
 name: Add Navbar
-
 on:
   page_build:  # Triggers the workflow on push events to gh-pages branch
   workflow_dispatch:  # Allows manual triggering
@@ -29,23 +28,19 @@ jobs:
         run: |
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
-
+          
           # Define the URL of the navbar to be used
           NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html"
-         
-          # Define the patterns to skip, if needed (comma-separated list)
-          SKIP_PATTERNS="v0.3.9,v0.3.8,test.html"
-         
-          # Update all HTML files in the current directory (gh-pages root)
-          if [ -n "$SKIP_PATTERNS" ]; then
-            ./insert_navbar.sh . $NAVBAR_URL $SKIP_PATTERNS
-          else
-            ./insert_navbar.sh . $NAVBAR_URL
-          fi
-         
+          
+          # Define paths to exclude (comma-separated list)
+          EXCLUDE_PATHS="path/to/exclude1,path/to/exclude2"
+          
+          # Update all HTML files in the current directory (gh-pages root), excluding specified paths
+          ./insert_navbar.sh . $NAVBAR_URL --exclude "$EXCLUDE_PATHS"
+          
           # Remove the insert_navbar.sh file
           rm insert_navbar.sh
-         
+          
           # Check if there are any changes
           if [[ -n $(git status -s) ]]; then
             git add .
