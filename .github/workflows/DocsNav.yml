@@ -34,7 +34,7 @@ jobs:
           NAVBAR_URL="https://raw.githubusercontent.com/shravanngoswamii/experimental/main/test/navbar.html"
          
           # Define the patterns to skip, if needed (comma-separated list)
-          # SKIP_PATTERNS="folder1,file2.html,folder3/subfolder"
+          SKIP_PATTERNS="v0.3.9,v0.3.8,test.html"
          
           # Update all HTML files in the current directory (gh-pages root)
           if [ -n "$SKIP_PATTERNS" ]; then
