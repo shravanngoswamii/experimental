@@ -1291,7 +1291,7 @@ entries:
     - first: Maneesh
       last: Sahani
     booktitle: nips20
-    cat: approx mvision neuroscience
+    cat: approx mvision neuro
     editor:
     - first: J.
       last: Platt
@@ -1337,7 +1337,7 @@ entries:
       middle: E.
     - first: Maneesh
       last: Sahani
-    cat: approx time mvision neuroscience
+    cat: approx time mvision neuro
     doi: 10.1371/journal.pcbi.1000495
     journal: PLoS Computational Biology
     month: 09
@@ -3713,7 +3713,7 @@ entries:
       last: Shenoy.
       middle: V.
     cat: gp neuro
-    journal: Nature Neuroscience
+    journal: Nature Neuro
     pages: 369-378
     title: 'Stimulus onset quashes neural variability: a widespread cortical phenomenon'
     type: article
@@ -18323,7 +18323,7 @@ entries:
     publisher: IEEE Computer Society
     title: Improving PPM with dynamic parameter updates
     type: inproceedings
-    url: http://cstein.kings.cam.ac.uk/ chris/ppm-dp.pdf
+    url: http://cstein.kings.cam.ac.uk/~chris/ppm-dp.pdf
     year: '2015'
   Ste16:
     abstract: Most of the world's digital data is currently encoded in a sequential

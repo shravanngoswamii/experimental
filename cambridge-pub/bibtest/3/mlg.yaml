@@ -340,15 +340,14 @@ entries:
       MoEs). First, we show that the two approaches have complementary features whose
       combination is beneficial. This includes a comprehensive evaluation of sparse
       MoEs in uncertainty related benchmarks. Then, we present efficient ensemble
-      of experts (E<sup>3</sup>), a scalable and simple ensemble of sparse MoEs that
-      takes the best of both classes of models, while using up to 45% fewer FLOPs
-      than a deep ensemble. Extensive experiments demonstrate the accuracy, log-likelihood,
-      few-shot learning, robustness, and uncertainty improvements of E<sup>3</sup>
-      over several challenging vision Transformer-based baselines. E<sup>3</sup> not
-      only preserves its efficiency while scaling to models with up to 2.7B parameters,
-      but also provides better predictive performance and uncertainty estimates for
-      larger models.'
-    annote: <a href="https://github.com/google-research/vmoe">Code</a>
+      of experts (E3), a scalable and simple ensemble of sparse MoEs that takes the
+      best of both classes of models, while using up to 45% fewer FLOPs than a deep
+      ensemble. Extensive experiments demonstrate the accuracy, log-likelihood, few-shot
+      learning, robustness, and uncertainty improvements of E3 over several challenging
+      vision Transformer-based baselines. E3 not only preserves its efficiency while
+      scaling to models with up to 2.7B parameters, but also provides better predictive
+      performance and uncertainty estimates for larger models.'
+    annote: Code
     author:
     - first: James
       last: Allingham
@@ -467,7 +466,7 @@ entries:
       and image classification tasks. Our approach provides uncertainty calibration,
       robustness to dataset shift, and accuracies competitive with more computationally
       expensive baselines.
-    annote: <a href="https://github.com/cambridge-mlg/DUN">Code</a>
+    annote: Code
     author:
     - first: Javier
       last: Antorán
@@ -1002,7 +1001,7 @@ entries:
       middle: L.
     - first: Marc
       last: Brockschmidt
-    - first: S<!>ebastian
+    - first: Sebastian
       last: Nowozin
     - first: Daniel
       last: Tarlow
@@ -1023,10 +1022,7 @@ entries:
       via a Mondrian process, but fit independently. This link provides a new insight
       into the relationship between kernel methods and random forests.
     address: Jersey City, New Jersey, USA
-    annote: '[<a href="http://www.auai.org/uai2016/proceedings/supp/236_supp.pdf">Supplementary
-      Material</a>] [<a href="https://arxiv.org/abs/1606.05241">arXiv</a>] [<a href="http://matejbalog.eu/research/mondrian_kernel_poster.pdf">Poster</a>]
-      [<a href="http://matejbalog.eu/research/mondrian_kernel_slides.pdf">Slides</a>]
-      [<a href="https://github.com/matejbalog/mondrian-kernel">Code</a>]'
+    annote: '[Supplementary Material] [arXiv] [Poster] [Slides] [Code]'
     author:
     - first: Matej
       last: Balog
@@ -1122,7 +1118,7 @@ entries:
       and prove theoretical results guaranteeing differential privacy of the resulting
       algorithms and the consistency of estimators constructed from their outputs.
     address: Stockholm, Sweden
-    annote: '[<a href="https://arxiv.org/abs/1710.01641">arXiv</a>]'
+    annote: '[arXiv]'
     author:
     - first: Matej
       last: Balog
@@ -1153,9 +1149,7 @@ entries:
       the simpler analytical form of the Gumbel trick enables additional theoretical
       results.
     address: Sydney, Australia
-    annote: '[<a href="http://arxiv.org/abs/1706.04161">arXiv</a>] [<a href="http://matejbalog.eu/research/lost_relatives_of_the_gumbel_trick_poster.pdf">Poster</a>]
-      [<a href="http://matejbalog.eu/research/lost_relatives_of_the_gumbel_trick_slides.pdf">Slides</a>]
-      [<a href="https://github.com/matejbalog/gumbel-relatives">Code</a>]'
+    annote: '[arXiv] [Poster] [Slides] [Code]'
     author:
     - first: Matej
       last: Balog
@@ -1181,7 +1175,7 @@ entries:
       theoretical properties and behave differently in practice. We thoroughly investigate
       the two methods for regression both analytically and through illustrative examples,
       and draw conclusions to guide practical application.
-    annote: <a href="http://arxiv.org/abs/1606.04820">arXiv</a>
+    annote: arXiv
     author:
     - first: Matthias
       last: Bauer
@@ -1291,7 +1285,7 @@ entries:
     - first: Maneesh
       last: Sahani
     booktitle: nips20
-    cat: approx mvision neuroscience
+    cat: approx mvision neuro
     editor:
     - first: J.
       last: Platt
@@ -1305,7 +1299,7 @@ entries:
     publisher: mit
     title: On sparsity and overcompleteness in image models
     type: InProceedings
-    url: http://www.gatsby.ucl.ac.uk/ turner/Publications/berkes-et-al-2008a.html
+    url: http://www.gatsby.ucl.ac.uk/~turner/Publications/berkes-et-al-2008a.html
     volume: '20'
     year: '2008'
   BerkTurSah09a:
@@ -1337,7 +1331,7 @@ entries:
       middle: E.
     - first: Maneesh
       last: Sahani
-    cat: approx time mvision neuroscience
+    cat: approx time mvision neuro
     doi: 10.1371/journal.pcbi.1000495
     journal: PLoS Computational Biology
     month: 09
@@ -1345,7 +1339,7 @@ entries:
     publisher: Public Library of Science
     title: A Structured Model of Video Reproduces Primary Visual Cortical Organisation
     type: article
-    url: http://www.gatsby.ucl.ac.uk/ turner/Publications/berkes-et-al-2009a.html
+    url: http://www.gatsby.ucl.ac.uk/~turner/Publications/berkes-et-al-2009a.html
     volume: '5'
     year: '2009'
   BhaAleAvi17:
@@ -1592,7 +1586,7 @@ entries:
     - first: Zoubin
       last: Ghahramani
     booktitle: NIPS workshop on Advances in Approximate Inference
-    cat: mcm np
+    cat: mcmc np
     month: December
     title: Sampling and inference for discrete random probability measures in probabilistic
       programs
@@ -2036,7 +2030,7 @@ entries:
       last: Bratières
     - first: Novi
       last: Quadrianto
-    - first: S<!>ebastian
+    - first: Sebastian
       last: Nowozin
     - first: Zoubin
       last: Ghahramani
@@ -2050,12 +2044,12 @@ entries:
     abstract: This paper compares parallel and distributed implementations of an iterative,
       Gibbs sampling, machine learning algorithm. Distributed implementations run
       under Hadoop on facility computing clouds. The probabilistic model under study
-      is the infinite HMM <a href="/pub/#BeaGhaRas02">Beal, Ghahramani and Rasmussen,
-      2002</a>, in which parameters are learnt using an instance blocked Gibbs sampling,
-      with a step consisting of a dynamic program. We apply this model to learn part-of-speech
-      tags from newswire text in an unsupervised fashion. However our focus here is
-      on runtime performance, as opposed to NLP-relevant scores, embodied by iteration
-      duration, ease of development, deployment and debugging.
+      is the infinite HMM Beal, Ghahramani and Rasmussen, 2002, in which parameters
+      are learnt using an instance blocked Gibbs sampling, with a step consisting
+      of a dynamic program. We apply this model to learn part-of-speech tags from
+      newswire text in an unsupervised fashion. However our focus here is on runtime
+      performance, as opposed to NLP-relevant scores, embodied by iteration duration,
+      ease of development, deployment and debugging.
     address: Bradford, UK
     author:
     - first: Sébastien
@@ -2134,7 +2128,7 @@ entries:
       last: Gordon
     - first: James
       last: Requeima
-    - first: S<!>ebastian
+    - first: Sebastian
       last: Nowozin
     - first: Richard
       last: Turner
@@ -2177,7 +2171,7 @@ entries:
       last: Patacchiola
     - first: Katja
       last: Hofmann
-    - first: S<!>ebastian
+    - first: Sebastian
       last: Nowozin
     - first: Richard
       last: Turner
@@ -2516,19 +2510,18 @@ entries:
     year: '2021'
   BurRasWil19:
     abstract: Excellent variational approximations to Gaussian process posteriors
-      have been developed which avoid the O(N<sup>3</sup>) scaling with dataset size
-      N. They reduce the computational cost to O(NM<sup>2</sup>), with M   Lt;N being
-      the number of inducing variables, which summarise the process. While the computational
-      cost seems to be linear in N, the true complexity of the algorithm depends on
-      how M must increase to ensure a certain quality of approximation. We address
-      this by characterising the behavior of an upper bound on the KL divergence to
-      the posterior. We show that with high probability the KL divergence can be made
-      arbitrarily small by growing M more slowly than N. A particular case of interest
-      is that for regression with normally distributed inputs in D-dimensions with
-      the popular Squared Exponential kernel, M=O(log<sup>D</sup>N) is sufficient.
-      Our results show that as datasets grow, Gaussian process posteriors can truly
-      be approximated cheaply, and provide a concrete rule for how to increase M in
-      continual learning scenarios.
+      have been developed which avoid the O(N3) scaling with dataset size N. They
+      reduce the computational cost to O(NM2), with M   Lt;N being the number of inducing
+      variables, which summarise the process. While the computational cost seems to
+      be linear in N, the true complexity of the algorithm depends on how M must increase
+      to ensure a certain quality of approximation. We address this by characterising
+      the behavior of an upper bound on the KL divergence to the posterior. We show
+      that with high probability the KL divergence can be made arbitrarily small by
+      growing M more slowly than N. A particular case of interest is that for regression
+      with normally distributed inputs in D-dimensions with the popular Squared Exponential
+      kernel, M=O(logDN) is sufficient. Our results show that as datasets grow, Gaussian
+      process posteriors can truly be approximated cheaply, and provide a concrete
+      rule for how to increase M in continual learning scenarios.
     author:
     - first: David
       last: Burt
@@ -2550,17 +2543,14 @@ entries:
       and mathematically convenient priors in Bayesian modelling. However, their use
       is often impeded for data with large numbers of observations, N, due to the
       cubic (in N) cost of matrix operations used in exact inference. Many solutions
-      have been proposed that rely on M << N inducing variables to form an approximation
-      at a cost of O(NM<sup>2</sup>). While the computational cost appears linear
+      have been proposed that rely on M 2). While the computational cost appears linear
       in N, the true complexity depends on how M must scale with N to ensure a certain
       quality of the approximation. In this work, we investigate upper and lower bounds
       on how M needs to grow with N to ensure high quality approximations. We show
       that we can make the KL-divergence between the approximate model and the exact
-      posterior arbitrarily small for a Gaussian-noise regression model with M <<
-      N. Specifically, for the popular squared exponential kernel and D-dimensional
-      Gaussian distributed covariates, M = O((log N)<sup>D</sup>) suffice and a method
-      with an overall computational cost of O(N(log N)<sup>2D</sup>(log log N)<sup>2</sup>)
-      can be used to perform inference.
+      posterior arbitrarily small for a Gaussian-noise regression model with M D)
+      suffice and a method with an overall computational cost of O(N(log N)2D(log
+      log N)2) can be used to perform inference.
     author:
     - first: David
       last: Burt
@@ -2989,7 +2979,7 @@ entries:
       Moreover, our approach is orthogonal to and compatible with existing methods
       for reducing communication overhead, such as local methods and communication
       compression methods.
-    annote: <a href="https://arxiv.org/abs/2010.13723">arXiv</a>
+    annote: arXiv
     author:
     - first: Wenlin
       last: Chen
@@ -3713,7 +3703,7 @@ entries:
       last: Shenoy.
       middle: V.
     cat: gp neuro
-    journal: Nature Neuroscience
+    journal: Nature Neuro
     pages: 369-378
     title: 'Stimulus onset quashes neural variability: a widespread cortical phenomenon'
     type: article
@@ -3869,19 +3859,19 @@ entries:
       learning with the advantages of Bayesian formalism. In recent years, the analysis
       of wide, deep BNNs has provided theoretical insight into their priors and posteriors.
       However, we have no analogous insight into their posteriors under approximate
-      inference. In this work, we show that mean-field variational inference <em>entirely
-      fails to model the data</em> when the network width is large and the activation
-      function is odd. Specifically, for fully-connected BNNs with odd activation
-      functions and a homoscedastic Gaussian likelihood, we show that the <em>optimal</em>
-      mean-field variational posterior predictive (i.e., function space) distribution
-      converges to the prior predictive distribution as the width tends to infinity.
-      We generalize aspects of this result to other likelihoods. Our theoretical results
-      are suggestive of underfitting behavior previously observered in BNNs. While
-      our convergence bounds are non-asymptotic and constants in our analysis can
-      be computed, they are currently too loose to be applicable in standard training
-      regimes. Finally, we show that the optimal approximate posterior need not tend
-      to the prior if the activation function is not odd, showing that our statements
-      cannot be generalized arbitrarily.
+      inference. In this work, we show that mean-field variational inference entirely
+      fails to model the data when the network width is large and the activation function
+      is odd. Specifically, for fully-connected BNNs with odd activation functions
+      and a homoscedastic Gaussian likelihood, we show that the optimal mean-field
+      variational posterior predictive (i.e., function space) distribution converges
+      to the prior predictive distribution as the width tends to infinity. We generalize
+      aspects of this result to other likelihoods. Our theoretical results are suggestive
+      of underfitting behavior previously observered in BNNs. While our convergence
+      bounds are non-asymptotic and constants in our analysis can be computed, they
+      are currently too loose to be applicable in standard training regimes. Finally,
+      we show that the optimal approximate posterior need not tend to the prior if
+      the activation function is not odd, showing that our statements cannot be generalized
+      arbitrarily.
     author:
     - first: Beau
       last: Coker
@@ -3918,9 +3908,7 @@ entries:
       and reliability with fewer annotators, and serves as a guide for future dataset
       curators on the benefits of leveraging richer information, such as categorical
       uncertainty, from individual annotators.
-    annote: '[<a href="https://sites.google.com/view/eliciting-individ-soft-labels">Project
-      Page</a>] [<a href="https://github.com/cambridge-mlg/cifar-10s/tree/master/cifar10s_data">Data</a>]
-      [<a href="https://github.com/cambridge-mlg/cifar-10s">Code</a>]'
+    annote: '[Project Page] [Data] [Code]'
     author:
     - first: Katherine
       last: Collins
@@ -4303,34 +4291,34 @@ entries:
     volume: '139'
     year: '2021'
   Dei10:
-    abstract: In many research areas, including control and medical applications,
+    abstract: 'In many research areas, including control and medical applications,
       we face decision-making problems where data are limited and/or the underlying
       generative process is complicated and partially unknown. In these scenarios,
-      we can profit from algorithms that learn from data and aid decision making.<br>
+      we can profit from algorithms that learn from data and aid decision making.
       Reinforcement learning (RL) is a general computational approach to experience-based
       goal-directed learning for sequential decision making under uncertainty. However,
       RL often lacks efficiency in terms of the number of required trials when no
       task-specific knowledge is available. This lack of efficiency makes RL often
       inapplicable to (optimal) control problems. Thus, a central issue in RL is to
-      speed up learning by extracting more information from available experience.<br>
-      The contributions of this dissertation are threefold:<br> 1. We propose PILCO,
-      a fully Bayesian approach for efficient RL in continuous-valued state and action
+      speed up learning by extracting more information from available experience.
+      The contributions of this dissertation are threefold: 1. We propose PILCO, a
+      fully Bayesian approach for efficient RL in continuous-valued state and action
       spaces when no expert knowledge is available. PILCO is based on well-established
-      ideas from statistics and machine learning. PILCO's key ingredient is a probabilistic
+      ideas from statistics and machine learning. PILCO''s key ingredient is a probabilistic
       dynamics model learned from data, which is implemented by a Gaussian process
       (GP). The GP carefully quantifies knowledge by a probability distribution over
       plausible dynamics models. By averaging over all these models during long-term
       planning and decision making, PILCO takes uncertainties into account in a principled
-      way and, therefore, reduces model bias, a central problem in model-based RL.<br>
+      way and, therefore, reduces model bias, a central problem in model-based RL.
       2. Due to its generality and efficiency, PILCO can be considered a conceptual
       and practical approach to jointly learning models and controllers when expert
       knowledge is difficult to obtain or simply not available. For this scenario,
-      we investigate PILCO's properties its applicability to challenging real and
+      we investigate PILCO''s properties its applicability to challenging real and
       simulated nonlinear control problems. For example, we consider the tasks of
       learning to swing up a double pendulum attached to a cart or to balance a unicycle
       with five degrees of freedom. Across all tasks we report unprecedented automation
-      and an unprecedented learning efficiency for solving these tasks.<br> 3. As
-      a step toward pilco's extension to partially observable Markov decision processes,
+      and an unprecedented learning efficiency for solving these tasks. 3. As a step
+      toward pilco''s extension to partially observable Markov decision processes,
       we propose a principled algorithm for robust filtering and smoothing in GP dynamic
       systems. Unlike commonly used Gaussian filters for nonlinear systems, it does
       neither rely on function linearization nor on finite-sample representations
@@ -4338,7 +4326,7 @@ entries:
       while keeping all computations analytically tractable. We present experimental
       evidence that demonstrates the robustness and the advantages of our method over
       unscented Kalman filters, the cubature Kalman filter, and the extended Kalman
-      filter.
+      filter.'
     address: Karlsruhe, Germany
     author:
     - first: Marc
@@ -4394,10 +4382,9 @@ entries:
       latter case. Our filter does not require further approximations. In particular,
       it avoids finite-sample approximations. We compare the filter to a variety of
       Gaussian filters, that is, the EKF, the UKF, and the recent GP-UKF proposed
-      by <a href="http://www.cs.washington.edu/homes/fox/postscripts/gp-ukf-iros-07.pdf">Ko
-      et al. (2007)</a>.
+      by Ko et al. (2007).
     address: Montréal, QC, Canada
-    annote: With corrections. <a href="http://mlg.eng.cam.ac.uk/marc/downloads/gpadf.zip">code</a>.
+    annote: With corrections. code.
     author:
     - first: Marc
       last: Deisenroth
@@ -4434,7 +4421,7 @@ entries:
       outcomes, we learn a possibly discontinuous closed-loop policy on the entire
       state space by switching between two independently trained Gaussian processes.
     address: Seattle, WA, USA
-    annote: <a href="http://mlg.eng.cam.ac.uk/marc/code/acc2008.zip">code</a>.
+    annote: code.
     author:
     - first: Marc
       last: Deisenroth
@@ -4511,7 +4498,7 @@ entries:
       approximate inference. Furthermore, policy gradients are computed analytically
       for policy improvement. We report unprecedented learning efficiency on challenging
       and high-dimensional control tasks.
-    annote: <a href="http://mlg.eng.cam.ac.uk/pilco">web site</a>
+    annote: web site
     author:
     - first: Marc
       last: Deisenroth
@@ -4541,8 +4528,7 @@ entries:
       and analyze the learning gain by exploiting the sequential structure of the
       stacking task.
     address: Los Angeles, CA, USA
-    annote: <a href="http://www.cs.washington.edu/ai/Mobile_Robotics/projects/robot-rl">project
-      site</a>
+    annote: project site
     author:
     - first: Marc
       last: Deisenroth
@@ -4571,8 +4557,7 @@ entries:
       pendulum swing up. Moreover, we compare our results on this RL task to a nearly
       optimal discrete DP solution in a fully known environment.
     address: Bruges, Belgium
-    annote: <a href="http://mlg.eng.cam.ac.uk/marc/code/esann2008.zip">code</a>. <a
-      href="http://mlg.eng.cam.ac.uk/marc/talks/2008-04-23-ESANN-bruges.pdf">slides</a>
+    annote: code. slides
     author:
     - first: Marc
       last: Deisenroth
@@ -4608,7 +4593,7 @@ entries:
       to the under-actuated pendulum swing up and analyze the performances of the
       suggested algorithms. It turns out that GPDP uses data very efficiently and
       can be applied to problems, where classic dynamic programming would be cumbersome.
-    annote: <a href="http://mlg.eng.cam.ac.uk/marc/code/algpdp.zip">code</a>.
+    annote: code.
     author:
     - first: Marc
       last: Deisenroth
@@ -4648,7 +4633,7 @@ entries:
       last: Deisenroth
       middle: Peter
     - first: Ryan
-      last: T<!>urner
+      last: Turner
       middle: D.
     - first: Marco
       last: Huber
@@ -4693,7 +4678,7 @@ entries:
     title: 'You shouldn''t trust me: Learning models which conceal unfairness from
       multiple explanation methods'
     type: inproceedings
-    url: http://mlg.eng.cam.ac.uk/adrian/ECAI20-You_Shouldn
+    url: http://mlg.eng.cam.ac.uk/adrian/ECAI20-You_Shouldn%E2%80%99t_Trust_Me.pdf
     year: '2020'
   Dos09:
     abstract: 'Many unsupervised learning problems seek to identify hidden features
@@ -4941,7 +4926,7 @@ entries:
       We develop a deterministic variational method for inference in the IBP based
       on truncating to infinite models, provide theoretical bounds on the truncation
       error, and evaluate our method in several data regimes. This technical report
-      is a longer version of <a href="/pub/#DosMilVanTeh09">Doshi-Velez et al. (2009)</a>.
+      is a longer version of Doshi-Velez et al. (2009).
     address: Computational and Biological Learning Laboratory, Department of Engineering
     author:
     - first: Finale
@@ -4990,7 +4975,7 @@ entries:
     - first: Finale
       last: Doshi
     - first: Nicholas
-      last: R<!>oy
+      last: Roy
     journal: Connection Science
     month: December
     number: '4'
@@ -5292,7 +5277,7 @@ entries:
       last: Duvenaud
     - first: Oren
       last: Rippel
-    - first: R<!>yan
+    - first: Ryan
       last: Adams
       middle: P.
     - first: Zoubin
@@ -5391,8 +5376,7 @@ entries:
       better than selecting variables at random, and give experimental results which
       show that it performs competitively with existing approximate inference algorithms.
     address: Clearwater Beach, FL, USA
-    annote: <a href="http://mlg.eng.cam.ac.uk/frederik/libdai-eaton.tar.gz">Code</a>
-      (in C++ based on <a href="http://www.kyb.mpg.de/bs/people/jorism/libDAI">libDAI</a>).
+    annote: Code (in C++ based on libDAI).
     author:
     - first: Frederik
       last: Eaton
@@ -5473,7 +5457,7 @@ entries:
       last: Schölkopf
     booktitle: Advances in Neural Information Processing Systems 16
     editor:
-    - first: S<!>ebastian
+    - first: Sebastian
       last: Thrun
     - first: Lawrence
       last: Saul
@@ -5505,7 +5489,7 @@ entries:
       reduce the number of unsafe actions that lead to non-reversible states, and
       can automatically induce a curriculum.
     address: Vancouver CANADA
-    annote: '[<a href="https://sites.google.com/site/mlleavenotrace/">Video</a>]'
+    annote: '[Video]'
     author:
     - first: Benjamin
       last: Eysenbach
@@ -5721,7 +5705,7 @@ entries:
       datasets, including CIFAR-100C, ImageNet-C, and ImageNet-A. Moreover, we propose
       HetSNGP Ensemble, an ensembled version of our method which additionally models
       uncertainty over the network parameters and outperforms other ensemble baselines.
-    annote: <a href="https://github.com/google/edward2/blob/main/edward2/tensorflow/layers/hetsngp.py">Code</a>
+    annote: Code
     author:
     - first: Vincent
       last: Fortuin
@@ -5893,18 +5877,18 @@ entries:
       at making predictions which quantify the uncertainty due to limitations in the
       quantity and the quality of the data. Second, they are flexible enough to model
       highly complex data whilst preventing overfitting when the data does not warrant
-      complex models.</br> We begin with a unifying literature review on time series
-      models based on Gaussian processes. Then, we centre our attention on the Gaussian
-      Process State-Space Model (GP-SSM): a Bayesian nonparametric generalisation
-      of discrete-time nonlinear state-space models. We present a novel formulation
-      of the GP-SSM that offers new insights into its properties. We then proceed
-      to exploit those insights by developing new learning algorithms for the GP-SSM
-      based on particle Markov chain Monte Carlo and variational inference.</br> Finally,
-      we present a filtered nonlinear auto-regressive model with a simple, robust
-      and fast learning algorithm that makes it well suited to its application by
-      non-experts on large datasets. Its main advantage is that it avoids the computationally
-      expensive (and potentially difficult to tune) smoothing step that is a key part
-      of learning nonlinear state-space models.'
+      complex models. We begin with a unifying literature review on time series models
+      based on Gaussian processes. Then, we centre our attention on the Gaussian Process
+      State-Space Model (GP-SSM): a Bayesian nonparametric generalisation of discrete-time
+      nonlinear state-space models. We present a novel formulation of the GP-SSM that
+      offers new insights into its properties. We then proceed to exploit those insights
+      by developing new learning algorithms for the GP-SSM based on particle Markov
+      chain Monte Carlo and variational inference. Finally, we present a filtered
+      nonlinear auto-regressive model with a simple, robust and fast learning algorithm
+      that makes it well suited to its application by non-experts on large datasets.
+      Its main advantage is that it avoids the computationally expensive (and potentially
+      difficult to tune) smoothing step that is a key part of learning nonlinear state-space
+      models.'
     address: Cambridge, UK
     author:
     - first: Roger
@@ -6103,8 +6087,6 @@ entries:
     url: .
     year: '2013'
   GalCheGha15:
-    Title: Latent Gaussian Processes for Distribution Estimation of Multivariate Categorical
-      Data
     abstract: Multivariate categorical data occur in many applications of machine
       learning. One of the main difficulties with these vectors of categorical variables
       is sparsity. The number of possible observations grows exponentially with vector
@@ -6132,6 +6114,8 @@ entries:
       (ICML-15)
     cat: gp np approx bioinf
     pages: 645–654
+    title: Latent Gaussian Processes for Distribution Estimation of Multivariate Categorical
+      Data
     type: inproceedings
     url: http://jmlr.org/proceedings/papers/v37/gala15.html
     year: '2015'
@@ -6163,8 +6147,6 @@ entries:
     url: https://arxiv.org/abs/2206.13102
     year: '2017'
   GalTur15:
-    Title: Improving the Gaussian Process Sparse Spectrum Approximation by Representing
-      Uncertainty in Frequency Inputs
     abstract: Standard sparse pseudo-input approximations to the Gaussian process
       (GP) cannot handle complex functions well. Sparse spectrum alternatives attempt
       to answer this but are known to over-fit. We suggest the use of variational
@@ -6185,6 +6167,8 @@ entries:
       (ICML-15)
     cat: gp np approx
     pages: 655–664
+    title: Improving the Gaussian Process Sparse Spectrum Approximation by Representing
+      Uncertainty in Frequency Inputs
     type: inproceedings
     url: http://jmlr.org/proceedings/papers/v37/galb15.html
     year: '2015'
@@ -6556,14 +6540,14 @@ entries:
       binary matrices by taking the limit of a distribution over N   times;K binary
       matrices as K   rarr;   infin;. We define a simple generative processes for
       this distribution which we call the Indian buffet process (IBP; Griffiths and
-      Ghahramani, 2005, <a href="/pub/#GriGha06">2006</a>) by analogy to the Chinese
-      restaurant process (Aldous, 1985; Pitman, 2002). The IBP has a single hyperparameter
-      which controls both the number of feature per ob ject and the total number of
-      features. We describe a two-parameter generalization of the IBP which has additional
-      flexibility, independently controlling the number of features per object and
-      the total number of features in the matrix. The use of this distribution as
-      a prior in an infinite latent feature model is illustrated, and Markov chain
-      Monte Carlo algorithms for inference are described.
+      Ghahramani, 2005, 2006) by analogy to the Chinese restaurant process (Aldous,
+      1985; Pitman, 2002). The IBP has a single hyperparameter which controls both
+      the number of feature per ob ject and the total number of features. We describe
+      a two-parameter generalization of the IBP which has additional flexibility,
+      independently controlling the number of features per object and the total number
+      of features in the matrix. The use of this distribution as a prior in an infinite
+      latent feature model is illustrated, and Markov chain Monte Carlo algorithms
+      for inference are described.
     address: Oxford, UK
     annote: Includes discussion by David Dunson, and rejoinder.
     author:
@@ -6963,24 +6947,24 @@ entries:
     volume: '366'
     year: '2008'
   GilSaaCun13:
-    abstract: Exact Gaussian Process (GP) regression has O(N<sup>3</sup>) runtime
-      for data size N, making it intractable for large N. Many algorithms for improving
-      GP scaling approximate the covariance with lower rank matrices. Other work has
-      exploited structure inherent in particular covariance functions, including GPs
-      with implied Markov structure, and equispaced inputs (both enable O(N) runtime).
-      However, these GP advances have not been extended to the multidimensional input
-      setting, despite the preponderance of multidimensional applications. This paper
-      introduces and tests novel extensions of structured GPs to multidimensional
-      inputs. We present new methods for additive GPs, showing a novel connection
-      between the classic backﬁtting method and the Bayesian framework. To achieve
-      optimal accuracy-complexity tradeoff, we extend this model with a novel variant
-      of projection pursuit regression. Our primary result – projection pursuit Gaussian
-      Process Regression – shows orders of magnitude speedup while preserving high
-      accuracy. The natural second and third steps include non-Gaussian observations
-      and higher dimensional equispaced grid methods. We introduce novel techniques
-      to address both of these necessary directions. We thoroughly illustrate the
-      power of these three advances on several datasets, achieving close performance
-      to the naive Full GP at orders of magnitude less cost.
+    abstract: Exact Gaussian Process (GP) regression has O(N3) runtime for data size
+      N, making it intractable for large N. Many algorithms for improving GP scaling
+      approximate the covariance with lower rank matrices. Other work has exploited
+      structure inherent in particular covariance functions, including GPs with implied
+      Markov structure, and equispaced inputs (both enable O(N) runtime). However,
+      these GP advances have not been extended to the multidimensional input setting,
+      despite the preponderance of multidimensional applications. This paper introduces
+      and tests novel extensions of structured GPs to multidimensional inputs. We
+      present new methods for additive GPs, showing a novel connection between the
+      classic backﬁtting method and the Bayesian framework. To achieve optimal accuracy-complexity
+      tradeoff, we extend this model with a novel variant of projection pursuit regression.
+      Our primary result – projection pursuit Gaussian Process Regression – shows
+      orders of magnitude speedup while preserving high accuracy. The natural second
+      and third steps include non-Gaussian observations and higher dimensional equispaced
+      grid methods. We introduce novel techniques to address both of these necessary
+      directions. We thoroughly illustrate the power of these three advances on several
+      datasets, achieving close performance to the naive Full GP at orders of magnitude
+      less cost.
     author:
     - first: E.
       last: Gilboa
@@ -6997,24 +6981,24 @@ entries:
     year: '2013'
   GilSaaCun15:
     Journal: IEEE Transactions on Pattern Analysis and Machine Intelligence
-    abstract: 'Exact Gaussian process (GP) regression has O(N<sup>3</sup> runtime
-      for data size N, making it intractable for large N. Many algorithms for improving
-      GP scaling approximate the covariance with lower rank matrices. Other work has
-      exploited structure inherent in particular covariance functions, including GPs
-      with implied Markov structure, and inputs on a lattice (both enable O(N) or
-      O(N log N) runtime). However, these GP advances have not been well extended
-      to the multidimensional input setting, despite the preponderance of multidimensional
-      applications. This paper introduces and tests three novel extensions of structured
-      GPs to multidimensional inputs, for models with additive and multiplicative
-      kernels. First we present a new method for inference in additive GPs, showing
-      a novel connection between the classic backfitting method and the Bayesian framework.
-      We extend this model using two advances: a variant of projection pursuit regression,
-      and a Laplace approximation for non-Gaussian observations. Lastly, for multiplicative
-      kernel structure, we present a novel method for GPs with inputs on a multidimensional
+    abstract: 'Exact Gaussian process (GP) regression has O(N3 runtime for data size
+      N, making it intractable for large N. Many algorithms for improving GP scaling
+      approximate the covariance with lower rank matrices. Other work has exploited
+      structure inherent in particular covariance functions, including GPs with implied
+      Markov structure, and inputs on a lattice (both enable O(N) or O(N log N) runtime).
+      However, these GP advances have not been well extended to the multidimensional
+      input setting, despite the preponderance of multidimensional applications. This
+      paper introduces and tests three novel extensions of structured GPs to multidimensional
+      inputs, for models with additive and multiplicative kernels. First we present
+      a new method for inference in additive GPs, showing a novel connection between
+      the classic backfitting method and the Bayesian framework. We extend this model
+      using two advances: a variant of projection pursuit regression, and a Laplace
+      approximation for non-Gaussian observations. Lastly, for multiplicative kernel
+      structure, we present a novel method for GPs with inputs on a multidimensional
       grid. We illustrate the power of these three advances on several data sets,
       achieving performance equal to or very close to the naive GP at orders of magnitude
       less cost.'
-    annote: <a href="http://arxiv.org/abs/1209.4120">arXiv</a>
+    annote: arXiv
     author:
     - first: E.
       last: Gilboa
@@ -7033,12 +7017,11 @@ entries:
     abstract: We consider the problem of multi-step ahead prediction in time series
       analysis using the non-parametric Gaussian process model. k-step ahead forecasting
       of a discrete-time non-linear dynamic system can be performed by doing repeated
-      one-step ahead predictions. For a state-space model of the form y<sub>t</sub>
-      = f(y<sub>t-1</sub>,...,y<sub>t-L</sub>), the prediction of y at time t + k
-      is based on the point estimates of the previous outputs. In this paper, we show
-      how, using an analytical Gaussian approximation, we can formally incorporate
-      the uncertainty about intermediate regressor values, thus updating the uncertainty
-      on the current prediction.
+      one-step ahead predictions. For a state-space model of the form yt = f(yt-1,...,yt-L),
+      the prediction of y at time t + k is based on the point estimates of the previous
+      outputs. In this paper, we show how, using an analytical Gaussian approximation,
+      we can formally incorporate the uncertainty about intermediate regressor values,
+      thus updating the uncertainty on the current prediction.
     address: Cambridge, MA, USA
     author:
     - first: Agathe
@@ -7334,7 +7317,7 @@ entries:
       last: Bronskill
     - first: Matthias
       last: Bauer
-    - first: S<!>ebastian
+    - first: Sebastian
       last: Nowozin
     - first: Richard
       last: Turner
@@ -7673,9 +7656,7 @@ entries:
       manipulation skills in simulation and a complex door opening skill on real robots
       without any prior demonstrations or manually designed representations.
     address: SINGAPORE
-    annote: '[<a href="https://research.googleblog.com/2016/10/how-robots-can-acquire-new-skills-from.html">Google
-      Blogpost</a>] [<a href="https://www.technologyreview.com/s/602529/google-builds-a-robotic-hive-mind-kindergarten/">MIT
-      Technology Review</a>] [<a href="https://www.youtube.com/watch?v=ZhsEKTo7V04">Video</a>]'
+    annote: '[Google Blogpost] [MIT Technology Review] [Video]'
     author:
     - first: Shixiang
       last: Gu
@@ -7909,11 +7890,11 @@ entries:
       related states. Incorporation of such information would be beneficial both computationally
       and for faster dynamics learning. This paper introduces a method of achieving
       this, yielding faster dynamics learning and a reduction in computational effort
-      from O(Dn<sup>2</sup>) to O((D-F)n<sup>2</sup>) in the prediction stage for
-      a system with D states, F known state relationships and n observations. The
-      effectiveness of the method is demonstrated through its inclusion in the PILCO
-      learning algorithm with application to the swing-up and balance of a torque-limited
-      pendulum and the balancing of a robotic unicycle in simulation.
+      from O(Dn2) to O((D-F)n2) in the prediction stage for a system with D states,
+      F known state relationships and n observations. The effectiveness of the method
+      is demonstrated through its inclusion in the PILCO learning algorithm with application
+      to the swing-up and balance of a torque-limited pendulum and the balancing of
+      a robotic unicycle in simulation.
     author:
     - first: Joseph
       last: Hall
@@ -8572,7 +8553,7 @@ entries:
     - first: Matthew
       last: Hoffman
       middle: W.
-    - first: R<!>yan
+    - first: Ryan
       last: Adams
       middle: P.
     - first: Zoubin
@@ -9117,10 +9098,10 @@ entries:
       of nodes, systems biology and the Internet are now generating graph data with
       thousands and millions of nodes. Hence data mining faces the algorithmic challenge
       of coping with this significant increase in graph size: Classic algorithms for
-      data analysis are often too expensive and too slow on large graphs.<br> While
-      one strategy to overcome this problem is to design novel efficient algorithms,
-      the other is to ''reduce'' the size of the large graph by sampling. This is
-      the scope of this paper: We will present novel Metropolis algorithms for sampling
+      data analysis are often too expensive and too slow on large graphs. While one
+      strategy to overcome this problem is to design novel efficient algorithms, the
+      other is to ''reduce'' the size of the large graph by sampling. This is the
+      scope of this paper: We will present novel Metropolis algorithms for sampling
       a ''representative'' small subgraph from the original large graph, with ''representative''
       describing the requirement that the sample shall preserve crucial graph properties
       of the original graph. In our experiments, we improve over the pioneering work
@@ -9208,7 +9189,7 @@ entries:
       we present an intuitive Bayesian kernel machine for density estimation that
       is obtained by applying the kernel trick to a Gaussian generative model in feature
       space.
-    annote: arXiv:<a href="http://arxiv.org/abs/1103.1761">1103.1761</a>
+    annote: arXiv:1103.1761
     author:
     - first: Ferenc
       last: Huszár
@@ -9238,7 +9219,7 @@ entries:
       results demonstrate a significant potential in standard binary decision tasks
       to recover detailed information about subjects' mental representations
     address: Austin, TX, USA
-    annote: Supplementary material available <a href = "http://mlg.eng.cam.ac.uk/ferenc/mindreading">here</a>.
+    annote: Supplementary material available here.
     author:
     - first: Ferenc
       last: Huszár
@@ -9303,7 +9284,7 @@ entries:
     school: University of Cambridge, Department of Engineering
     title: Variational Inference in Dynamical Systems
     type: phdthesis
-    url: https://www.repository.cam.ac.uk/bitstream/handle/1810/343944/PhD
+    url: https://www.repository.cam.ac.uk/bitstream/handle/1810/343944/PhD%20Thesis%20-%20Alessandro%20Davide%20Ialongo%20%28Final%20Version%20-%202022-12-06%29.pdf?sequence=3&isAllowed=y
     year: '2022'
   IalWilHenRas18:
     abstract: We focus on variational inference in dynamical systems where the discrete
@@ -9478,7 +9459,7 @@ entries:
     journal: IEEE Transactions on Pattern Analysis and Machine Intelligence
     title: Unsupervised Many-to-Many Object Matching for Relational Data
     type: article
-    url: http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=7208879   tag=1
+    url: http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=7208879&tag=1
     year: '2015'
   IwaShaGha13a:
     abstract: Many people share their activities with others through online communities.
@@ -9610,8 +9591,7 @@ entries:
       and structure of the generated sequences, while maintaining information learned
       from data.
     address: Sydney AUSTRALIA
-    annote: '[<a href="https://www.technologyreview.com/s/603003/ai-songsmith-cranks-out-surprisingly-catchy-tunes/">MIT
-      Technology Review</a>] [<a href="https://www.youtube.com/watch?v=abBfZB5DlSY">Video</a>]'
+    annote: '[MIT Technology Review] [Video]'
     author:
     - first: Natasha
       last: Jaques
@@ -9696,7 +9676,7 @@ entries:
     editor:
     - first: Suzanna
       last: Becker
-    - first: S<!>ebastian
+    - first: Sebastian
       last: Thrun
     - first: Klaus
       last: Obermayer
@@ -9909,12 +9889,11 @@ entries:
       truth values of statements in the knowledge base would be a major step forward
       in addressing the issue of knowledge base curation. We present a family of probabilistic
       graphical models that builds on user feedback and logical inference rules derived
-      from the popular Semantic-Web formalism of RDFS <a href="http://www.w3.org/TR/rdf-schema/">[1]</a>.
-      Through internal inference and belief propagation, these models can learn both,
-      the truth values of the statements in the knowledge base and the reliabilities
-      of the users who give feedback. We demonstrate the viability of our approach
-      in extensive experiments on real-world datasets, with feedback collected from
-      Amazon Mechanical Turk.
+      from the popular Semantic-Web formalism of RDFS [1]. Through internal inference
+      and belief propagation, these models can learn both, the truth values of the
+      statements in the knowledge base and the reliabilities of the users who give
+      feedback. We demonstrate the viability of our approach in extensive experiments
+      on real-world datasets, with feedback collected from Amazon Mechanical Turk.
     address: Barcelona, Spain
     author:
     - first: G.
@@ -9955,7 +9934,7 @@ entries:
       sequencing data but also a demonstration of the feasibility of using a probability
       based alignment method on real and simulated data sets.'
     annote: Peter Kerpedjiev and Jes Frellsen contributed equally. Additional resources
-      are available at <a href="http://bwa-pssm.binf.ku.dk">bwa-pssm.binf.ku.dk</a>
+      are available at bwa-pssm.binf.ku.dk
     author:
     - first: Peter
       last: Kerpedjiev
@@ -10000,7 +9979,7 @@ entries:
     - first: Mahmoudreza
       last: Babaei
     - first: Jessica
-      last: H<!>offmann
+      last: Hoffmann
     - first: Mahdi
       last: Jalili
     - first: Adrian
@@ -10152,7 +10131,7 @@ entries:
     - first: Moritz
       last: Hardt
     - first: Dominik
-      last: J<!>anzing
+      last: Janzing
     - first: Bernhard
       last: Schölkopf
     booktitle: Advances in Neural Information Processing Systems 30
@@ -10421,22 +10400,21 @@ entries:
       datasets and data types simultaneously (including the ability to model time
       series data explicitly using Gaussian processes). Each dataset is modelled using
       a Dirichlet-multinomial allocation (DMA) mixture model, with dependencies between
-      these models captured via parameters that describe the agreement among the datasets.
-      <br> Results: Using a set of 6 artificially constructed time series datasets,
-      we show that MDI is able to integrate a significant number of datasets simultaneously,
-      and that it successfully captures the underlying structural similarity between
-      the datasets. We also analyse a variety of real S. cerevisiae datasets. In the
-      2-dataset case, we show that MDI’s performance is comparable to the present
-      state of the art. We then move beyond the capabilities of current approaches
-      and integrate gene expression, ChIP-chip and protein-protein interaction data,
-      to identify a set of protein complexes for which genes are co-regulated during
-      the cell cycle. Comparisons to other unsupervised data integration techniques
-      – as well as to non-integrative approaches – demonstrate that MDI is very competitive,
+      these models captured via parameters that describe the agreement among the datasets.  Results:
+      Using a set of 6 artificially constructed time series datasets, we show that
+      MDI is able to integrate a significant number of datasets simultaneously, and
+      that it successfully captures the underlying structural similarity between the
+      datasets. We also analyse a variety of real S. cerevisiae datasets. In the 2-dataset
+      case, we show that MDI’s performance is comparable to the present state of the
+      art. We then move beyond the capabilities of current approaches and integrate
+      gene expression, ChIP-chip and protein-protein interaction data, to identify
+      a set of protein complexes for which genes are co-regulated during the cell
+      cycle. Comparisons to other unsupervised data integration techniques – as well
+      as to non-integrative approaches – demonstrate that MDI is very competitive,
       while also providing information that would be difficult or impossible to extract
       using other methods.'
-    annote: This paper is available from the <a href="http://bioinformatics.oxfordjournals.org/content/early/2012/10/08/bioinformatics.bts595.abstract">Bioinformatics
-      site</a> and a Matlab implementation of MDI is available from<a href="https://sites.google.com/site/mdipackage/">this
-      site</a>.
+    annote: This paper is available from the Bioinformatics site and a Matlab implementation
+      of MDI is available fromthis site.
     author:
     - first: P.
       last: Kirk
@@ -10471,7 +10449,7 @@ entries:
       data. The empirical performance of our method is very close to the computationally
       expensive MCMC alternative on a density estimation problem, and significantly
       outperforms kernel density estimators.
-    annote: <a href="http://mlg.eng.cam.ac.uk/dave/knowles2011-icml.pdf">web site</a>
+    annote: web site
     author:
     - first: David
       last: Knowles
@@ -10526,7 +10504,7 @@ entries:
       Both algorithms use message passing on the tree structure. The utility of the
       model and algorithms is demonstrated on synthetic and real world data, both
       continuous and binary.'
-    annote: <a href="http://mlg.eng.cam.ac.uk/dave/knowles2011uai.pdf">web site</a>
+    annote: web site
     author:
     - first: David
       last: Knowles
@@ -10576,7 +10554,7 @@ entries:
       the naive percentage threshold approach. The possibility of early stage PCR
       errors becoming significant is investigated by simulation, which underlines
       the importance of the initial copy number.'
-    annote: <a href="http://mlg.eng.cam.ac.uk/dave/nips454.pdf">web site</a>
+    annote: web site
     author:
     - first: David
       last: Knowles
@@ -10600,7 +10578,7 @@ entries:
       regression. In the multinomial case we introduce a novel variational bound for
       the softmax factor which is tighter than other commonly used bounds whilst maintaining
       computational tractability.'
-    annote: <a href="http://mlg.eng.cam.ac.uk/dave/nips2011.pdf">web site</a> <a href="http://mlg.eng.cam.ac.uk/dave/nips2011supp.pdf">supplementary</a>
+    annote: web site supplementary
     author:
     - first: David
       last: Knowles
@@ -10624,8 +10602,7 @@ entries:
       variables, concluding that factor analysis type models have the strongest statistical
       performance in this setting. We show that such models can be combined with regression
       components for improved interpretability.
-    annote: <a href="http://mlg.eng.cam.ac.uk/dave/knowles2010_predictive_medicine.pdf">web
-      site</a>
+    annote: web site
     author:
     - first: David
       last: Knowles
@@ -10654,7 +10631,7 @@ entries:
       from the linearity assumption and show how to alleviate these issues using a
       non-linear extension. We find more gene expression probes are significantly
       associated with our measurement of physiological age than to chronological age.
-    annote: <a href="http://mlg.eng.cam.ac.uk/dave/physiological_age.pdf">web site</a>
+    annote: web site
     author:
     - first: David
       last: Knowles
@@ -10783,7 +10760,7 @@ entries:
       cheaper extended Kalman filter and complementary filter implementations. The
       quality of their estimates is illustrated using both experimental and simulated
       data.
-    annote: <a href="https://arxiv.org/abs/1704.06053">arXiv</a>
+    annote: arXiv
     author:
     - first: Manon
       last: Kok
@@ -10840,7 +10817,7 @@ entries:
       offset by a decrease in variance due to our ability to draw more samples per
       unit of time.
     address: Beijing, China
-    annote: <a href="http://jmlr.org/proceedings/papers/v32/korattikara14-supp.pdf">supplementary</a>
+    annote: supplementary
     author:
     - first: Anoop
       last: Korattikara
@@ -11620,10 +11597,10 @@ entries:
       Here we propose a generative model for networks that is both mathematically
       tractable and can generate networks that have all the above mentioned structural
       properties. Our main idea here is to use a non-standard matrix operation, the
-      Kronecker product, to generate graphs which we refer to as "Kronecker graphs".<br>First,
+      Kronecker product, to generate graphs which we refer to as "Kronecker graphs".First,
       we show that Kronecker graphs naturally obey common network properties. In fact,
       we rigorously prove that they do so. We also provide empirical evidence showing
-      that Kronecker graphs can effectively model the structure of real networks.<br>We
+      that Kronecker graphs can effectively model the structure of real networks.We
       then present KRONFIT, a fast and scalable algorithm for fitting the Kronecker
       graph generation model to large real networks. A naive approach to fitting would
       take super-exponential time. In contrast, KRONFIT takes linear time, by exploiting
@@ -12079,10 +12056,10 @@ entries:
       genes does incur lethality. Several studies have shown a correlation between
       functional similarity of genes and their distances in networks based on synthetic
       lethal interactions. However, there is a lack of algorithms for predicting gene
-      function from synthetic lethality interaction networks. <br> Results: In this
-      article, we present a novel technique called kernelROD for gene function prediction
-      from synthetic lethal interaction networks based on kernel machines. We apply
-      our novel algorithm to Gene Ontology functional annotation prediction in yeast.
+      function from synthetic lethality interaction networks.  Results: In this article,
+      we present a novel technique called kernelROD for gene function prediction from
+      synthetic lethal interaction networks based on kernel machines. We apply our
+      novel algorithm to Gene Ontology functional annotation prediction in yeast.
       Our experiments show that our method leads to improved gene function prediction
       compared with state-of-the-art competitors and that combining genetic and congruence
       networks leads to a further improvement in prediction accuracy.'
@@ -12253,7 +12230,7 @@ entries:
     - first: Zoubin
       last: Ghahramani
     booktitle: Advances in Neural Information Processing Systems 29
-    cat: gp crit np
+    cat: gp np
     month: December
     pages: 1–9
     title: Statistical Model Criticism using Kernel Two Sample Tests
@@ -12579,7 +12556,7 @@ entries:
     publisher: mit
     title: Occlusive Components Analysis
     type: incollection
-    url: http://www.gatsby.ucl.ac.uk/ turner/Publications/lucke-et-al-2009.html
+    url: http://www.gatsby.ucl.ac.uk/~turner/Publications/lucke-et-al-2009.html
     year: '2009'
   MacBusCunetal11:
     abstract: Neurons in the neocortex code and compute as part of a locally interconnected
@@ -13053,9 +13030,9 @@ entries:
       can be infeasibly complex and require a large number of simplifying assumptions.
       An alternative is to use a data-driven approach, which builds a model directly
       from observations. A powerful and principled approach to doing this is to use
-      a Gaussian Process (GP).<br> In this thesis we start by discussing how GPs can
-      be applied to data sets which have noise affecting their inputs. We present
-      the "Noisy Input GP", which uses a simple local-linearisation to refer the input
+      a Gaussian Process (GP). In this thesis we start by discussing how GPs can be
+      applied to data sets which have noise affecting their inputs. We present the
+      "Noisy Input GP", which uses a simple local-linearisation to refer the input
       noise into heteroscedastic output noise, and compare it to other methods both
       theoretically and empirically. We show that this technique leads to a effective
       model for nonlinear functions with input and output noise. We then consider
@@ -13191,7 +13168,7 @@ entries:
     - first: Mireya
       last: Plass
     - first: Simon
-      last: R<!>asmussen
+      last: Rasmussen
       middle: H.
     - first: Anders
       last: Krogh
@@ -13268,7 +13245,7 @@ entries:
       allow us to explore the underlying structure in data, and have relevance in
       a vast number of application areas including collaborative filtering, source
       separation, missing data imputation, gene expression analysis, information retrieval,
-      computational finance and computer vision, amongst others.<br> This thesis develops
+      computational finance and computer vision, amongst others. This thesis develops
       generalisations of matrix factorisation models that advance our understanding
       and enhance the applicability of this important class of models. The generalisation
       of models for matrix factorisation focuses on three concerns: widening the applicability
@@ -13284,7 +13261,7 @@ entries:
       that may be real-valued, binary, counts, non-negative or a heterogeneous set
       of these data types. The model unifies various existing models and constructs
       for unsupervised settings, the complementary framework to the generalised linear
-      models in regression.<br> Moving to structural considerations, we develop Bayesian
+      models in regression. Moving to structural considerations, we develop Bayesian
       methods for learning sparse latent representations. We define ideas of weakly
       and strongly sparse vectors and investigate the classes of prior distributions
       that give rise to these forms of sparsity, namely the scale-mixture of Gaussians
@@ -13321,7 +13298,7 @@ entries:
       of the observed data matrix, and show performance of the model on both synthetic
       and real data.
     address: Cambridge, MA, USA
-    annote: <a href="http://mlg.eng.cam.ac.uk/shakir/papers/NIPS08spotlight.pdf">spotlight</a>.
+    annote: spotlight.
     author:
     - first: Shakir
       last: Mohamed
@@ -13373,7 +13350,7 @@ entries:
     - first: Zoubin
       last: Ghahramani
     booktitle: 29th International Conference on Machine Learning
-    title: Bayesian and L<sub>1</sub> Approaches for Sparse Unsupervised Learning
+    title: Bayesian and L1 Approaches for Sparse Unsupervised Learning
     type: inproceedings
     url: .
     year: '2012'
@@ -14115,9 +14092,7 @@ entries:
       As an application of our constructive framework, we derive a model on infinite
       permutations, the nonparametric Bayesian analogue of a model recently proposed
       for the analysis of rank data.
-    annote: <a href="http://mlg.eng.cam.ac.uk/porbanz/reports/NIPS2009_0901_extra.pdf">Supplements
-      (proofs)</a> and <a href="http://mlg.eng.cam.ac.uk/porbanz/reports/porbanz_NIPS09TR.pdf">techreport
-      version</a>
+    annote: Supplements (proofs) and techreport version
     author:
     - first: Peter
       last: Orbanz
@@ -14209,7 +14184,7 @@ entries:
     title: A Unified Framework for Resource-Bounded Agents Interacting with an Unknown
       Environment
     type: phdthesis
-    url: http://www.dcc.uchile.cl/ peortega/home/lib/exe/fetch.php?id=autonomous_agents   amp;cache=cache   amp;media=thesis.pdf
+    url: http://www.dcc.uchile.cl/~peortega/home/lib/exe/fetch.php?id=autonomous_agents&amp;cache=cache&amp;media=thesis.pdf
     year: '2011'
   OrtBra10a:
     abstract: Rewards typically express desirabilities or preferences over a set of
@@ -14368,7 +14343,7 @@ entries:
     series: Lecture Notes on Artificial Intelligence
     title: Information, Utility and Bounded Rationality
     type: inproceedings
-    url: http://www.dcc.uchile.cl/ peortega/home/lib/exe/fetch.php?id=autonomous_agents   amp;cache=cache   amp;media=infoutilityboundedrationality.pdf
+    url: http://www.dcc.uchile.cl/~peortega/home/lib/exe/fetch.php?id=autonomous_agents&amp;cache=cache&amp;media=infoutilityboundedrationality.pdf
     volume: '6830'
     year: '2011'
   OrtBraGod11:
@@ -14396,7 +14371,7 @@ entries:
     series: Lecture Notes on Artificial Intelligence
     title: Reinforcement Learning and the Bayesian Control Rule
     type: inproceedings
-    url: http://www.dcc.uchile.cl/ peortega/home/lib/exe/fetch.php?id=autonomous_agents   amp;cache=cache   amp;media=actor-critic.pdf
+    url: http://www.dcc.uchile.cl/~peortega/home/lib/exe/fetch.php?id=autonomous_agents&amp;cache=cache&amp;media=actor-critic.pdf
     volume: '6830'
     year: '2011'
   OsaSwaJaietal19:
@@ -14471,7 +14446,7 @@ entries:
     pages: 46-54
     title: Active Learning of Model Evidence Using Bayesian Quadrature
     type: inproceedings
-    url: http://www.robots.ox.ac.uk/ mosb/papers/bbq_nips_final.pdf
+    url: http://www.robots.ox.ac.uk/~mosb/papers/bbq_nips_final.pdf
     year: '2012'
   OswChaGooetal2022:
     abstract: 1. The UK Government’s draft ‘Algorithmic Transparency Standard’ is
@@ -14681,7 +14656,7 @@ entries:
       algorithms. Finally, we invent the total propagation algorithm, which efficiently
       computes a union over all pathwise derivative depths during a single backwards
       pass, automatically giving greater weight to estimators with lower variance,
-      sometimes improving over reparameterization gradients by 10<sup>6</sup> times.
+      sometimes improving over reparameterization gradients by 106 times.
     author:
     - first: Paavo
       last: Parmas
@@ -14968,7 +14943,7 @@ entries:
     title: Sample and Feedback Efficient Hierarchical Reinforcement Learning from
       Human Preferences
     type: inproceedings
-    url: https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=   arnumber=8460907
+    url: https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8460907
     year: '2018'
   PinGorNaletal19:
     abstract: Leveraging the wealth of unlabeled data produced in recent years provides
@@ -15092,7 +15067,7 @@ entries:
     month: Apr
     title: 'Temporal Difference Models: Model-Free Deep RL for Model-Based Control'
     type: inproceedings
-    url: https://openreview.net/forum?id=Skw0n-W0Z   noteId=Skw0n-W0Z
+    url: https://openreview.net/forum?id=Skw0n-W0Z&noteId=Skw0n-W0Z
     year: '2018'
   QiMinPic04a:
     abstract: In many real-world classification problems the input contains a large
@@ -15249,9 +15224,9 @@ entries:
       of the method is demonstrated for forecasting of time-series and compared to
       approximate methods.
     address: Piscataway, New Jersey
-    annote: Electronic version of <a href="/pub/#QuiGirLarRas03">Quiñonero-Candela,
-      Girard, Larsen and Rasmussen, 2003</a> which should have been presented at ICASSP
-      03, but was cancelled due to bird flu epidemic.
+    annote: Electronic version of Quiñonero-Candela, Girard, Larsen and Rasmussen,
+      2003 which should have been presented at ICASSP 03, but was cancelled due to
+      bird flu epidemic.
     author:
     - first: Joaquin
       last: Quiñonero-Candela
@@ -15288,7 +15263,7 @@ entries:
     url: /pub/#QuiGirLarRas03
     year: '2003'
   QuiGirRas03:
-    annote: <a href="http://www2.imm.dtu.dk/pubdb/views/publication_details.php?id=2800">techreport</a>
+    annote: techreport
     author:
     - first: Joaquin
       last: Quiñonero-Candela
@@ -15419,11 +15394,10 @@ entries:
     URL: .
     abstract: A wealth of computationally efficient approximation methods for Gaussian
       process regression have been recently proposed. We give a unifying overview
-      of sparse approximations, following <a href="/pub/#QuiRas05">Quiñonero-Candela
-      and Rasmussen (2005)</a>, and a brief review of approximate matrix-vector multiplication
-      methods.
+      of sparse approximations, following Quiñonero-Candela and Rasmussen (2005),
+      and a brief review of approximate matrix-vector multiplication methods.
     address: Cambridge, MA, USA
-    annote: <a href="http://mitpress.mit.edu/9780262026253">book</a>
+    annote: book
     author:
     - first: Joaquin
       last: Quiñonero-Candela
@@ -15580,7 +15554,7 @@ entries:
       the marginal likelihood. We explain the practical advantages of Gaussian Process
       and end with conclusions and a look at the current trends in GP work.
     address: Heidelberg
-    annote: Copyright by Springer, <a href="http://www.springerlink.com/content/lrh41y849xdh">springerlink</a>
+    annote: Copyright by Springer, springerlink
     author:
     - first: Carl
       last: Rasmussen
@@ -15631,20 +15605,20 @@ entries:
       performances due to both variation in training and test sets are accounted for.
       The framework allows for estimation of generalisation performance as well as
       statistical tests of significance for pairwise comparisons. Two experimental
-      designs are recommended and supported by the DELVE software environment.<br>
-      Two new non-parametric Bayesian learning methods relying on Gaussian process
-      priors over functions are developed. These priors are controlled by hyperparameters
+      designs are recommended and supported by the DELVE software environment. Two
+      new non-parametric Bayesian learning methods relying on Gaussian process priors
+      over functions are developed. These priors are controlled by hyperparameters
       which set the characteristic length scale for each input dimension. In the simplest
       method, these parameters are fit from the data using optimization. In the second,
       fully Bayesian method, a Markov chain Monte Carlo technique is used to integrate
       over the hyperparameters. One advantage of these Gaussian process methods is
-      that the priors and hyperparameters of the trained models are easy to interpret.<br>
+      that the priors and hyperparameters of the trained models are easy to interpret.
       The Gaussian process methods are benchmarked against several other methods,
       on regression tasks using both real data and data generated from realistic simulations.
       The experiments show that small datasets are unsuitable for benchmarking purposes
       because the uncertainties in performance measurements are large. A second set
       of experiments provide strong evidence that the bagging procedure is advantageous
-      for the Multivariate Adaptive Regression Splines (MARS) method.<br> The simulated
+      for the Multivariate Adaptive Regression Splines (MARS) method. The simulated
       datasets have controlled characteristics which make them useful for understanding
       the relationship between properties of the dataset and the performance of different
       methods. The dependency of the performance on available computation time is
@@ -15741,8 +15715,7 @@ entries:
       task. Learning progresses rapidly, and a good policy is found after only a hand-full
       of iterations.
     address: Villeneuve d'Ascq, France
-    annote: <a href="http://mlg.eng.cam.ac.uk/carl/ewrl08/">videos and more</a>. <a
-      href="http://mlg.eng.cam.ac.uk/marc/talks/2008-07-03-EWRL-lille.pdf">slides</a>.
+    annote: videos and more. slides.
     author:
     - first: Carl
       last: Rasmussen
@@ -15896,7 +15869,7 @@ entries:
       of datasets from many sources, an environment within which this data can be
       used to assess the performance of methods for learning relationships from data,
       and a repository for the results of such experiments.
-    annote: The <a href="http://www.cs.toronto.edu/ delve">delve website</a>.
+    annote: The delve website.
     author:
     - first: Carl
       last: Rasmussen
@@ -15933,9 +15906,8 @@ entries:
       Finally, a range of inference methods is provided, including exact and variational
       inference, Expectation Propagation, and Laplace's method dealing with non-Gaussian
       likelihoods and FITC for dealing with large regression tasks.
-    annote: Toolbox avaiable from <a href="http://GaussianProcess.org/gpml/code">here</a>.
-      Implements algorithms from <a href="/pub/#RasWil06">Rasmussen and Williams,
-      2006</a>.
+    annote: Toolbox avaiable from here. Implements algorithms from Rasmussen and Williams,
+      2006.
     author:
     - first: Carl
       last: Rasmussen
@@ -15988,10 +15960,8 @@ entries:
       a long-needed systematic and unified treatment of theoretical and practical
       aspects of GPs in machine learning. The treatment is comprehensive and self-contained,
       targeted at researchers and students in machine learning and applied statistics.
-    annote: Winner of the 2009 <a href="http://bayesian.org/project/degroot-prize">DeGroot
-      Prize</a>. Book <a href="http://www.gaussianprocess.org/gpml">web page</a>,
-      <a href="//www.gaussianprocess.org/gpml/chapters">chapters</a> and <a href="http://www.gaussianprocess.org/gpml/chapters/RW.pdf">entire
-      book pdf</a>. <a href="/pub/#RasNic10">GPML Toolbox</a>.
+    annote: Winner of the 2009 DeGroot Prize. Book web page, chapters and entire book
+      pdf. GPML Toolbox.
     author:
     - first: Carl
       last: Rasmussen
@@ -16194,7 +16164,7 @@ entries:
       last: Gordon
     - first: John
       last: Bronskill
-    - first: S<!>ebastian
+    - first: Sebastian
       last: Nowozin
     - first: Richard
       last: Turner
@@ -16539,56 +16509,55 @@ entries:
     year: '2011'
   Saa11:
     abstract: The generic inference and learning algorithm for Gaussian Process (GP)
-      regression has O(N<sup>3</sup>) runtime and O(N<sup>2</sup>) memory complexity,
-      where N is the number of observations in the dataset. Given the computational
-      resources available to a present-day workstation, this implies that GP regression
-      simply <em>cannot be run</em> on large datasets. The need to use non- Gaussian
-      likelihood functions for tasks such as classification adds even more to the
-      computational burden involved.<br> The majority of algorithms designed to improve
-      the scaling of GPs are founded on the idea of approximating the true covariance
-      matrix, which is usually of rank N, with a matrix of rank P, where P   lt;   lt;N.
-      Typically, the true training set is replaced with a smaller, representative
-      (pseudo-) training set such that a specific measure of information loss is minimized.
-      These algorithms typically attain O(P<sup>2</sup>N) runtime and O(PN) space
-      complexity. They are also general in the sense that they are designed to work
-      with <em>any</em> covariance function. In essence, they trade off accuracy with
-      computational complexity. The central contribution of this thesis is to improve
-      scaling instead by exploiting any structure that is present in the covariance
-      matrices generated by <em>particular</em> covariance functions. Instead of settling
-      for a kernel-independent accuracy/complexity trade off, as is done in much the
-      literature, we often obtain accuracies close to, or exactly equal to the full
-      GP model at a fraction of the computational cost.<br> We define a <em>structured</em>
-      GP as any GP model that is endowed with a kernel which produces structured covariance
-      matrices. A trivial example of a structured GP is one with the linear regression
-      kernel. In this case, given inputs living in R<sup>D</sup>, the covariance matrices
-      generated have rank D – this results in significant computational gains in the
-      usual case where D   lt;   lt;N. Another case arises when a stationary kernel
-      is evaluated on equispaced, scalar inputs. This results in <em>Toeplitz</em>
-      covariance matrices and all necessary computations can be carried out exactly
-      in O(N log N).<br> This thesis studies four more types of structured GP. First,
-      we comprehensively review the case of kernels corresponding to <em>Gauss-Markov</em>
+      regression has O(N3) runtime and O(N2) memory complexity, where N is the number
+      of observations in the dataset. Given the computational resources available
+      to a present-day workstation, this implies that GP regression simply cannot
+      be run on large datasets. The need to use non- Gaussian likelihood functions
+      for tasks such as classification adds even more to the computational burden
+      involved. The majority of algorithms designed to improve the scaling of GPs
+      are founded on the idea of approximating the true covariance matrix, which is
+      usually of rank N, with a matrix of rank P, where P   lt;   lt;N. Typically,
+      the true training set is replaced with a smaller, representative (pseudo-) training
+      set such that a specific measure of information loss is minimized. These algorithms
+      typically attain O(P2N) runtime and O(PN) space complexity. They are also general
+      in the sense that they are designed to work with any covariance function. In
+      essence, they trade off accuracy with computational complexity. The central
+      contribution of this thesis is to improve scaling instead by exploiting any
+      structure that is present in the covariance matrices generated by particular
+      covariance functions. Instead of settling for a kernel-independent accuracy/complexity
+      trade off, as is done in much the literature, we often obtain accuracies close
+      to, or exactly equal to the full GP model at a fraction of the computational
+      cost. We define a structured GP as any GP model that is endowed with a kernel
+      which produces structured covariance matrices. A trivial example of a structured
+      GP is one with the linear regression kernel. In this case, given inputs living
+      in RD, the covariance matrices generated have rank D – this results in significant
+      computational gains in the usual case where D   lt;   lt;N. Another case arises
+      when a stationary kernel is evaluated on equispaced, scalar inputs. This results
+      in Toeplitz covariance matrices and all necessary computations can be carried
+      out exactly in O(N log N). This thesis studies four more types of structured
+      GP. First, we comprehensively review the case of kernels corresponding to Gauss-Markov
       processes evaluated on scalar inputs. Using state-space models we show how (generalised)
       regression (including hyperparameter learning) can be performed in O(N log N)
       runtime and O(N) space. Secondly, we study the case where we introduce block
       structure into the covariance matrix of a GP time-series model by assuming a
       particular form of nonstationarity a priori. Third, we extend the efficiency
       of scalar Gauss-Markov processes to higher-dimensional input spaces by assuming
-      <em>additivity</em>. We illustrate the connections between the classical backfitting
+      additivity. We illustrate the connections between the classical backfitting
       algorithm and approximate Bayesian inference techniques including Gibbs sampling
       and variational Bayes. We also show that it is possible to relax the rather
       strong assumption of additivity without sacrificing O(N log N) complexity, by
       means of a projection-pursuit style GP regression model. Finally, we study the
       properties of a GP model with a tensor product kernel evaluated on a multivariate
-      grid of inputs locations. We show that for an <em>arbitrary</em> (regular or
-      irregular) grid the resulting covariance matrices are Kronecker and full GP
-      regression can be implemented in O(N) time and memory usage.<br> We illustrate
-      the power of these methods on several real-world regression datasets which satisfy
-      the assumptions inherent in the structured GP employed. In many cases we obtain
-      performance comparable to the generic GP algorithm. We also analyse the performance
-      degradation when these assumptions are not met, and in several cases show that
-      it is comparable to that observed for sparse GP methods. We provide similar
-      results for regression tasks with non-Gaussian likelihoods, an extension rarely
-      addressed by sparse GP techniques.
+      grid of inputs locations. We show that for an arbitrary (regular or irregular)
+      grid the resulting covariance matrices are Kronecker and full GP regression
+      can be implemented in O(N) time and memory usage. We illustrate the power of
+      these methods on several real-world regression datasets which satisfy the assumptions
+      inherent in the structured GP employed. In many cases we obtain performance
+      comparable to the generic GP algorithm. We also analyse the performance degradation
+      when these assumptions are not met, and in several cases show that it is comparable
+      to that observed for sparse GP methods. We provide similar results for regression
+      tasks with non-Gaussian likelihoods, an extension rarely addressed by sparse
+      GP techniques.
     address: Cambridge, UK
     author:
     - first: Yunus
@@ -16609,13 +16578,12 @@ entries:
       own advantages. We present methods to reduce the computational burden of these
       models and demonstrate it on several real world data sets.
     address: Haifa, Israel
-    annote: <a href="http://mlg.eng.cam.ac.uk/rdturner/ICML2010poster.pdf">poster</a>,
-      <a href="http://mlg.eng.cam.ac.uk/rdturner/ICML2010talk.pdf">slides</a>.
+    annote: poster, slides.
     author:
     - first: Yunus
       last: Saatçi
     - first: Ryan
-      last: T<!>urner
+      last: Turner
     - first: Carl
       last: Rasmussen
       middle: Edward
@@ -16703,13 +16671,13 @@ entries:
       that co-expression and co-regulation are not necessarily equivalent and hence
       we do not expect all genes to group similarly in both datasets. In particular,
       it allows us to identify the subset of genes that share the same structure of
-      transcriptional modules in both datasets.<br>Results: We find that by working
-      on a gene-by-gene basis, our model is able to extract clusters with greater
-      functional coherence than existing methods. By combining gene expression and
-      transcription factor binding (ChIP-chip) data in this way, we are better able
-      to determine the groups of genes that are most likely to represent underlying
-      TMs.<br>Availability: If interested in the code for the work presented in this
-      article, please contact the authors.'
+      transcriptional modules in both datasets.Results: We find that by working on
+      a gene-by-gene basis, our model is able to extract clusters with greater functional
+      coherence than existing methods. By combining gene expression and transcription
+      factor binding (ChIP-chip) data in this way, we are better able to determine
+      the groups of genes that are most likely to represent underlying TMs.Availability:
+      If interested in the code for the work presented in this article, please contact
+      the authors.'
     author:
     - first: R.
       last: Savage
@@ -16737,16 +16705,16 @@ entries:
     abstract: 'Background: Although the use of clustering methods has rapidly become
       one of the standard computational approaches in the literature of microarray
       gene expression data analysis, little attention has been paid to uncertainty
-      in the results obtained.<br> Results: We present an R/Bioconductor port of a
-      fast novel algorithm for Bayesian agglomerative hierarchical clustering and
-      demonstrate its use in clustering gene expression microarray data. The method
-      performs bottom-up hierarchical clustering, using a Dirichlet Process (infinite
-      mixture) to model uncertainty in the data and Bayesian model selection to decide
-      at each step which clusters to merge.<br> Conclusion: Biologically plausible
-      results are presented from a well studied data set: expression profiles of A.
-      thaliana subjected to a variety of biotic and abiotic stresses. Our method avoids
-      several limitations of traditional methods, for example how many clusters there
-      should be and how to choose a principled distance metric.'
+      in the results obtained. Results: We present an R/Bioconductor port of a fast
+      novel algorithm for Bayesian agglomerative hierarchical clustering and demonstrate
+      its use in clustering gene expression microarray data. The method performs bottom-up
+      hierarchical clustering, using a Dirichlet Process (infinite mixture) to model
+      uncertainty in the data and Bayesian model selection to decide at each step
+      which clusters to merge. Conclusion: Biologically plausible results are presented
+      from a well studied data set: expression profiles of A. thaliana subjected to
+      a variety of biotic and abiotic stresses. Our method avoids several limitations
+      of traditional methods, for example how many clusters there should be and how
+      to choose a principled distance metric.'
     author:
     - first: R.
       last: Savage
@@ -16795,9 +16763,7 @@ entries:
       on a food science data set compared to Gaussian process regression and tensor
       factorization using PARAFAC and GEMANOVA models.
     address: Montréal, QC, Canada
-    annote: <a href="http://mikkelschmidt.dk/uploads/media/talk_icml2009_01.pdf">slides</a>.
-      <a href="http://mikkelschmidt.dk/uploads/media/poster_icml2009_01.pdf">poster</a>.
-      <a href="http://videolectures.net/icml09_schmidt_ffuw/">video</a>.
+    annote: slides. poster. video.
     author:
     - first: Mikkel
       last: Schmidt
@@ -16827,7 +16793,7 @@ entries:
       different from features extracted using existing related matrix factorization
       techniques.
     address: Cambridge, MA, USA
-    annote: <a href="http://mikkelschmidt.dk/index.php?id=23   amp;cHash=9da63395ee586d4767b1fd35337bd5dd   amp;tx_ttnews[tt_news]=47   amp;tx_ttnews[backPid]=2">code</a>.
+    annote: code.
     author:
     - first: Mikkel
       last: Schmidt
@@ -16986,8 +16952,7 @@ entries:
       estimate we present an iterated conditional modes algorithm that rivals existing
       state-of-the-art NMF algorithms on an image feature extraction problem.
     address: Paraty, Brazil
-    annote: <a href="http://mikkelschmidt.dk/uploads/media/talk_ica2009.pdf">slides</a>.
-      <a href="http://mikkelschmidt.dk/uploads/media/bayesnmf_01.zip">code</a>.
+    annote: slides. code.
     author:
     - first: Mikkel
       last: Schmidt
@@ -17208,7 +17173,7 @@ entries:
       last: Vákár
     - first: Sam
       last: Staton
-    - first: H<!>ongseok
+    - first: Hongseok
       last: Yang
     - first: Yufei
       last: Cai
@@ -17426,7 +17391,7 @@ entries:
       identifying and correcting mislabeled examples, classifying minority-group samples,
       prioritizing points relevant for training and enabling scalable human auditing
       of relevant examples.'
-    annote: 'Project webpage: <a href="https://metadata-archaeology.github.io/">https://metadata-archaeology.github.io/</a>'
+    annote: 'Project webpage: https://metadata-archaeology.github.io/'
     author:
     - first: Shoaib
       last: Siddiqui
@@ -17460,7 +17425,7 @@ entries:
       A Bayesian nonparametric classification model is built upon this graphical representation
       and evaluated with several empirical studies.'
     address: Cambridge, MA, USA
-    annote: Code at <a href="http://www.homepages.ucl.ac.uk/ ucgtrbd/code/xgp">http://www.homepages.ucl.ac.uk/ ucgtrbd/code/xgp</a>
+    annote: Code at http://www.homepages.ucl.ac.uk/ ucgtrbd/code/xgp
     author:
     - first: R.
       last: Silva
@@ -17556,7 +17521,7 @@ entries:
       and how to learn parameters. This requires a non-standard parameterization and
       raises difficult non-linear optimization issues.
     address: Clearwater Beach, FL, USA
-    annote: Code at <a href="http://www.homepages.ucl.ac.uk/ ucgtrbd/code/fmog-version0.zip">http://www.homepages.ucl.ac.uk/ ucgtrbd/code/fmog-version0.zip</a>
+    annote: Code at http://www.homepages.ucl.ac.uk/ ucgtrbd/code/fmog-version0.zip
     author:
     - first: R.
       last: Silva
@@ -17867,16 +17832,16 @@ entries:
     abstract: We present a new Gaussian process (GP) regression model whose covariance
       is parameterized by the the locations of M pseudo-input points, which we learn
       by a gradient based optimization. We take M   lt;   lt;N, where N is the number
-      of real data points, and hence obtain a sparse regression method which has O(NM<sup>2</sup>)
-      training cost and O(M<sup>2</sup>) prediction cost per test case. We also find
-      hyperparameters of the covariance function in the same joint optimization. The
-      method can be viewed as a Bayesian regression model with particular input dependent
-      noise. The method turns out to be closely related to several other sparse GP
-      approaches, and we discuss the relation in detail. We finally demonstrate its
-      performance on some large data sets, and make a direct comparison to other sparse
-      GP methods. We show that our method can match full GP performance with small
-      M, i.e. very sparse solutions, and it significantly outperforms other approaches
-      in this regime.
+      of real data points, and hence obtain a sparse regression method which has O(NM2)
+      training cost and O(M2) prediction cost per test case. We also find hyperparameters
+      of the covariance function in the same joint optimization. The method can be
+      viewed as a Bayesian regression model with particular input dependent noise.
+      The method turns out to be closely related to several other sparse GP approaches,
+      and we discuss the relation in detail. We finally demonstrate its performance
+      on some large data sets, and make a direct comparison to other sparse GP methods.
+      We show that our method can match full GP performance with small M, i.e. very
+      sparse solutions, and it significantly outperforms other approaches in this
+      regime.
     address: Cambridge, MA
     author:
     - first: Edward
@@ -17896,24 +17861,24 @@ entries:
     publisher: The MIT Press
     title: Sparse Gaussian Processes using Pseudo-inputs
     type: InCollection
-    url: http://www.gatsby.ucl.ac.uk/ snelson/SPGP_up.pdf
+    url: http://www.gatsby.ucl.ac.uk/~snelson/SPGP_up.pdf
     year: '2006'
   SneGha06b:
     abstract: The sparse pseudo-input Gaussian process (SPGP) is a new approximation
       method for speeding up GP regression in the case of a large number of data points
       N. The approximation is controlled by the gradient optimization of a small set
-      of M pseudo-inputs, thereby reducing complexity from O(N<sup>3</sup>) to O(NM<sup>2</sup>).
-      One limitation of the SPGP is that this optimization space becomes impractically
-      big for high dimensional data sets. This paper addresses this limitation by
-      performing automatic dimensionality reduction. A projection of the input space
-      to a low dimensional space is learned in a supervised manner, alongside the
-      pseudo-inputs, which now live in this reduced space. The paper also investigates
-      the suitability of the SPGP for modeling data with input-dependent noise. A
-      further extension of the model is made to make it even more powerful in this
-      regard - we learn an uncertainty parameter for each pseudo-input. The combination
-      of sparsity, reduced dimension, and input-dependent noise makes it possible
-      to apply GPs to much larger and more complex data sets than was previously practical.
-      We demonstrate the benefits of these methods on several synthetic and real world
+      of M pseudo-inputs, thereby reducing complexity from O(N3) to O(NM2). One limitation
+      of the SPGP is that this optimization space becomes impractically big for high
+      dimensional data sets. This paper addresses this limitation by performing automatic
+      dimensionality reduction. A projection of the input space to a low dimensional
+      space is learned in a supervised manner, alongside the pseudo-inputs, which
+      now live in this reduced space. The paper also investigates the suitability
+      of the SPGP for modeling data with input-dependent noise. A further extension
+      of the model is made to make it even more powerful in this regard - we learn
+      an uncertainty parameter for each pseudo-input. The combination of sparsity,
+      reduced dimension, and input-dependent noise makes it possible to apply GPs
+      to much larger and more complex data sets than was previously practical. We
+      demonstrate the benefits of these methods on several synthetic and real world
       problems.
     author:
     - first: Edward
@@ -17931,7 +17896,7 @@ entries:
     publisher: AUAI Press
     title: Variable noise and dimensionality reduction for sparse Gaussian processes
     type: InProceedings
-    url: http://www.gatsby.ucl.ac.uk/ snelson/snelson_uai.pdf
+    url: http://www.gatsby.ucl.ac.uk/~snelson/snelson_uai.pdf
     year: '2006'
   SneGha07:
     abstract: Gaussian process (GP) models are flexible probabilistic nonparametric
@@ -17945,10 +17910,9 @@ entries:
       these different approaches work well or fail. We then proceed to develop a new
       sparse GP approximation which is a combination of both the global and local
       approaches. Theoretically we show that it is derived as a natural extension
-      of the framework developed by <a href="/pub/#QuiRas05">Quiñonero-Candela and
-      Rasmussen</a> for sparse GP approximations. We demonstrate the benefits of the
-      combined approximation on some 1D examples for illustration, and on some large
-      real-world data sets.
+      of the framework developed by Quiñonero-Candela and Rasmussen for sparse GP
+      approximations. We demonstrate the benefits of the combined approximation on
+      some 1D examples for illustration, and on some large real-world data sets.
     author:
     - first: Edward
       last: Snelson
@@ -17964,7 +17928,7 @@ entries:
     publisher: Omnipress
     title: Local and global sparse Gaussian process approximations
     type: InProceedings
-    url: http://www.gatsby.ucl.ac.uk/ snelson/localGP.pdf
+    url: http://www.gatsby.ucl.ac.uk/~snelson/localGP.pdf
     year: '2007'
   SneRasGha04:
     abstract: We generalise the Gaussian process (GP) framework for regression by
@@ -18323,7 +18287,7 @@ entries:
     publisher: IEEE Computer Society
     title: Improving PPM with dynamic parameter updates
     type: inproceedings
-    url: http://cstein.kings.cam.ac.uk/ chris/ppm-dp.pdf
+    url: http://cstein.kings.cam.ac.uk/~chris/ppm-dp.pdf
     year: '2015'
   Ste16:
     abstract: Most of the world's digital data is currently encoded in a sequential
@@ -18496,15 +18460,15 @@ entries:
     year: '2012'
   SteGhaGoretal09:
     abstract: The Infinite Hidden Markov Model (IHMM) extends hidden Markov models
-      to have a countably infinite number of hidden states (<a href="/pub/#BeaGhaRas02">Beal
-      et al., 2002</a>; Teh et al., 2006). We present a generalization of this framework
-      that introduces nearly block-diagonal structure in the transitions between the
-      hidden states, where blocks correspond to "sub-behaviors" exhibited by data
-      sequences. In identifying such structure, the model classifies, or partitions,
-      sequence data according to these sub-behaviors in an unsupervised way. We present
-      an application of this model to artificial data, a video gesture classification
-      task, and a musical theme labeling task, and show that components of the model
-      can also be applied to graph segmentation.
+      to have a countably infinite number of hidden states (Beal et al., 2002; Teh
+      et al., 2006). We present a generalization of this framework that introduces
+      nearly block-diagonal structure in the transitions between the hidden states,
+      where blocks correspond to "sub-behaviors" exhibited by data sequences. In identifying
+      such structure, the model classifies, or partitions, sequence data according
+      to these sub-behaviors in an unsupervised way. We present an application of
+      this model to artificial data, a video gesture classification task, and a musical
+      theme labeling task, and show that components of the model can also be applied
+      to graph segmentation.
     address: Clearwater Beach, FL, USA
     author:
     - first: T.
@@ -18922,7 +18886,7 @@ entries:
       empirical results obtained for a benchmark data set collected in an outdoor
       environment, and using a multi-robot mapping simulation.
     author:
-    - first: S<!>ebastian
+    - first: Sebastian
       last: Thrun
     - first: Yufeng
       last: Liu
@@ -18980,7 +18944,7 @@ entries:
     title: Learning Stationary Time Series using Gaussian Process with Nonparametric
       Kernels
     type: inproceedings
-    url: http://www.cmm.uchile.cl/ ftobar/data/Tobar_Bui_Turner_NIPS2015.pdf
+    url: http://www.cmm.uchile.cl/~ftobar/data/Tobar_Bui_Turner_NIPS2015.pdf
     year: '2015'
   TobDjuMan15:
     abstract: A novel framework for the design of state-space models (SSMs) is proposed
@@ -19435,7 +19399,7 @@ entries:
     school: Gatsby Computational Neuroscience Unit, UCL
     title: Statistical Models for Natural Sounds
     type: phdthesis
-    url: http://www.gatsby.ucl.ac.uk/ turner/Publications/turner-2010.html
+    url: http://www.gatsby.ucl.ac.uk/~turner/Publications/turner-2010.html
     year: '2010'
   Tur11:
     abstract: 'This thesis details several applications of Gaussian processes (GPs)
@@ -19446,29 +19410,28 @@ entries:
       generality of the Gaussian process time series methods. These methodologies
       are evaluated on predictive performance on six real world data sets, which include
       three environmental data sets, one financial, one biological, and one from industrial
-      well drilling.<br> Gaussian processes are capable of generalizing standard linear
+      well drilling. Gaussian processes are capable of generalizing standard linear
       time series models. We cover two approaches: the Gaussian process time series
       model (GPTS) and the autoregressive Gaussian process (ARGP). We cover a variety
       of methods that greatly reduce the computational and memory complexity of Gaussian
-      process approaches, which are generally cubic in computational complexity.<br>
-      Two different improvements to state space based approaches are covered. First,
-      Gaussian process inference and learning (GPIL) generalizes linear dynamical
-      systems (LDS), for which the Kalman filter is based, to general nonlinear systems
-      for nonparametric system identification. Second, we address pathologies in the
-      unscented Kalman filter (UKF). We use Gaussian process optimization (GPO) to
-      learn UKF settings that minimize the potential for sigma point collapse.<br>
-      We show how to embed mentioned Gaussian process approaches to time series into
-      a change point framework. Old data, from an old regime, that hinders predictive
-      performance is automatically and elegantly phased out. The computational improvements
-      for Gaussian process time series approaches are of even greater use in the change
-      point framework. We also present a supervised framework learning a change point
-      model when change point labels are available in training.<br> These mentioned
-      methodologies significantly improve predictive performance on the diverse set
-      of data sets selected.'
+      process approaches, which are generally cubic in computational complexity. Two
+      different improvements to state space based approaches are covered. First, Gaussian
+      process inference and learning (GPIL) generalizes linear dynamical systems (LDS),
+      for which the Kalman filter is based, to general nonlinear systems for nonparametric
+      system identification. Second, we address pathologies in the unscented Kalman
+      filter (UKF). We use Gaussian process optimization (GPO) to learn UKF settings
+      that minimize the potential for sigma point collapse. We show how to embed mentioned
+      Gaussian process approaches to time series into a change point framework. Old
+      data, from an old regime, that hinders predictive performance is automatically
+      and elegantly phased out. The computational improvements for Gaussian process
+      time series approaches are of even greater use in the change point framework.
+      We also present a supervised framework learning a change point model when change
+      point labels are available in training. These mentioned methodologies significantly
+      improve predictive performance on the diverse set of data sets selected.'
     address: Cambridge, UK
     author:
     - first: Ryan
-      last: T<!>urner
+      last: Turner
       middle: Darby
     cat: gp
     school: University of Cambridge, Department of Engineering
@@ -19488,7 +19451,7 @@ entries:
     address: Kittilä, Finland
     author:
     - first: Ryan
-      last: T<!>urner
+      last: Turner
     - first: Steven
       last: Bottone
     - first: Zoubin
@@ -19514,10 +19477,10 @@ entries:
     year: '2010'
   TurDeiRas09:
     address: Whistler, BC, Canada
-    annote: <a href="http://mlg.eng.cam.ac.uk/rdturner/NLDSposter.pdf">poster</a>.
+    annote: poster.
     author:
     - first: Ryan
-      last: T<!>urner
+      last: Turner
     - first: Marc
       last: Deisenroth
       middle: Peter
@@ -19542,10 +19505,10 @@ entries:
       to iterate between inference in the latent state-space and learning the parameters
       of the underlying GP dynamics model.
     address: Chia Laguna, Sardinia, Italy
-    annote: <a href="http://mlg.eng.cam.ac.uk/rdturner/NLDSposterAISTATS.pdf">poster</a>.
+    annote: poster.
     author:
     - first: Ryan
-      last: T<!>urner
+      last: Turner
     - first: Marc
       last: Deisenroth
       middle: Peter
@@ -19583,7 +19546,7 @@ entries:
     address: Kittilä, Finland
     author:
     - first: Ryan
-      last: T<!>urner
+      last: Turner
     - first: Carl
       last: Rasmussen
       middle: Edward
@@ -19619,7 +19582,7 @@ entries:
       computational complexity than the other methods. We call our method UKF-L.
     author:
     - first: Ryan
-      last: T<!>urner
+      last: Turner
       middle: D.
     - first: Carl
       last: Rasmussen
@@ -19650,11 +19613,10 @@ entries:
       likelihood of the BOCPD model, a closed-form quantity which can be computed
       sequentially. We illustrate performance on three real-world datasets.
     address: Whistler, BC, Canada
-    annote: <a href="http://mlg.eng.cam.ac.uk/rdturner/BOCPDposter.pdf">poster</a>,
-      <a href="http://mlg.eng.cam.ac.uk/rdturner/BOCPDtalk.pdf">slides</a>.
+    annote: poster, slides.
     author:
     - first: Ryan
-      last: T<!>urner
+      last: Turner
     - first: Yunus
       last: Saatçi
     - first: Carl
@@ -19695,7 +19657,7 @@ entries:
     pages: 544–551
     title: Probabilistic Amplitude Demodulation
     type: inproceedings
-    url: http://www.gatsby.ucl.ac.uk/ turner/Publications/turner-and-sahani-2007b.html
+    url: http://www.gatsby.ucl.ac.uk/~turner/Publications/turner-and-sahani-2007b.html
     year: '2007'
   TurSah08a:
     abstract: 'Natural sounds are structured on many time-scales. A typical segment
@@ -19737,7 +19699,7 @@ entries:
     publisher: mit
     title: Modeling natural sounds with modulation cascade processes
     type: inproceedings
-    url: http://www.gatsby.ucl.ac.uk/ turner/Publications/turner-and-sahani-2008a.html
+    url: http://www.gatsby.ucl.ac.uk/~turner/Publications/turner-and-sahani-2008a.html
     volume: '20'
     year: '2008'
   TurSah10a:
@@ -19764,7 +19726,7 @@ entries:
     title: Statistical inference for single- and multi-band probabilistic amplitude
       demodulation.
     type: InProceedings
-    url: http://www.gatsby.ucl.ac.uk/ turner/Publications/turner-and-sahani-2010a.html
+    url: http://www.gatsby.ucl.ac.uk/~turner/Publications/turner-and-sahani-2010a.html
     year: '2010'
   TurSah11a:
     abstract: Variational methods are a key component of the approximate inference
@@ -19804,7 +19766,7 @@ entries:
     title: Two problems with variational expectation maximisation for time-series
       models
     type: incollection
-    url: http://www.gatsby.ucl.ac.uk/ turner/Publications/turner-and-sahani-2011a.html
+    url: http://www.gatsby.ucl.ac.uk/~turner/Publications/turner-and-sahani-2011a.html
     year: '2011'
   TurSah11b:
     abstract: 'Demodulation is an ill-posed problem whenever both carrier and envelope
@@ -19834,7 +19796,7 @@ entries:
     pages: 2398–2411
     title: Demodulation as Probabilistic Inference
     type: article
-    url: http://www.gatsby.ucl.ac.uk/ turner/Publications/turner-and-sahani-2011b.html
+    url: http://www.gatsby.ucl.ac.uk/~turner/Publications/turner-and-sahani-2011b.html
     volume: '19'
     year: '2011'
   TurSah11c:
@@ -19863,7 +19825,7 @@ entries:
     publisher: The MIT Press
     title: Probabilistic amplitude and frequency demodulation
     type: incollection
-    url: http://www.gatsby.ucl.ac.uk/ turner/Publications/turner-and-sahani-2011c.html
+    url: http://www.gatsby.ucl.ac.uk/~turner/Publications/turner-and-sahani-2011c.html
     year: '2011'
   TurSah12a:
     ISSN: 1520-6149
@@ -19889,7 +19851,7 @@ entries:
     title: Decomposing signals into a sum of amplitude and frequency modulated sinusoids
       using probabilistic inference
     type: inproceedings
-    url: http://www.gatsby.ucl.ac.uk/ turner/Publications/turner-and-sahani-2012a.html
+    url: http://www.gatsby.ucl.ac.uk/~turner/Publications/turner-and-sahani-2012a.html
     year: '2012'
   TurSah2007a:
     abstract: The brain extracts useful features from a maelstrom of sensory information,
@@ -19922,7 +19884,7 @@ entries:
     publisher: MIT Press
     title: A Maximum-Likelihood Interpretation for Slow Feature Analysis
     type: article
-    url: http://www.gatsby.ucl.ac.uk/ turner/Publications/turner-and-sahani-2007a.html
+    url: http://www.gatsby.ucl.ac.uk/~turner/Publications/turner-and-sahani-2007a.html
     volume: '19'
     year: '2007'
   UedGha02a:
@@ -20345,7 +20307,7 @@ entries:
       neither an ensemble or an E2E system. The work also uncovers links to Dropout,
       and raises questions around the nature of ensemble diversity and multi-branch
       networks.'
-    annote: <a href="https://arxiv.org/abs/1902.04422">arXiv</a>
+    annote: arXiv
     author:
     - first: Andrew
       last: Webb
@@ -20403,8 +20365,7 @@ entries:
       counting numbers. We explore approximation error and shed light on the empirical
       success of the Bethe approximation.
     address: Amsterdam
-    annote: <a href="http://auai.org/uai2015/proceedings/supp/9_supp.pdf">Supplementary
-      Material</a>
+    annote: Supplementary Material
     author:
     - first: Adrian
       last: Weller
@@ -20498,8 +20459,7 @@ entries:
       functions of general pairwise multi-label models that depends only on the topology.
       We demonstrate that clamping a few wisely chosen variables can be of practical
       value by dramatically reducing approximation error.
-    annote: <a href="http://papers.nips.cc/paper/5529-clamping-variables-and-approximate-inference-supplemental.zip">Supplementary
-      Material</a>
+    annote: Supplementary Material
     author:
     - first: Adrian
       last: Weller
@@ -20558,64 +20518,64 @@ entries:
       without human intervention. Bayesian nonparametric models, which can uniquely
       represent expressive prior information and detailed inductive biases, provide
       a distinct opportunity to develop intelligent systems, with applications in
-      essentially any learning and prediction task.<br> Gaussian processes are rich
-      distributions over functions, which provide a Bayesian nonparametric approach
-      to smoothing and interpolation. A covariance kernel determines the support and
-      inductive biases of a Gaussian process. In this thesis, we introduce new covariance
-      kernels to enable fast automatic pattern discovery and extrapolation with Gaussian
-      processes.<br> In the introductory chapter, we discuss the high level principles
-      behind all of the models in this thesis: 1) we can typically improve the predictive
-      performance of a model by accounting for additional structure in data; 2) to
-      automatically discover rich structure in data, a model must have large support
-      and the appropriate inductive biases; 3) we most need expressive models for
-      large datasets, which typically provide more information for learning structure,
-      and 4) we can often exploit the existing inductive biases (assumptions) or structure
-      of a model for scalable inference, without the need for simplifying assumptions.<br>
-      In the context of this introduction, we then discuss, in chapter 2, Gaussian
-      processes as kernel machines, and my views on the future of Gaussian process
-      research.<br> In chapter 3 we introduce the Gaussian process regression network
-      (GPRN) framework, a multi-output Gaussian process method which scales to many
-      output variables, and accounts for input-dependent correlations between the
-      outputs. Underlying the GPRN is a highly expressive kernel, formed using an
-      adaptive mixture of latent basis functions in a neural network like architecture.
-      The GPRN is capable of discovering expressive structure in data. We use the
-      GPRN to model the time-varying expression levels of 1000 genes, the spatially
-      varying concentrations of several distinct heavy metals, and multivariate volatility
-      (input dependent noise covariances) between returns on equity indices and currency
-      exchanges, which is particularly valuable for portfolio allocation. We generalise
-      the GPRN to an adaptive network framework, which does not depend on Gaussian
-      processes or Bayesian nonparametrics; and we outline applications for the adaptive
-      network in nuclear magnetic resonance (NMR) spectroscopy, ensemble learning,
-      and change-point modelling.<br> In chapter 4 we introduce simple closed form
-      kernel for automatic pattern discovery and extrapolation. These spectral mixture
-      (SM) kernels are derived by modelling the spectral densiy of a kernel (its Fourier
-      transform) using a scale-location Gaussian mixture. SM kernels form a basis
-      for all stationary covariances, and can be used as a drop-in replacement for
-      standard kernels, as they retain simple and exact learning and inference procedures.
-      We use the SM kernel to discover patterns and perform long range extrapolation
-      on atmospheric CO2 trends and airline passenger data, as well as on synthetic
-      examples. We also show that the SM kernel can be used to automatically reconstruct
-      several standard covariances. The SM kernel and the GPRN are highly complementary;
-      we show that using the SM kernel with adaptive basis functions in a GPRN induces
-      an expressive prior over non-stationary kernels.<br> In chapter 5 we introduce
-      GPatt, a method for fast multidimensional pattern extrapolation, particularly
-      suited to imge and movie data. Without human intervention – no hand crafting
-      of kernel features, and no sophisticated initialisation procedures – we show
-      that GPatt can solve large scale pattern extrapolation, inpainting and kernel
-      discovery problems, including a problem with 383,400 training points. GPatt
-      exploits the structure of a spectral mixture product (SMP) kernel, for fast
-      yet exact inference procedures. We find that GPatt significantly outperforms
-      popular alternative scalable gaussian process methods in speed and accuracy.
-      Moreover, we discover profound differences between each of these methods, suggesting
-      expressive kernels, nonparametric representations, and scalable inference which
-      exploits existing model structure are useful in combination for modelling large
-      scale multidimensional patterns.<br> The models in this dissertation have proven
-      to be scalable and with greatly enhanced predictive performance over the alternatives:
-      the extra structure being modelled is an important part of a wide variety of
-      real data – including problems in econometrics, gene expression, geostatistics,
-      nuclear magnetic resonance spectroscopy, ensemble learning, multi-output regression,
-      change point modelling, time series, multivariate volatility, image inpainting,
-      texture extrapolation, video extrapolation, acoustic modelling, and kernel discovery.'
+      essentially any learning and prediction task. Gaussian processes are rich distributions
+      over functions, which provide a Bayesian nonparametric approach to smoothing
+      and interpolation. A covariance kernel determines the support and inductive
+      biases of a Gaussian process. In this thesis, we introduce new covariance kernels
+      to enable fast automatic pattern discovery and extrapolation with Gaussian processes.
+      In the introductory chapter, we discuss the high level principles behind all
+      of the models in this thesis: 1) we can typically improve the predictive performance
+      of a model by accounting for additional structure in data; 2) to automatically
+      discover rich structure in data, a model must have large support and the appropriate
+      inductive biases; 3) we most need expressive models for large datasets, which
+      typically provide more information for learning structure, and 4) we can often
+      exploit the existing inductive biases (assumptions) or structure of a model
+      for scalable inference, without the need for simplifying assumptions. In the
+      context of this introduction, we then discuss, in chapter 2, Gaussian processes
+      as kernel machines, and my views on the future of Gaussian process research.
+      In chapter 3 we introduce the Gaussian process regression network (GPRN) framework,
+      a multi-output Gaussian process method which scales to many output variables,
+      and accounts for input-dependent correlations between the outputs. Underlying
+      the GPRN is a highly expressive kernel, formed using an adaptive mixture of
+      latent basis functions in a neural network like architecture. The GPRN is capable
+      of discovering expressive structure in data. We use the GPRN to model the time-varying
+      expression levels of 1000 genes, the spatially varying concentrations of several
+      distinct heavy metals, and multivariate volatility (input dependent noise covariances)
+      between returns on equity indices and currency exchanges, which is particularly
+      valuable for portfolio allocation. We generalise the GPRN to an adaptive network
+      framework, which does not depend on Gaussian processes or Bayesian nonparametrics;
+      and we outline applications for the adaptive network in nuclear magnetic resonance
+      (NMR) spectroscopy, ensemble learning, and change-point modelling. In chapter
+      4 we introduce simple closed form kernel for automatic pattern discovery and
+      extrapolation. These spectral mixture (SM) kernels are derived by modelling
+      the spectral densiy of a kernel (its Fourier transform) using a scale-location
+      Gaussian mixture. SM kernels form a basis for all stationary covariances, and
+      can be used as a drop-in replacement for standard kernels, as they retain simple
+      and exact learning and inference procedures. We use the SM kernel to discover
+      patterns and perform long range extrapolation on atmospheric CO2 trends and
+      airline passenger data, as well as on synthetic examples. We also show that
+      the SM kernel can be used to automatically reconstruct several standard covariances.
+      The SM kernel and the GPRN are highly complementary; we show that using the
+      SM kernel with adaptive basis functions in a GPRN induces an expressive prior
+      over non-stationary kernels. In chapter 5 we introduce GPatt, a method for fast
+      multidimensional pattern extrapolation, particularly suited to imge and movie
+      data. Without human intervention – no hand crafting of kernel features, and
+      no sophisticated initialisation procedures – we show that GPatt can solve large
+      scale pattern extrapolation, inpainting and kernel discovery problems, including
+      a problem with 383,400 training points. GPatt exploits the structure of a spectral
+      mixture product (SMP) kernel, for fast yet exact inference procedures. We find
+      that GPatt significantly outperforms popular alternative scalable gaussian process
+      methods in speed and accuracy. Moreover, we discover profound differences between
+      each of these methods, suggesting expressive kernels, nonparametric representations,
+      and scalable inference which exploits existing model structure are useful in
+      combination for modelling large scale multidimensional patterns. The models
+      in this dissertation have proven to be scalable and with greatly enhanced predictive
+      performance over the alternatives: the extra structure being modelled is an
+      important part of a wide variety of real data – including problems in econometrics,
+      gene expression, geostatistics, nuclear magnetic resonance spectroscopy, ensemble
+      learning, multi-output regression, change point modelling, time series, multivariate
+      volatility, image inpainting, texture extrapolation, video extrapolation, acoustic
+      modelling, and kernel discovery.'
     address: Cambridge, UK
     author:
     - first: Andrew
@@ -20639,12 +20599,12 @@ entries:
       by discovering patterns and performing long range extrapolation on synthetic
       examples, as well as atmospheric CO2 trends and airline passenger data. We also
       show that we can reconstruct standard covariances within our framework.
-    annote: arXiv:<a href="http://arxiv.org/abs/1302.4245">1302.4245</a>
+    annote: arXiv:1302.4245
     author:
     - first: Andrew
       last: Wilson
       middle: Gordon
-    - first: R<!>yan
+    - first: Ryan
       last: Adams
       middle: Prescott
     booktitle: 30th International Conference on Machine Learning
@@ -20676,8 +20636,7 @@ entries:
       our model can outperform GARCH on simulated and financial data. And unlike GARCH,
       GCPV can easily handle missing data, incorporate covariates other than time,
       and model a rich class of covariance structures.
-    annote: <a href="http://books.nips.cc/papers/files/nips23/NIPS2010_0784.extra.zip">Supplementary
-      Material</a>, <a href="http://books.nips.cc/papers/files/nips23/NIPS2010_0784_slide.pdf">slides</a>.
+    annote: Supplementary Material, slides.
     author:
     - first: Andrew
       last: Wilson
@@ -20702,8 +20661,7 @@ entries:
       introduce general procedures for inference and prediction, and show that it
       outperforms its main competitor, multivariate GARCH, even on financial data
       that especially suits GARCH.
-    annote: <a href="http://mlg.eng.cam.ac.uk/andrew/gwpsupp.pdf">Supplementary Material</a>,
-      Best Student Paper Award
+    annote: Supplementary Material, Best Student Paper Award
     author:
     - first: Andrew
       last: Wilson
@@ -20794,7 +20752,7 @@ entries:
       Gaussian process models and three multivariate volatility models on benchmark
       datasets, including a 1000 dimensional gene expression dataset.
     address: Cambridge, UK
-    annote: arXiv:<a href="http://arxiv.org/abs/1110.4411">1110.4411</a>
+    annote: arXiv:1110.4411
     author:
     - first: Andrew
       last: Wilson
@@ -20912,7 +20870,7 @@ entries:
       convolutional and RBF kernels to further improve performance. We hope that this
       illustration of the usefulness of a marginal likelihood will help automate discovering
       architectures in larger models.
-    annote: <a href="https://arxiv.org/abs/1709.01894">arXiv</a>
+    annote: arXiv
     author:
     - first: Mark
       last: Wilk
@@ -21014,7 +20972,7 @@ entries:
     - first: Daniel
       last: Holland
       middle: J.
-    - first: S<!>ebastian
+    - first: Sebastian
       last: Nowozin
     - first: Mick
       last: Mantle
@@ -21384,7 +21342,7 @@ entries:
     booktitle: NIPS
     cat: nlp
     editor:
-    - first: S<!>ebastian
+    - first: Sebastian
       last: Thrun
     - first: Lawrence
       last: Saul
@@ -21558,7 +21516,7 @@ entries:
     booktitle: NIPS
     cat: ssl
     editor:
-    - first: S<!>ebastian
+    - first: Sebastian
       last: Thrun
     - first: Lawrence
       last: Saul

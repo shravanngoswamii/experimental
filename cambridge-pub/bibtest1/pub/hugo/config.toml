@@ -1,0 +1,4 @@
+baseURL = 'https://mlg.eng.cam.ac.uk/pub/'
+languageCode = 'en-us'
+title = 'Cambridge Machine Learning Group Publications'
+disableKinds = ["taxonomy", "term"]

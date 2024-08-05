@@ -14,49 +14,99 @@ input_file="mlg.yaml"
 output_file="mlg.md"
 
 # Create the header of the markdown file
-echo "---" > "$output_file"
-echo "title: Publications" >> "$output_file"
-echo "---" >> "$output_file"
-echo "" >> "$output_file"
+cat << EOF > "$output_file"
+---
+title: Publications
+---
+
+# Table of Contents
+
+EOF
+
+# Function to sanitize and format author names
+format_authors() {
+    echo "$1" | sed -E 's/\[|\]//g; s/\{[^}]*\}//g; s/,([^ ])/,\1/g; s/  / /g'
+}
 
 # Get all unique categories
 categories=$(yq e '.entries[].cat' "$input_file" | tr ' ' '\n' | sort | uniq)
 
+# Create Table of Contents
+for category in $categories
+do
+    echo "- [${category}](#${category})" >> "$output_file"
+done
+
+echo "" >> "$output_file"
+
 # Process each category
 for category in $categories
 do
-    echo "## $category" >> "$output_file"
+    echo "## ${category}" >> "$output_file"
     echo "" >> "$output_file"
 
     # Get all entries for this category
-    yq e ".entries | to_entries[] | select(.value.cat | contains(\"$category\"))" "$input_file" | while read -r line
+    yq e ".entries | to_entries[] | select(.value.cat | split(\" \") | contains([\"$category\"])) | .key" "$input_file" | while read -r key
     do
-        if [[ $line == "- key:"* ]]; then
-            # Start of a new entry
-            key=$(echo "$line" | awk '{print $3}')
-            
-            # Extract and format the author information
-            authors=$(yq e ".entries.$key.author[] | [.first, .middle, .last] | join(\" \")" "$input_file" | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/, /g')
+        # Extract the title and URL
+        title=$(yq e ".entries.$key.title" "$input_file")
+        url=$(yq e ".entries.$key.url" "$input_file")
+        
+        # Format the title with URL
+        if [ "$url" = "." ] || [ -z "$url" ]; then
+            formatted_title="[$title](/.old-setup/hugo/static/pdf/${key}.pdf)"
+        else
+            formatted_title="[$title]($url)"
+        fi
 
-            # Extract the title
-            title=$(yq e ".entries.$key.title" "$input_file")
+        # Extract and format the author information
+        authors=$(yq e ".entries.$key.author[] | [.first, .middle // \"\", .last] | join(\" \")" "$input_file" | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/, /g')
+        authors=$(format_authors "$authors")
 
-            # Extract other fields (excluding author, title, cat, and abstract)
-            other_fields=$(yq e ".entries.$key | del(.author, .title, .cat, .abstract) | to_entries | .[] | \"\(.key): \(.value)\"" "$input_file" | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/, /g')
+        # Extract editors if available
+        editors=$(yq e ".entries.$key.editor[] | [.first, .middle // \"\", .last] | join(\" \")" "$input_file" | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/, /g')
+        editors=$(format_authors "$editors")
 
-            # Extract the abstract
-            abstract=$(yq e ".entries.$key.abstract" "$input_file")
+        # Extract the abstract
+        abstract=$(yq e ".entries.$key.abstract" "$input_file")
 
-            # Write the formatted entry to the output file
-            echo "### $title" >> "$output_file"
-            echo "" >> "$output_file"
-            echo "**Authors:** $authors" >> "$output_file"
-            echo "" >> "$output_file"
-            echo "**Other Information:** $other_fields" >> "$output_file"
-            echo "" >> "$output_file"
-            echo "**Abstract:** $abstract" >> "$output_file"
+        # Extract type and other relevant fields
+        type=$(yq e ".entries.$key.type" "$input_file")
+        booktitle=$(yq e ".entries.$key.booktitle" "$input_file")
+        volume=$(yq e ".entries.$key.volume" "$input_file")
+        month=$(yq e ".entries.$key.month" "$input_file")
+        year=$(yq e ".entries.$key.year" "$input_file")
+
+        # Write the formatted entry to the output file
+        echo "$formatted_title" >> "$output_file"
+        echo "**Authors:** $authors" >> "$output_file"
+        
+        if [ ! -z "$editors" ]; then
+            echo "**Editors:** $editors" >> "$output_file"
+        fi
+        
+        echo "**Abstract:** $abstract" >> "$output_file"
+        
+        # Format additional information based on type
+        if [ "$type" = "inproceedings" ]; then
+            echo -n "In " >> "$output_file"
+            if [ ! -z "$volume" ]; then
+                echo -n "Volume $volume of " >> "$output_file"
+            fi
+            echo -n "$booktitle" >> "$output_file"
+            if [ ! -z "$month" ]; then
+                echo -n ", $month" >> "$output_file"
+            fi
+            if [ ! -z "$year" ]; then
+                echo -n " $year" >> "$output_file"
+            fi
             echo "" >> "$output_file"
         fi
+
+        # Add other bibtex fields
+        yq e ".entries.$key | del(.author, .title, .cat, .abstract, .url, .type, .booktitle, .volume, .month, .year, .editor) | to_entries | .[] | \"**\(.key):** \(.value)\"" "$input_file" >> "$output_file"
+
+        echo "" >> "$output_file"
     done
 
     echo "" >> "$output_file"
