@@ -1,5 +1,0 @@
-hugo/public
-hugo/layouts/partials/ref-*.html
-cblfs-*
-.hugo_build.lock
-hugo/static/publications/
