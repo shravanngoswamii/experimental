@@ -1,0 +1,28 @@
+name: 'BibTex Tidy'
+
+on:
+  pull_request:
+    paths: ['mlg.bib']
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm install -g bibtex-tidy
+
+      - name: Run BibTex Tidy
+        run: bibtex-tidy -m --curly --tab --align=13 --sort=key --duplicates=key --no-escape --sort-fields=cat,title,shorttitle,author,year,month,day,journal,booktitle,location,on,publisher,address,series,volume,number,pages,doi,isbn,issn,url,urldate,copyright,note,metadata --no-tidy-comments --no-remove-dupe-fields --no-lowercase --wrap=80 mlg.bib
+
+      - uses: parkerbxyz/suggest-changes@v1
+        with:
+          comment: 'Please commit the suggested changes from BibTex Tidy.'
+      
