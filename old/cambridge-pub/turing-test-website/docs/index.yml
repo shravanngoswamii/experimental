@@ -1,0 +1,69 @@
+- title: Getting Started
+  subtitle: A Beginners Guide to Turing.jl
+  links:
+    - text: "Getting Started"
+      href: using-turing/getting-started/
+    - text: "Quick Start"
+      href: using-turing/quick-start/
+    - text: "Guide"
+      href: using-turing/guide/
+    - text: "Advanced Usage"
+      href: using-turing/advanced-usage/
+    - text: "Automatic Differentiation"
+      href: using-turing/automatic-differentiation/
+    - text: "Performance Tips"
+      href: using-turing/performance-tips/
+    - text: "Using DynamicHMC"
+      href: using-turing/using-dynamichmc/
+    - text: "Sampler Visualization"
+      href: using-turing/sampler-visualization/
+    - text: "External Samplers"
+      href: using-turing/external-samplers/
+
+- title: For Developers
+  subtitle: 
+  links:
+    - text: "Turing Compiler Design"
+      href: for-developers/compiler/
+    - text: "Interface Guide"
+      href: for-developers/interface/
+    - text: "How Turing implements AbstractMCMC"
+      href: for-developers/abstractmcmc-turing/
+    - text: "Variational Inference"
+      href: for-developers/variational-inference/
+
+- title: Tutorials
+  subtitle: Explore Turing.jl
+  links:
+    - text: "Introduction to Turing.jl"
+      href: tutorials/00-introduction/
+    - text: "Gaussian Mixture Model"
+      href: tutorials/01-gaussian-mixture-model/
+    - text: "Bayesian Logistic Regression"
+      href: tutorials/02-logistic-regression/
+    - text: "Bayesian Neural Network"
+      href: tutorials/03-bayesian-neural-network/
+    - text: "Bayesian Hidden Markov Models"
+      href: tutorials/04-hidden-markov-model
+    - text: "Linear Regression"
+      href: tutorials/05-linear-regression/
+    - text: Infinite Mixture Model
+      href: tutorials/06-infinite-mixture-model/
+    - text: "Bayesian Poisson Regression"
+      href: tutorials/07-poisson-regression/
+    - text: "Multinomial Logistic Regression"
+      href: tutorials/08-multinomial-logistic-regression/
+    - text: "Variational Inference"
+      href: tutorials/09-variational-inference/
+    - text: "Bayesian Differential Equations"
+      href: tutorials/10-bayesian-differential-equations/
+    - text: "Probabilistic PCA"
+      href: tutorials/11-probabilistic-pca/
+    - text: "Gaussian Process LVM"
+      href: tutorials/12-gplvm/
+    - text: "Bayesian Time Series Analysis"
+      href: tutorials/13-seasonal-time-series/
+    - text: "A Mini Turing Compiler"
+      href: tutorials/14-minituring/
+    - text: "Intro to Gaussian Processes"
+      href: tutorials/15-gaussian-processes/

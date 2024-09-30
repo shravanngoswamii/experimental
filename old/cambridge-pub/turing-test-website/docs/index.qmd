@@ -1,0 +1,14 @@
+---
+title: "Documentation"
+subtitle: Comprehensive documentation to using Turing.jl. If you are just starting out, you may want to  explore the [tutorials](/docs/tutorials/introduction/) to learn the basics.
+page-layout: article
+anchor-sections: false
+search: false
+listing:
+  id: guide-links
+  template: links.ejs
+  contents: index.yml
+---
+
+::: {#guide-links .column-screen-inset-right style="max-width: 850px;"}
+:::
