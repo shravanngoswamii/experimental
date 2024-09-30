@@ -2,7 +2,6 @@ name: 'BibTex Tidy'
 
 on:
   pull_request:
-    paths: ['mlg.bib']
 
 permissions:
   contents: read
