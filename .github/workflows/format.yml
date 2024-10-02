@@ -13,8 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
 
       - uses: actions/setup-node@v4
         with:
@@ -23,8 +21,10 @@ jobs:
       - run: npm install -g bibtex-tidy
 
       - name: Run BibTex Tidy
-        run: bibtex-tidy --curly --tab --align=13 --sort=key --duplicates=key --no-escape --sort-fields=cat,title,shorttitle,author,year,month,day,journal,booktitle,location,on,publisher,address,series,volume,number,pages,doi,isbn,issn,url,urldate,copyright,note,metadata --no-tidy-comments --no-remove-dupe-fields --no-lowercase --wrap=80 mlg.bib
-      - run: git add -A
+        run: bibtex-tidy --v2 -m --curly --tab --align=13 --sort=key --duplicates=key --no-escape --sort-fields=cat,title,shorttitle,author,year,month,day,journal,booktitle,location,on,publisher,address,series,volume,number,pages,doi,isbn,issn,url,urldate,copyright,note,metadata --no-tidy-comments --no-remove-dupe-fields --no-lowercase --wrap=80 mlg.bib
+      
+      # - run: git add -A
+
       - uses: parkerbxyz/suggest-changes@v1
         with:
           comment: 'Please commit the suggested changes from BibTex Tidy.'
