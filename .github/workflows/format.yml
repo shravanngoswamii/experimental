@@ -22,13 +22,10 @@ jobs:
       
       - run: npm install -g bibtex-tidy
 
-      - name: Run BibTex Tidy and Capture Output
-        id: bibtex_output
-        run: |
-          output=$(bibtex-tidy --curly --tab --align=13 --sort=key --duplicates=key --no-escape --sort-fields=cat,title,shorttitle,author,year,month,day,journal,booktitle,location,on,publisher,address,series,volume,number,pages,doi,isbn,issn,url,urldate,copyright,note,metadata --no-tidy-comments --no-remove-dupe-fields --no-lowercase --wrap=80 mlg.bib)
-          echo "$output" > changes.txt
-          echo "::set-output name=changes::$(cat changes.txt)"
-
+      - name: Run BibTex Tidy
+        run: bibtex-tidy -m --curly --tab --align=13 --sort=key --duplicates=key --no-escape --sort-fields=cat,title,shorttitle,author,year,month,day,journal,booktitle,location,on,publisher,address,series,volume,number,pages,doi,isbn,issn,url,urldate,copyright,note,metadata --no-tidy-comments --no-remove-dupe-fields --no-lowercase --wrap=80 mlg.bib
+      - run: git add -A
       - uses: parkerbxyz/suggest-changes@v1
         with:
-          comment: ${{ steps.bibtex_output.outputs.changes }}
+          comment: 'Please commit the suggested changes from BibTex Tidy.'
+      
