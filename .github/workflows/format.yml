@@ -6,8 +6,6 @@ on:
 
 permissions:
   contents: read
-  checks: write
-  issues: write
   pull-requests: write
 
 jobs:
@@ -19,30 +17,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      
+
       - run: npm install -g bibtex-tidy
-      - run: bibtex-tidy -v
 
       - name: Run BibTex Tidy
-        id: tidy
-        run: |
-          bibtex-tidy --curly --tab --align=13 --sort=key --duplicates=key --no-escape --sort-fields=cat,title,shorttitle,author,year,month,day,journal,booktitle,location,on,publisher,address,series,volume,number,pages,doi,isbn,issn,url,urldate,copyright,note,metadata --no-tidy-comments --no-remove-dupe-fields --no-lowercase --wrap=80 mlg.bib > tidied.bib
-          
-          # Check if there are changes
-          if ! diff -q mlg.bib tidied.bib > /dev/null; then
-            echo "The BibTeX file has been modified."
-            mv tidied.bib mlg.bib
-            echo "changed=true" >> $GITHUB_ENV
-          else
-            echo "No changes made."
-            echo "changed=false" >> $GITHUB_ENV
-          fi
+        run: bibtex-tidy -m --curly --tab --align=13 --sort=key --duplicates=key --no-escape --sort-fields=cat,title,shorttitle,author,year,month,day,journal,booktitle,location,on,publisher,address,series,volume,number,pages,doi,isbn,issn,url,urldate,copyright,note,metadata --no-tidy-comments --no-remove-dupe-fields --no-lowercase --wrap=80 mlg.bib
 
-      - name: Suggest Changes with Reviewdog
-        if: env.changed == 'true'
-        uses: reviewdog/action-suggester@v1
+      - name: Suggest Changes
+        uses: parkerbxyz/suggest-changes@v1
         with:
-          tool_name: 'bibtex-tidy'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          level: warning
-          filter_mode: diff_context
+          token: ${{ secrets.GITHUB_TOKEN }}
+          comment: 'Please commit the suggested changes from BibTex Tidy.'
