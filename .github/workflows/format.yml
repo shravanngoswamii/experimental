@@ -20,13 +20,14 @@ jobs:
 
       - run: npm install -g bibtex-tidy
 
-      - name: Run BibTex Tidy
-        run: bibtex-tidy --curly --tab --align=13 --sort=key --duplicates=key --no-escape --sort-fields=cat,title,shorttitle,author,year,month,day,journal,booktitle,location,on,publisher,address,series,volume,number,pages,doi,isbn,issn,url,urldate,copyright,note,metadata --no-tidy-comments --no-remove-dupe-fields --no-lowercase --wrap=80 mlg.bib
+      - name: Run BibTex Tidy and save to temp file
+        run: bibtex-tidy --curly --tab --align=13 --sort=key --duplicates=key --no-escape --sort-fields=cat,title,shorttitle,author,year,month,day,journal,booktitle,location,on,publisher,address,series,volume,number,pages,doi,isbn,issn,url,urldate,copyright,note,metadata --no-tidy-comments --no-remove-dupe-fields --no-lowercase --wrap=80 mlg.bib > temp.bib
+
+      - name: Move temp file to mlg.bib
+        run: mv temp.bib mlg.bib
 
       - name: Suggest Changes
         uses: reviewdog/action-suggester@v1
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           tool_name: "BibTex Tidy"
-          suggest_diff: "mlg.bib"
-          comment: "Suggested changes from BibTex Tidy."
-          token: ${{ secrets.GITHUB_TOKEN }}
