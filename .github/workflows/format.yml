@@ -25,17 +25,22 @@ jobs:
         id: tidy
         run: |
           bibtex-tidy --curly --tab --align=13 --sort=key --duplicates=key --no-escape --sort-fields=cat,title,shorttitle,author,year,month,day,journal,booktitle,location,on,publisher,address,series,volume,number,pages,doi,isbn,issn,url,urldate,copyright,note,metadata --no-tidy-comments --no-remove-dupe-fields --no-lowercase --wrap=80 mlg.bib > tidied.bib
+          
+          # Check if there are changes
           if ! diff -q mlg.bib tidied.bib > /dev/null; then
             echo "The BibTeX file has been modified."
             cat tidied.bib > mlg.bib
-            echo "::set-output name=changed::true"
+            echo "changed=true" >> $GITHUB_ENV
           else
             echo "No changes made."
-            echo "::set-output name=changed::false"
+            echo "changed=false" >> $GITHUB_ENV
           fi
 
+          # Log the differences for debugging
+          diff mlg.bib tidied.bib || true
+
       - name: Suggest Changes
-        if: steps.tidy.outputs.changed == 'true'
+        if: env.changed == 'true'
         uses: parkerbxyz/suggest-changes@v1
         with:
           comment: 'Please commit the suggested changes from BibTex Tidy.'
