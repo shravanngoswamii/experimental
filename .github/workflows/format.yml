@@ -6,6 +6,8 @@ on:
 
 permissions:
   contents: read
+  checks: write
+  issues: write
   pull-requests: write
 
 jobs:
@@ -29,18 +31,18 @@ jobs:
           # Check if there are changes
           if ! diff -q mlg.bib tidied.bib > /dev/null; then
             echo "The BibTeX file has been modified."
-            cat tidied.bib > mlg.bib
+            mv tidied.bib mlg.bib
             echo "changed=true" >> $GITHUB_ENV
           else
             echo "No changes made."
             echo "changed=false" >> $GITHUB_ENV
           fi
 
-          # Log the differences for debugging
-          diff mlg.bib tidied.bib || true
-
-      - name: Suggest Changes
+      - name: Suggest Changes with Reviewdog
         if: env.changed == 'true'
-        uses: parkerbxyz/suggest-changes@v1
+        uses: reviewdog/action-suggester@v1
         with:
-          comment: 'Please commit the suggested changes from BibTex Tidy.'
+          tool_name: 'bibtex-tidy'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          level: warning
+          filter_mode: diff_context
