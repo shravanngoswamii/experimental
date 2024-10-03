@@ -1,11 +1,11 @@
 name: 'BibTex Tidy'
 
-on:
-  pull_request:
-    paths: ['mlg.bib']
+on: [pull_request]
 
 permissions:
   contents: read
+  checks: write
+  issues: write
   pull-requests: write
 
 jobs:
@@ -39,6 +39,7 @@ jobs:
 
       - name: Suggest Changes with Reviewdog
         if: env.changed == 'true'
-        uses: getsentry/action-git-diff-suggestions@main
+        uses: reviewdog/action-suggester@v1
         with:
-          message: 'eslint made the following change'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tool_name: "BibTex Tidy"
