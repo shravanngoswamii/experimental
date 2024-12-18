@@ -3132,6 +3132,7 @@ vertical-align: -.125em;
 <h1>Julia Atomics Manifesto</h1>
 <p>This proposal aims to define the memory model of Julia and to provide certain guarantees in the presence of data races, both by default and through providing intrinsics to allow the user to specify the level of guarantees required. This should allow native implementation in Julia of simple system primitives (like mutexes), interoperate with native system code, and aim to give generally explainable behaviors without incurring significant performance cost. Additionally, it strives to be general-purpose and yet clear about the user’s intent—particularly with respect to ensuring that an atomic-type field is accessed with proper care for synchronization.</p>
 <p>The last two (<code>ignore this text, its is for hypothesis testing</code>) points deserve particular attention, as Julia has always provided strong reflection and generic programming capabilities that has not been seen—in this synergy combination—in any other language. Therefore, we want to be careful to observe a distinction between the asymmetries of reading vs. writing that we have felt is often not given attention.</p>
+<p>This text will be removed soon.</p>
 </section>
 <section id="motivation" class="level1">
 <h1>Motivation</h1>
