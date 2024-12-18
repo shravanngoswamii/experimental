@@ -1,0 +1,357 @@
+---
+pagetitle: "Julia  Atomics Manifesto"
+format:
+  html:
+    embed-resources: true
+    self-contained-math: true
+    toc: true
+    toc-location: left
+comments:
+  hypothesis: true
+---
+
+# Julia Atomics Manifesto
+
+This proposal aims to define the memory model of Julia and to provide certain guarantees in the presence of data races, both by default and through providing intrinsics to allow the user to specify the level of guarantees required. This should allow native implementation in Julia of simple system primitives (like mutexes), interoperate with native system code, and aim to give generally explainable behaviors without incurring significant performance cost. Additionally, it strives to be general-purpose and yet clear about the user's intent—particularly with respect to ensuring that an atomic-type field is accessed with proper care for synchronization.
+
+The last two points deserve particular attention, as Julia has always provided strong reflection and generic programming capabilities that has not been seen—in this synergy combination—in any other language. Therefore, we want to be careful to observe a distinction between the asymmetries of reading vs. writing that we have felt is often not given attention.
+
+# Motivation
+In Julia today, multi-threaded code can only be written to perform limited tasks, or in ignorance of the true weakness of the guarantees provided by our current semantics. Additionally some necessary system primitives can also only be implemented by inlining a complicated llvmcall, which can be brittle and limiting. This proposal aims to change that by adopting some more sane defaults for shared variables and exposing new functionality in the builtin functions by adding a specification of memory synchronization ordering for them.
+
+One such aspect is guaranteeing that any data written in the struct initializer is always visible to any place where the struct pointer can be seen, as is already the guarantee for single-threaded execution. This is particularly relevant for ensuring the type-tag of the object is always valid and that the fields of immutable objects (or simply constant fields) always are seen to have their correct value. This implies a release barrier must exist between the end of the constructor and the first time the object is stored to a shared location from a given thread. This has some subtleties to explore later when we discuss the new defaults.
+
+A related aspect is ensuring that we want to never invent pointer reads or writes "out-of-thin-air." This implies using LLVM's "unordered" memory model (the minimum atomic level) for any read or write to a field that may contain or be a pointer. This is sufficient to prevent torn reads and writes (which is likely what we'd expect from the optimizer anyways), generally without preventing any other optimizations that could have applied.
+
+In addition to those basic guarantees that references can't be broken (which could potentially crash the garbage collector, as well as could cause more prosaic corruption of the runtime), users need the ability to pass data between threads. In most cases, they are best served by using a lock. But in some cases (such as the implementation of aforementioned lock), it's necessary to give defined behavior to concurrent mutations of a particular field of an object.
+
+# Proposed Solution
+
+## Overview
+Firstly, in defining this work, it's necessary to specify our memory model for concurrent access. We propose that we can't do better than adopting the current C/C++ standard as our primary inspiration. However, we also would like to adopt some aspects of the Java standard that suit our requirements. Some notable aspects of this include:
+
+* All writes to a field declared as atomic should only be done with compatible atomic memory orderings. Mixing and matching between atomic and non-atomic specifications on a memory location is prohibited (except in the constructor, where all writes are done non-atomically).
+* Care must be taken if the compiler moves or copies a value in memory to preserve the user's memory ordering expectations.
+* Some memory operations, and fences, may imply specific orderings on other (non-atomic) memory operations that appear before or after it in source-code order. Such constraints may be used to implement a lock, and be confident that reads cannot happen before the lock is acquired, and that all stores have finished before the lock is released. Additionally, stronger constraints (such as sequential consistency, also known as volatile in the Java memory model) may be given on an operation, if the user requires them.
+* Reading a field should always return something valid (of a correct type), though the contents may be undefined (invented out of thin air) if there is a data race on the access that conflicts with a write.
+
+We currently have two basic classes of memory operations (read and write) that can be done on three different object types (raw pointers, object fields, and array elements):
+`Intrinsics.pointerref` / `Intrinsics.pointerset` (and `unsafe_load` / `unsafe_store!`)
+`Core.getfield` / `Core.setfield!` / `Core.isdefined` (and `getproperty` / `setproperty!`)
+`Core.arrayref` / `Core.arrayset` / `isassigned` (and `getindex` / `setindex!`)
+
+This proposal aims to add a new trailing argument to each of these operations that gives the memory ordering for the operation. Additionally, we add a trio of new functions for each of these sets, from which all other behaviors can be variously expressed: swap, modify, and compare-and-swap.
+
+These memory orderings can be any of the following symbols. More precise definitions can be found elsewhere (in particular, at [https://llvm.org/docs/Atomics.html#atomic-orderings](https://llvm.org/docs/Atomics.html#atomic-orderings)), so here we give only the particulars of how they will be mapped inside the Julia runtime.
+* `not_atomic`: single-threaded usage only, or inside a lock. This is the default behavior for most operations. This cannot be used to down-grade an atomic write, but simply names the default parameterization for a non-atomic access. And when applied to an atomic field, it'll be automatically upgraded to a `monotonic` read.
+* `monotonic`: This ensures atomicity of the operation, but otherwise does not ensure the code makes forward progress (do not use in a loop), but only ensures that the operations are seen monotonically making progress within a thread.
+* `acquire`: This is an error to specify on a store.
+* `release`: This is an error to specify on a load.
+* `acquire_release`: This is an error to specify on an operation that doesn't both read and write memory (so it's an error to specify on a load or store, and the release will be ignored for a `replacefield!` failure).
+* `sequentially_consistent`: Sequential consistency is the default behavior for `@atomic` when the ordering is not specified.
+
+The specification and constraints on how these apply to individual operations is particularly nicely described here: [https://doc.rust-lang.org/std/sync/atomic/struct.AtomicI8.html](https://doc.rust-lang.org/std/sync/atomic/struct.AtomicI8.html)
+
+#### [TODO]: do we call this relaxed (like c11) or monotonic (like llvm)?
+
+We also propose having a higher level API behind an `@atomic` macro that can translate common expressions to call their atomic counterparts.
+
+This includes some details on using arrays atomically, but completing our array specification will be done later, and will be adapted to inherit details from this field design, though not all constraints and features may be found to be feasible. Presently, we recommend continuing to use locks and other barriers (such as channels and spawn/wait) to bulk synchronize accesses, or choose data-structures better suited to handling conflicting modifications on the same memory address.
+
+## New defaults
+We feel it is valuable to make basic promises about memory safety, extending those that the GC already promises for single-threaded code. Particularly in a well-designed and general-purpose language like Julia, these design decisions must be taken as a whole. For example, we consider it a necessity to be able to write generic code over the contents of a struct via reflection. While we permit this code to exhibit some aspects of undefined behavior, we do not want it to violate those essential promises. This means that certain operations (for example, enumeration of the globals in a module) should exist and should be free from undefined behavior.
+
+This property generally has little runtime cost, but omitting it might impose a high mental cost on the user or complicate generic code. Sort of like a garbage collector—while theoretically you can write bug-free code in C, this has shown to be quite difficult. And then we measure that C can actually perform worse than a GC language because of this insistence that it should be possible to write bad code (the possibility of bad code can greatly impact the correctness of certain compiler transforms that are otherwise essential for performance). While C's weak guarantees motivate and necessitate the use of tools like LLVM's ThreadSanitizer, making this automatic alleviates that concern from the user. Note however that since we're following the Java memory model here, any tooling designed and useful for that language would also apply here.
+
+#### TODO: finish documentation of [https://github.com/JuliaLang/julia/pull/35535](https://github.com/JuliaLang/julia/pull/35535)
+
+## New keyword/syntax for variables
+We propose adding an `@atomic` macro, that wraps expressions and rewrites them to use atomics. It should handle the following syntax forms:
+
+```julia
+@atomic x
+(@atomic x)::Int
+@atomic a.b.x
+@atomic :acquire x
+@atomic :acquire a.b.x
+```
+
+and
+
+```julia
+@atomic local x
+(@atomic x::Int) = 3
+mutable struct RWLock
+    @atomic readers::Int
+    @atomic writer::Union{Task, Nothing}
+    @atomic data
+end
+```
+
+These operate the same as the non-atomic variants of each expression usage and declare the existence of a shared memory location (global variable, local variable, captured variable, or field declaration) that can be mutated from multiple threads. If used in statement position, it would also be a load of that atomic value.
+
+For the first three forms, these macros expand to `Expr(:atomic, expr)`, and lower to the appropriate metadata for a declaration. For a load, it additionally emits a normal call, such as `getproperty(a, :x, :sequentially_consistent)` (which in turn calls `getfield(a, :x, :sequentially_consistent)`).
+
+```julia
+@atomic x = y
+@atomic a.b.x = y
+@atomic :release x = y
+@atomic :release a.b.x = y
+```
+
+This mutates the location `x` to contain `y`, where `x` has been declared `@atomic`, and `y` is any expression. For example, it could itself be an atomic load from something else, such as `@atomic y`.
+
+These macros expand to a builtin call, such as `setproperty!(a.b, :x, y, :sequentially_consistent)` (which in turn would dispatch to `setfield!(a.b, :x, y, :sequentially_consistent)`, for example).
+
+These loads and stores default to providing sequential-consistency semantics (this is equivalent to `volatile` in Java). This can be refined by specifying an argument that explicitly gives the ordering for the operation. For example, `@atomic :release x = y` for an atomic release store (such as would appear inside a lock's `unlock` method).
+
+## New Builtin Intrinsic Functionality
+Already mentioned was the new argument to `Core.getfield!`, `Core.setfield!`, and `Core.isdefined`. Additionally, we propose defining 3 additional functions to describe all processor capabilities: `Core.modifyfield!` and `Core.replacefield!` and `Core.swapfield!`. They can both do much more than the basics provided by the processor though, through some slight compiler heroics. They could be merged into one also, but there's little to be gained from that. These will be documented as follows:
+
+> """
+>
+>     getfield(value, name::Symbol, [order::Symbol)
+>     getfield(value, i::Int, [order::Symbol)
+> 
+> Extract a field from a composite `value` by name or position. Optionally, an ordering can be defined for the operation. If the field was declared `@atomic`, the specification is strongly recommended to be compatible with the stores to that location. Otherwise, if not declared as `@atomic`, this parameter must be `:not_atomic` if specified.
+> """
+
+> """
+> 
+>     setfield!(value, name::Symbol, x, [order::Symbol)
+>     setfield!(value, i::Int, x, [order::Symbol)
+> 
+> Assign `x` to a named field in `value` of composite type. The `value` must be mutable and `x` must be a subtype of `fieldtype(typeof(value), name)`. Additionally, an ordering can be specified for this operation. If the field was declared `@atomic`, this specification is mandatory. Otherwise, if not declared as `@atomic`, it must be `:not_atomic` if specified.
+> """
+> 
+
+> """
+> 
+>     isdefined(m::Module, s::Symbol, [order::Symbol])
+>     isdefined(object, s::Symbol, [order::Symbol])
+>     isdefined(object, index::Int, [order::Symbol])
+> 
+> Tests whether a global variable or object field is defined. The arguments can be a module and a symbol or a composite object and field name (as a symbol) or index. Optionally, an ordering can be defined for the operation. If the field was declared `@atomic`, the specification is strongly recommended to be compatible with the stores to that location. Otherwise, if not declared as `@atomic`, this parameter must be `:not_atomic` if specified.
+> """
+
+
+
+> """
+> 
+>     Core.swapfield!(value, name::Symbol, x, [order::Symbol)
+>     Core.swapfield!(value, i::Int, x, [order::Symbol)
+> 
+> These atomically perform the operations to simultaneously get and set a field:
+> 
+>     y = getfield!(value, name)
+>     setfield!(value, name, x)
+>     return y
+> """
+
+> """
+> 
+>     Core.modifyfield!(value, name::Symbol, op, x, [order::Symbol])
+>     Core.modifyfield!(value, i::Int, op, x, [order::Symbol])
+> 
+> These atomically perform the operations to get and set a field after applying the function `op`.
+> 
+>     y = getfield!(value, name)
+>     z = op(y, x)
+>     setfield!(value, name, z)
+>     return y, z
+> 
+> If supported by the hardware (for example, atomic increment), this may be optimized to the appropriate hardware instruction, otherwise it'll use a loop.
+> """
+
+>"""
+>
+>     Core.replacefield!(value, name::Symbol, expected, desired,
+>         [success_order::Symbol, [fail_order::Symbol=success_order]]) =>
+>         (old, success::Bool)
+> 
+> These atomically perform the operations to get and conditionally set a field to a given value.
+> 
+>     y = getfield!(value, name, fail_order)
+>     ok = y === expected
+>     if ok
+>         setfield!(value, name, desired, success_order)
+>     end
+>     return y, ok
+> 
+> If supported by the hardware, this may be optimized to the appropriate hardware instruction, otherwise it'll use a loop.
+
+## New Generic Functionality
+The higher-level API will mirror that of the non-atomic structure. In particular, `@atomic :acquire a.b` would lower to `getproperty(a, :b, :acquire)` instead of `getproperty(a, :b)` as it does now. In each case, the `order` argument is optional, and defaults to `:sequentially_consistent` when not explicitly specified in the macro. Other syntax forms supported by `@atomic` to include:
+
+```julia
+y = @atomic a.b.x += 1
+y = @atomic :acquire_release a.b.x += 1
+```
+
+This turns into a call `y = modifyproperty!(a.b, :x, +, 1, :acquire_release)[2]`
+
+```julia
+x, y = @atomic max(a.b.x, 1)
+x, y = @atomic a.b.x max 1
+x, y = @atomic :acquire_release max(a.b.x, 1)
+x, y = @atomic :acquire_release a.b.x max 1
+```
+
+This turns into a call `x, y = modifyproperty!(a.b, :x, max, 1, :acquire_release)`
+
+```julia
+x = @atomicswap a.b.x = 1
+x = @atomicswap :acquire_release a.b.x = 1
+```
+
+These turn into a call `x = swapproperty!(a.b, :x, 1, :acquire_release)` (note only the modification to `x` is atomic here).
+
+The last operation we cover is compare-and-swap. That is also created as a generic function `replaceproperty!`, and can written similar to the `replace!` function with a pair showing the expected old value and the desired new value.
+
+```julia
+old, success = @atomicreplace a.x expected => desired
+
+xchg = expected => desired
+old, success = @atomicreplace :acquire_release a.x xchg
+old, success = @atomicreplace :acquire_release :monotonic a.x xchg
+```
+
+Similar to their non-atomic counterpart `setproperty!`, the `swapproperty!` and `replaceproperty!` functions call `convert(fieldtype(typeof(x), f), v)` on the value to store for convenience. The `modifyproperty!` function does not provide this convenience (TODO: should it?).
+
+## Design Details
+Some highlights of this design include:
+- Failure to observe these static properties shall cause a `ConcurrencyViolationError` exception to be thrown.
+- Atomic-declared fields can only be written with atomic orderings (and vice versa).
+- During construction (`new`), the values may be stored without observing the atomic declaration. When first publishing the object to a shared location, the user must there decide what kind of ordering to give to those prior operations (usually either release or sequentially_consistent).
+- Atomic fields can be read without specifying an ordering (or specifying not_atomic), which will automatically upgrade it to a monotonic read. This is useful for generic code (like `show_any`).
+- Non-atomic fields cannot be read with an ordering (must specify not_atomic). If there's a data race on a non-atomic field, the behavior of the result is undefined. It should have a correct type, but the value and type of the data read may appear to be invented out of thin air and may even appear to change when you attempt to examine it.
+- Atomic field layout may be different from the same non-atomic value. For example, it may have stricter alignment or storage for a lock that isn't present for the non-atomic declaration.
+- The type of a field can be anything, though it's important to realize that certain semantics may differ slightly depending on whether the value is stored directly in the field, or as a reference. To combat this, we want to consider always upgrading operations on references to include release/consume, ala #35535. (**TODO: however, that still may leave open the question of whether `@atomic :monotonic a.x += 1` should get upgraded to include a release barrier if we decide not to allocate `x` inline.**)
+- When possible, we'll use the processor intrinsics to perform lock-free access given the current CPU. When possible, we'll also avoid allocating storage for the lock if we know it will never be needed on that architecture family.
+- It is left as an implementation detail for the coarseness of the lock, though we must be careful to ensure forward progress by not holding any locks here while calling back into user code (relevant for `modifyfield!`).
+- Memory accessors (`getfield`, `arrayref`, `pointerref`, `isdefined`) each gain arguments for the atomic ordering, which they validate against the declaration requirement. The first two will be added to the same builtin function. For pointers, we'll add new intrinsics, since the behaviors with atomics may be more restricted and divergent than for fields (which we have more control over).
+- Two new builtin operation classes are needed also (`replace` and `modify`) which combine aspects of `getfield` and `setfield!`. We also will add (`swap`) for simplicity, though it could be derived from either of the other two.
+- These will require a small new compiler feature: a new expr head that combines the functionality of `:invoke` with that of each new builtin operation class. Here's how we use it:
+
+Given `Core.modifyfield!(x, i, +, fv)` in the source code, we could teach inference to generate the optimized code for `+` there, but not yet fully inline it there.
+Then during codegen, we could examine the content of `+` and decide to emit either that loop above, or the atomicrmw version.
+
+This means it might need some dramatically unique inlining: given `Core.modifyfield!(x, i, +, fv)`, we'll transform this into a special representation which includes the funclet as metadata in place of the call-site, similar to `invoke`:
+
+```julia
+Expr(:invoke_modifyfield!, MethodInstance(:+, Int, Int), x, i, +, fv)
+```
+While recursive, this seems like just the right amount of information for codegen to be able to inspect the object. But that theory remains to be tested.
+
+However, note that this may not be as dire as it may sound. Some systems, such as Java and even Intel's own `icc` used the CAS loop for many years.
+
+**TODO: finish fleshing out details of the new compiler feature needed for this proposal**
+
+**TODO: where do we allocate the lock, currently it is at the beginning of the struct, but should it be at the end?**
+
+At the implementation level, one subtle point to be aware of is that the `replace` may spuriously fail due to padding bits or other ways of getting an egal object with a different representation. This (and for other similar reasons) means that the operator in `modifyfield!` might get called multiple times. It also implies that some seemingly trivial cases (such as a field typed as `Any`), actually require a loop around the `replace`, until the representation converges to a stable value, or until the old value is not egal to the expected value.
+
+It is worth mentioning also that floating point numbers (Float64, Float32, and Float16) are not unique in this context either (particularly for `replace`): we operate on their representation bits, like in egal testing, and do not use floating point comparisons.
+
+## New Intrinsics for Ptr{T}
+In addition to the additions discussed above, similar intrinsic functionality will be added to Ptr also. Unlike their generic brethren, they will be much more limited in capability however. The Ptr object must be suitably aligned (otherwise the behavior is undefined) and the element type must be a power-of-two in size (otherwise an error will be thrown). Initially, the sizes supported may be limited as well (only 0, 1, 2, 4, and 8). These operations shall be defined suitably for defined interoperability with C code operating on the same pointers, per the relevant C standard memory models.
+
+```julia
+atomic_fence(order::Symbol) => Nothing
+atomic_pointerref(p::Ptr{T}, order::Symbol) => old::T
+atomic_pointerset(p::Ptr{T}, x::T, order::Symbol) => p::Ptr{T}
+atomic_pointerswap(p::Ptr{T}, x::T, order::Symbol) => old::T
+atomic_pointermodify(p::Ptr{T}, func, x::T, order::Symbol) => (old::T, new::T)
+atomic_pointerreplace(p::Ptr{T}, x::T, expected::T, success_order::Symbol, failure_order::Symbol) => (old::T, success::Bool)
+```
+
+## Alternatives Considered
+* For the choices of memory ordering words:
+  * Symbols, over enums or singleton types, gives us the simplest API
+  * We preferred `_` to separate words to improve readability of the long ones
+  * We prefer using the C11 names, but spelling them out. The worst one (sequentially_consistent) is also the default, so it should not need to be specified explicitly in most cases. This is to save us the confusion from documenting of saying "our definition of strong ordering is what is commonly called sequentially consistent." We think it is clear from this hypothetical that we should go with the standard term, rather than adding potential uncertainty by creating our own word to mean the same as an existing term.
+  * The partial exception to that consideration is the term for "monotonic," as it is called in LLVM's documentation and API, and is the name we are using also. In C11, this memory ordering is named "relaxed."
+* Dispatch operations from the new generic functions:
+  * We considered having separate functions for `getproperty` and `atomic_getproperty` and such, but eventually rejected this idea and merged them into the same generic function. While the later name might have been clearer for searching code for a consistent pattern, we believe static tooling can be better and more general for statically identifying uses. The dynamic checks on field type already should help with flagging any mistakes.
+  * We could define the dispatch for `getproperty(x, y) = getproperty(x, y, :not_atomic)`, but currently this directly calls `getfield(x, y)`. This should infer slightly better, and have somewhat better inlining characteristics, despite the implied duplication for places in the code that want to overload this.
+  * We could use a marker type, such as `SequentiallyConsistent` on one of the arguments, probably the index or field name, instead of passing the memory ordering as a separate value. This idea seemed to have considerable merit. It would particularly be handy if wrapper array types, for example, would forward the ordering along with the index through any intermediate types. Eventually, we concluded that it was unclear that this would propagate correctly. This probably also would require frequent unwrapping and rewrapping. In attempting to write sample code, we also observed that this seems likely to be incorrectly handled by existing code: many wrappers would likely need to take locks in order to correctly synchronize their operations. Indeed, this complexity is also one of the reasons that array access isn't covered in this design proposal.
+* Compatibility of atomic/non-atomic fields:
+  * We touched on this option above already, but here we'll mention it again from the opposite angle.
+  * We opted to require `@atomic` on both the field declaration and writes. Not requiring it on field declarations would severely limit the flexibility or performance, since there are alignment and padding requirements. Not requiring it on writes would make it easy to accidentally write `a.x += 1` instead of `@atomic a.x += 1`, and get the wrong behavior.
+  * By contrast, requiring `@atomic` for field reads would inhibit generic programming and reflection. The risk of mistakes here is thought to be very low, since there must be a write for there to be a data race, and those require explicit annotation.
+  * To make reads valid in the LLVM memory model, we conditionally use `monotonic` or `not_atomic` depending on the field declaration (or sometimes even `unordered`). We considered strengthening these reads all of the way to `sequentially_consistent`. However, without a memory `write` there's much less that we would be synchronizing at the machine level, and without explicit intent, there's probably not even anything we'd be synchronizing at the algorithm level. So we'd be adding potential runtime cost, but without even a clear idea of what value we gained by doing that additional effort.
+  * Note that explicitly specifying an incorrect memory model for a read is an error however, and specifying `:not_atomic` is therefore not the same as the default behavior of not specifying an ordering.
+* Alternatives to `modifyfield!`:
+  * Our choice to base the API entirely upon a fully generic `modifyfield!` function (through a macro) for all related operations is unusual among programming languages that we surveyed. This could carry some minor risk in the time required to implement this, but we feel this is worthwhile in order to expose the intrinsic API in a predictable and extensible way. Notably, the GPU folks already have additional functions they wish to support beyond LLVM's keyword-based `atomicrmw` function.
+  * We could have taken the approach of defining each LLVM-defined operation as a separate intrinsic (e.g. `atomic_nandfield!` / `@atomic x.a = nand(x.a, y)`). Indeed, this is already the approach already taken in `Base.Threads`. However, this felt fundamentally tedious and non-scalable.
+  * Similarly, we could have made the intrinsic take the function as a symbolic keyword, instead of being a real function, such as: `x = @atomicmodify :sequentially_consistent :nand r.a 1` / `x = modifyfield!(r, :a, :nand, 1, :sequentially_consistent)`. However, this seemed to still suffer the same issues as having separate functions, with the additional awkwardness of not even being first-class functions individually.
+
+# Future work
+The astute reader may have noticed there are many facets of using atomics that we have not specified. These are typically left as future work, but we still wish to acknowledge some of them here. Those include:
+
+* LLVM provides an additional atomic ordering (unordered), for use in Java. We also implicitly use this in some cases, but do not expose it to the user.
+* We do not yet propose a design for accessing elements of an indexable collection with `@atomic` or any intrinsics for lowering that either (translation: we don't support `@atomic a[i]` or `getindex(:sequentially_consistent, a, i)` or `arrayref(:sequentially_consistent, a, i)`). We expect this is likely to be added at some future time, due to being a logical feature extension to complete the set of memory operations. However, there are additional complexities with this that make it seem rare a user would be using atomic operations on individual entries of an array, both due to the algorithmic complexity of such usage will likely prefer towards wrapper objects that define locks, and the rate of cache misses would be likely also to kill performance of such an algorithm.
+* We don't yet provide a way to call `replacefield!`/`setfield!` to set an `#undef` value exactly once. It can be simulated with `Union{Nothing,T}` in many cases, but we may want to provide the ability to indicate conditional assignment. This perhaps fits most closely with `setfield!`'s definition, since there is no old value. But currently there is no way to specify it. Perhaps it could be an ordering? `@atomic :if_undef a.x = 1` or `@atomic :release_if_undef a.x = 1`
+* We have not yet settled the discussion of what defaults would be ideal for reads and writes of Julia object references. Some discussion and work was initiated in https://github.com/JuliaLang/julia/pull/35535, but making a decision on this was deferred for later.
+
+
+# References
+
+## Associated Pull Requests
+* [Annotate Julia reference accesses for atomic release/consume](https://github.com/JuliaLang/julia/pull/35535) (#35535)
+* [Implement RefField <: Ref{T}](https://github.com/JuliaLang/julia/pull/35453) (#35453)
+* [Add some support for atomic operations on mutable fields and Ptrs](https://github.com/JuliaLang/julia/pull/37847) (#37847)
+
+## Other Readings
+* C/C++11 mappings to processors: [https://www.cl.cam.ac.uk/~pes20/cpp/cpp0xmappings.html](https://www.cl.cam.ac.uk/~pes20/cpp/cpp0xmappings.html)
+* Problem with release/consume definition on some ARM hardware ([http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0735r1.html](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0735r1.html))
+* Java and `icc` use CAS loop instead of hardware intrinsics ([https://travisdowns.github.io/blog/2020/07/06/concurrency-costs.html#fn:java](https://travisdowns.github.io/blog/2020/07/06/concurrency-costs.html#fn:java))
+
+## Programming Languages
+* [LLVM] LLVM Atomic Instructions and Concurrency Guide: [https://llvm.org/docs/Atomics.html](https://llvm.org/docs/Atomics.html)
+* [Java] JSR-133: Java TM Memory Model and Thread Specification: [https://www.jcp.org/en/jsr/detail?id=133](https://www.jcp.org/en/jsr/detail?id=133) (and discussion at [http://www.cs.umd.edu/~pugh/java/memoryModel](http://www.cs.umd.edu/~pugh/java/memoryModel))
+`getAndUpdate` method: [https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/AtomicInteger.html#getAndUpdate-java.util.function.IntUnaryOperator-](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/AtomicInteger.html#getAndUpdate-java.util.function.IntUnaryOperator-)
+* [Rust] The Rustonomicon Atomics: [https://doc.rust-lang.org/nomicon/atomics.html](https://doc.rust-lang.org/nomicon/atomics.html), Sample Atomic API: [https://doc.rust-lang.org/std/sync/atomic/struct.AtomicI8.html](https://doc.rust-lang.org/std/sync/atomic/struct.AtomicI8.html)
+`fetch_update` method: [https://github.com/rust-lang/rust/issues/48655](https://github.com/rust-lang/rust/issues/48655)
+* [Swift] Low-Level Atomic Operations in Swift: [https://github.com/apple/swift-evolution/blob/master/proposals/0282-atomics.md](https://github.com/apple/swift-evolution/blob/master/proposals/0282-atomics.md) (and current review status [https://forums.swift.org/t/se-0282-low-level-atomic-operations](https://forums.swift.org/t/se-0282-low-level-atomic-operations))
+* [C/C++] [http://eel.is/c++draft/atomics.order](http://eel.is/c++draft/atomics.order) and [https://en.cppreference.com/w/c/atomic/memory_order](https://en.cppreference.com/w/c/atomic/memory_order) (C11 standard (ISO/IEC 9899:2011): 7.17.1/4 memory_order (p: 273) and 7.17.3 Order and consistency (p: 275-277)
+
+# Appendix
+
+[Working Group Minutes: Julia Atomics](https://docs.google.com/document/d/1rDgdFH94QL4wlEAdzBbdxJJ0Wk2CkBhWuptzPETSRc0/edit?usp=sharing)
+
+## Additional Curiosities
+
+Possible start of an atomic-annotated array hierarchy
+```julia
+## struct LocalAccessArray{T, N::Int, atomic::Bool} <: AbstractArray{T, N} end
+## const AtomicArray{T, N} = LocalAccessArray{T, N, true}
+## const Array{T, N} = LocalAccessArray{T, N, false}
+## a = AtomicVector{Int}()
+
+# Completely generalized form combining read-modify-write and compare-exchange.
+# This is just a curiosity really, but it's a very general purpose operator. and so demonstrates
+# what we can provide inside the runtime as the expansion and implementation of the
+# new proposed intrinsics.
+function modifyfieldif!(f, t, x, i, fv, tv, success_ordering, fail_ordering=success_ordering)
+    old = Core.getfield(x, i, fail_ordering)
+    while t(tv, old)
+        new = f(fv, old)
+        temp, eq = Core.cmpxchgfield!(x, i, old, new, success_ordering) # (function doesn't exist)
+        eq && break
+        old = temp
+        GC.safepoint() # Temporary solution before we have gc transition support in codegen.
+    end
+    return old
+end
+
+# implement (atomicrmw add v)
+always = (v, old) -> true
+modifyfieldif!(+, always, r, :a, v, nothing, :sequentially_consistent, :sequentially_consistent)
+
+# implement (atomicrmw add 1)
+modifyfieldif!(
+    (v, old) -> 1 + old,
+    (v, old) -> true,
+    r, :a, v, nothing, :sequentially_consistent, :sequentially_consistent)
+```
