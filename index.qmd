@@ -16,7 +16,7 @@ This proposal aims to define the memory model of Julia and to provide certain gu
 
 The last two (`ignore this text, its is for hypothesis testing`) points deserve particular attention, as Julia has always provided strong reflection and generic programming capabilities that has not been seen—in this synergy combination—in any other language. Therefore, we want to be careful to observe a distinction between the asymmetries of reading vs. writing that we have felt is often not given attention.
 
-This text will be removed soon.
+> Old text is modified to new text
 
 # Motivation
 In Julia today, multi-threaded code can only be written to perform limited tasks, or in ignorance of the true weakness of the guarantees provided by our current semantics. Additionally some necessary system primitives can also only be implemented by inlining a complicated llvmcall, which can be brittle and limiting. This proposal aims to change that by adopting some more sane defaults for shared variables and exposing new functionality in the builtin functions by adding a specification of memory synchronization ordering for them.
