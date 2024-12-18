@@ -38,7 +38,6 @@ jobs:
           fi
 
       - name: Suggest Changes with Reviewdog
-        if: env.changed == 'true'
         uses: reviewdog/action-suggester@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
