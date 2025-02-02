@@ -1,13 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
-# Usage message
+# Print usage and exit.
 usage() {
   echo "Usage: $0 <html-directory> <navbar-url-or-file> [--exclude <path1,path2,...>]"
   exit 1
 }
 
-# Check arguments
 if [ "$#" -lt 2 ]; then
   usage
 fi
@@ -16,7 +15,7 @@ HTML_DIR="$1"
 NAVBAR_SOURCE="$2"
 shift 2
 
-# Process optional arguments
+# Process optional arguments.
 EXCLUDE_LIST=""
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -31,7 +30,7 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-# Get navbar HTML from URL or file
+# Fetch navbar HTML from a URL or local file.
 if [[ "$NAVBAR_SOURCE" =~ ^https?:// ]]; then
   NAVBAR_HTML=$(curl -s "$NAVBAR_SOURCE")
 else
@@ -48,26 +47,25 @@ if [ -z "$NAVBAR_HTML" ]; then
   exit 1
 fi
 
-# Create a temporary file that will hold the navbar content.
-# (It should already include the comment markers.)
+# Write the navbar HTML into a temporary file (if you prefer to use sed’s r command).
 TMP_NAVBAR=$(mktemp)
 echo "$NAVBAR_HTML" > "$TMP_NAVBAR"
 
-# Optional: function to decide whether a file should be excluded.
+# Function to decide if a file should be skipped.
 should_exclude() {
   local file="$1"
   IFS=',' read -ra EXCLUDES <<< "$EXCLUDE_LIST"
   for excl in "${EXCLUDES[@]}"; do
     if [[ "$file" == *"$excl"* ]]; then
-      return 0  # exclude this file
+      return 0  # file should be excluded
     fi
   done
   return 1  # do not exclude
 }
 
-# Process each HTML file recursively
+# Process each HTML file recursively.
+# We use GNU sed’s -z to treat the entire file as a single string.
 find "$HTML_DIR" -type f -name "*.html" | while read -r file; do
-
   if [ -n "$EXCLUDE_LIST" ] && should_exclude "$file"; then
     echo "Skipping excluded file: $file"
     continue
@@ -76,23 +74,23 @@ find "$HTML_DIR" -type f -name "*.html" | while read -r file; do
   echo "Processing $file"
 
   # (a) Remove any existing navbar block.
-  # This sed range deletes from the line that contains <!-- NAVBAR START -->
-  # up to (and including) the line that contains <!-- NAVBAR END -->.
-  sed -i.bak '/<!--[[:space:]]*NAVBAR START[[:space:]]*-->/, /<!--[[:space:]]*NAVBAR END[[:space:]]*-->/d' "$file"
+  # We match from <!-- NAVBAR START --> to <!-- NAVBAR END --> even if newlines exist.
+  sed -z -i.bak -E 's/<!--[[:space:]]*NAVBAR START[[:space:]]*-->.*<!--[[:space:]]*NAVBAR END[[:space:]]*-->//I' "$file"
 
   # (b) Insert the new navbar immediately after the opening <body> tag.
-  # This command looks for the first occurrence of <body ...> (case‑insensitive)
-  # and uses the "r" (read file) command to insert the contents of the temporary file.
-  sed -i.bak -E '/<body[^>]*>/I {
-    # The matched line is left unchanged, then the content from TMP_NAVBAR is inserted.
-    r '"$TMP_NAVBAR"'
-  }' "$file"
+  # We use a substitution that finds (<body ...>) and replaces it with itself followed by a newline,
+  # then the navbar HTML, then another newline.
+  #
+  # To be safe, we escape any sed‑special characters in the navbar content.
+  NAVBAR_ESCAPED=$(printf '%s\n' "$NAVBAR_HTML" | sed 's/[\/&]/\\&/g')
+  sed -z -i.bak -E "s/(<body[^>]*>)/\1\
+${NAVBAR_ESCAPED}\
+/I" "$file"
 
-  # Remove the backup created by sed (optional)
+  # Remove the backup file.
   rm -f "$file.bak"
 done
 
-# Clean up temporary file
 rm -f "$TMP_NAVBAR"
 
 echo "Navbar update complete."
