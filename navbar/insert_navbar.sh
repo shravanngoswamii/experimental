@@ -47,7 +47,7 @@ if [ -z "$NAVBAR_HTML" ]; then
   exit 1
 fi
 
-# Write the navbar HTML into a temporary file (if you prefer to use sed’s r command).
+# Write the navbar HTML into a temporary file.
 TMP_NAVBAR=$(mktemp)
 echo "$NAVBAR_HTML" > "$TMP_NAVBAR"
 
@@ -74,18 +74,12 @@ find "$HTML_DIR" -type f -name "*.html" | while read -r file; do
   echo "Processing $file"
 
   # (a) Remove any existing navbar block.
-  # We match from <!-- NAVBAR START --> to <!-- NAVBAR END --> even if newlines exist.
   sed -z -i.bak -E 's/<!--[[:space:]]*NAVBAR START[[:space:]]*-->.*<!--[[:space:]]*NAVBAR END[[:space:]]*-->//I' "$file"
 
   # (b) Insert the new navbar immediately after the opening <body> tag.
-  # We use a substitution that finds (<body ...>) and replaces it with itself followed by a newline,
-  # then the navbar HTML, then another newline.
-  #
-  # To be safe, we escape any sed‑special characters in the navbar content.
+  # Escape any sed‑special characters in the navbar content.
   NAVBAR_ESCAPED=$(printf '%s\n' "$NAVBAR_HTML" | sed 's/[\/&]/\\&/g')
-  sed -z -i.bak -E "s/(<body[^>]*>)/\1\
-${NAVBAR_ESCAPED}\
-/I" "$file"
+  sed -z -i.bak -E "s/(<body[^>]*>)/\1"$'\n'"${NAVBAR_ESCAPED}"$'\n'"/I" "$file"
 
   # Remove the backup file.
   rm -f "$file.bak"
