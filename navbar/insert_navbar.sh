@@ -63,8 +63,15 @@ should_exclude() {
   return 1  # do not exclude
 }
 
+# Define a newline variable.
+newline=$'\n'
+
+# Escape characters that might conflict with our delimiter (#) or sed’s replacement (&).
+# (Since we use '#' as the delimiter below, we need to escape any literal '#' and '&'.)
+NAVBAR_ESCAPED=$(printf '%s' "$NAVBAR_HTML" | sed 's/[#&]/\\&/g')
+
 # Process each HTML file recursively.
-# We use GNU sed’s -z to treat the entire file as a single string.
+# Use GNU sed’s -z so that the entire file is treated as a single string.
 find "$HTML_DIR" -type f -name "*.html" | while read -r file; do
   if [ -n "$EXCLUDE_LIST" ] && should_exclude "$file"; then
     echo "Skipping excluded file: $file"
@@ -73,13 +80,12 @@ find "$HTML_DIR" -type f -name "*.html" | while read -r file; do
 
   echo "Processing $file"
 
-  # (a) Remove any existing navbar block.
+  # (a) Remove any existing navbar block (from <!-- NAVBAR START --> to <!-- NAVBAR END -->)
   sed -z -i.bak -E 's/<!--[[:space:]]*NAVBAR START[[:space:]]*-->.*<!--[[:space:]]*NAVBAR END[[:space:]]*-->//I' "$file"
 
   # (b) Insert the new navbar immediately after the opening <body> tag.
-  # Escape any sed‑special characters in the navbar content.
-  NAVBAR_ESCAPED=$(printf '%s\n' "$NAVBAR_HTML" | sed 's/[\/&]/\\&/g')
-  sed -z -i.bak -E "s/(<body[^>]*>)/\1"$'\n'"${NAVBAR_ESCAPED}"$'\n'"/I" "$file"
+  # We use '#' as the delimiter so we don’t have to worry about '/' in the navbar HTML.
+  sed -z -i.bak -E "s#(<body[^>]*>)#\1${newline}${NAVBAR_ESCAPED}${newline}#I" "$file"
 
   # Remove the backup file.
   rm -f "$file.bak"
