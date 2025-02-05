@@ -1,84 +1,116 @@
-using Gumbo, HTTP, URIs, Logging
+using HTTP
 
-function process_file!(html_path, navbar_content, excluded_paths)
-    any(excluded_paths) do path
-        occursin(path, html_path)
-    end && return @info "Skipping excluded file: $html_path"
-
-    @info "Processing: $html_path"
-    
-    # Read and parse HTML
-    html_str = read(html_path, String)
-    doc = parsehtml(html_str)
-    
-    # Remove existing navbar
-    body = doc.root[2]  # Assuming standard structure: html > head + body
-    nav_comments = []
-    
-    # Find NAVBAR comments
-    for elem in PreOrderDFS(body)
-        isa(elem, HTMLComment) || continue
-        occursin("NAVBAR START", elem.text) && push!(nav_comments, elem)
-        occursin("NAVBAR END", elem.text) && push!(nav_comments, elem)
+function read_file(filename::String)
+    open(filename, "r") do io
+        read(io, String)
     end
-    
-    # Remove elements between comments
-    if length(nav_comments) == 2
-        start_idx = findfirst(==(nav_comments[1]), body.children)
-        end_idx = findfirst(==(nav_comments[2]), body.children)
-        
-        if start_idx !== nothing && end_idx !== nothing && start_idx < end_idx
-            deleteat!(body.children, start_idx:end_idx)
+end
+
+function write_file(filename::String, contents::String)
+    open(filename, "w") do io
+        write(io, contents)
+    end
+end
+
+function should_exclude(filename::String, patterns::Vector{String})
+    for pat in patterns
+        if occursin(pat, filename)
+            return true
         end
     end
-    
-    # Insert new navbar after <body> tag
-    navbar_node = parsehtml(navbar_content).root[2].children[1]  # Extract body content
-    insert!(body.children, 1, navbar_node)
-    
-    # Write modified HTML back
-    write(html_path, string(doc))
+    return false
+end
+
+function remove_existing_navbar(html::String)
+    start_marker = "<!-- NAVBAR START -->"
+    end_marker   = "<!-- NAVBAR END -->"
+    while occursin(start_marker, html) && occursin(end_marker, html)
+        start_idx_range = findfirst(start_marker, html)
+        end_idx_range   = findfirst(end_marker, html)
+        start_idx = first(start_idx_range)
+        end_idx = first(end_idx_range)
+        prefix = start_idx > 1 ? html[1:start_idx-1] : ""
+        suffix = lstrip(html[end_idx + length(end_marker) : end])
+        html = string(prefix, suffix)
+    end
+    return html
+end
+
+function wrap_navbar(navbar_html::String)
+    if !occursin("NAVBAR START", navbar_html) || !occursin("NAVBAR END", navbar_html)
+        return "<!-- NAVBAR START -->\n" * navbar_html * "\n<!-- NAVBAR END -->"
+    else
+        return navbar_html
+    end
+end
+
+function insert_navbar(html::String, navbar_html::String)
+    html = remove_existing_navbar(html)
+    m = match(r"(?i)(<body[^>]*>)", html)
+    if m === nothing
+        error("Could not find <body> tag in the HTML.")
+    end
+    prefix = m.match
+    inserted = string(prefix, "\n", navbar_html, "\n")
+    html = replace(html, prefix => inserted; count = 1)
+    return html
+end
+
+function process_file(filename::String, navbar_html::String)
+    println("Processing: $filename")
+    html = read_file(filename)
+    html = insert_navbar(html, navbar_html)
+    write_file(filename, html)
+    println("Updated: $filename")
 end
 
 function main()
-    # Parse command-line arguments
     if length(ARGS) < 2
-        println("Usage: julia insert_navbar.jl <html-directory> <navbar-url> [--exclude path1,path2,...]")
-        exit(1)
+        println("Usage: julia update_navbar.jl <html-file-or-directory> <navbar-file-or-url> [--exclude \"pat1,pat2,...\"]")
+        return
     end
-
-    html_dir = ARGS[1]
+    target = ARGS[1]
     navbar_source = ARGS[2]
-    exclude_paths = []
     
-    # Parse exclude paths
-    if "--exclude" in ARGS
-        idx = findfirst(==("--exclude"), ARGS)
-        exclude_paths = split(ARGS[idx+1], ',')
+    exclude_patterns = String[]
+    if length(ARGS) ≥ 4 && ARGS[3] == "--exclude"
+        exclude_patterns = map(x -> string(strip(x)), split(ARGS[4], ','))
     end
 
-    # Get navbar content
-    navbar_content = if occursin(r"^https?://", navbar_source)
-        HTTP.get(navbar_source).body |> String
+    navbar_html = ""
+    if startswith(lowercase(navbar_source), "http")
+        resp = HTTP.get(navbar_source)
+        if resp.status != 200
+            error("Failed to download navbar from $navbar_source")
+        end
+        navbar_html = String(resp.body)
     else
-        read(navbar_source, String)
+        navbar_html = read_file(navbar_source)
     end
+    navbar_html = string(navbar_html)
+    navbar_html = wrap_navbar(navbar_html)
 
-    # Process files
-    for (root, dirs, files) in walkdir(html_dir)
-        any(exclude_paths) do path
-            occursin(path, root)
-        end && continue
-        
-        for file in files
-            endswith(file, ".html") || continue
-            html_path = joinpath(root, file)
-            try
-                process_file!(html_path, navbar_content, exclude_paths)
-            catch e
-                @error "Failed to process $html_path" exception=(e, catch_backtrace())
+    if isfile(target)
+        if !should_exclude(target, exclude_patterns)
+            process_file(target, navbar_html)
+        else
+            println("Skipping excluded file: $target")
+        end
+    elseif isdir(target)
+        for (root, _, files) in walkdir(target)
+            for file in files
+                if endswith(file, ".html")
+                    fullpath = joinpath(root, file)
+                    if !should_exclude(fullpath, exclude_patterns)
+                        process_file(fullpath, navbar_html)
+                    else
+                        println("Skipping excluded file: $fullpath")
+                    end
+                end
             end
         end
+    else
+        error("Target $target is neither a file nor a directory.")
     end
 end
 
