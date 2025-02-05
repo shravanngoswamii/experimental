@@ -48,7 +48,8 @@ function insert_navbar(html::String, navbar_html::String)
     html = remove_existing_navbar(html)
     m = match(r"(?i)(<body[^>]*>)", html)
     if m === nothing
-        error("Could not find <body> tag in the HTML.")
+        println("Warning: Could not find <body> tag in the file; skipping insertion.")
+        return html
     end
     prefix = m.match
     inserted = string(prefix, "\n", navbar_html, "\n")
@@ -59,14 +60,18 @@ end
 function process_file(filename::String, navbar_html::String)
     println("Processing: $filename")
     html = read_file(filename)
-    html = insert_navbar(html, navbar_html)
-    write_file(filename, html)
-    println("Updated: $filename")
+    html_new = insert_navbar(html, navbar_html)
+    if html_new == html
+        println("Skipped: No <body> tag found in $filename")
+    else
+        write_file(filename, html_new)
+        println("Updated: $filename")
+    end
 end
 
 function main()
     if length(ARGS) < 2
-        println("Usage: julia update_navbar.jl <html-file-or-directory> <navbar-file-or-url> [--exclude \"pat1,pat2,...\"]")
+        println("Usage: julia insert_navbar.jl <html-file-or-directory> <navbar-file-or-url> [--exclude \"pat1,pat2,...\"]")
         return
     end
     target = ARGS[1]
