@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      const newPath = location.pathname.replace(
+        /^\/experimental\/TuringBenchmarking\.jl/,
+        '/Deprecated/TuringBenchmarking'
+      ) + location.search + location.hash;
+      window.location.replace(newPath);
+    </script>
+    <noscript>
+      <meta http-equiv="refresh" content="0; url=/Deprecated/TuringBenchmarking/" />
+    </noscript>
+    <title>Redirecting...</title>
+  </head>
+  <body>
+    <p>Redirecting to <a id="target-link" href="#">new location</a>...</p>
+    <script>
+      document.getElementById('target-link').href = newPath;
+    </script>
+  </body>
+</html>
