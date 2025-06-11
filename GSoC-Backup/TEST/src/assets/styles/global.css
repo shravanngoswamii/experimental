@@ -1,0 +1,219 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+
+/* Basic CSS Reset & Variables */
+:root {
+  /* VS Code-inspired colors */
+  --color-background: #f8f9fa; /* Lighter background for main content */
+  --color-background-soft: #ffffff; /* White for panels/cards */
+  --color-background-mute: #f1f3f5; /* Light grey for subtle backgrounds */
+  --color-background-dark: #222222; /* Dark for code viewers and VS Code sidebar */
+
+  --color-border: #dee2e6; /* Light border */
+  --color-border-hover: #adb5bd; /* Border on hover */
+  --color-border-light: #e9ecef; /* Even lighter border */
+  --color-border-dark: #ced4da; /* Slightly darker border for contrast */
+
+  --color-heading: #212529; /* Dark text for headings */
+  --color-text: #343a40; /* Dark text for general content */
+  --color-text-light: #f0f0f0; /* Light text for dark backgrounds */
+
+  --color-primary: #007acc; /* VS Code blue for primary actions/accents */
+  --color-primary-hover: #0060a0; /* Darker blue on hover */
+  --color-secondary: #6c757d; /* Grey for secondary actions */
+  --color-secondary-hover: #5a6268; /* Darker grey on hover */
+  --color-success: #28a745; /* Green for success */
+  --color-info: #17a2b8; /* Cyan for info */
+  --color-warning: #ffc107; /* Yellow for warning */
+  --color-danger: #dc3545; /* Red for danger */
+
+  /* Layout dimensions */
+  --navbar-height: 50px; /* New: Height of the top navigation bar */
+  --vertical-tab-width: 50px; /* Width of the vertical tab strip (icons only) */
+  --sidebar-content-width-left: 280px; /* Width of the left sidebar's content area when open */
+  --sidebar-width-right: 320px; /* Width of the right sidebar */
+  --menubar-height: 40px; /* Placeholder for a potential top menubar */
+
+  /* Grid size for Cytoscape (default) */
+  --grid-size: 20px;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  overflow: hidden; /* Prevent global scroll */
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Full viewport height */
+  width: 100vw; /* Full viewport width */
+  overflow: hidden; /* Prevent #app from scrolling */
+}
+
+/* Basic styling for common elements */
+button, select, input[type="text"], input[type="number"], textarea {
+  font-family: inherit;
+  font-size: inherit;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background-color: var(--color-background-soft);
+  color: var(--color-text);
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button {
+  background-color: var(--color-background-mute);
+}
+
+button:hover {
+  background-color: var(--color-border-light);
+}
+
+button.primary {
+  background-color: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+button.primary:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+button.secondary {
+  background-color: var(--color-secondary);
+  color: white;
+  border-color: var(--color-secondary);
+}
+
+button.secondary:hover {
+  background-color: var(--color-secondary-hover);
+  border-color: var(--color-secondary-hover);
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Basic utility classes */
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-grow { flex-grow: 1; }
+.justify-center { justify-content: center; }
+.items-center { align-items: center; }
+.text-center { text-align: center; }
+.p-4 { padding: 1rem; }
+.m-4 { margin: 1rem; }
+.border { border: 1px solid var(--color-border); }
+.rounded { border-radius: 0.25rem; }
+.shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+
+/* Cytoscape specific styles for grid background */
+.cytoscape-container.grid-background {
+  background-image:
+    linear-gradient(to right, var(--color-border-dark) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-border-dark) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+}
+
+/* Base styles for modals (from Modal.vue, but globalized for consistency) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  min-width: 350px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: relative;
+  animation: slideIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.2em;
+  color: var(--color-heading);
+}
+
+.modal-close-button {
+  background: none;
+  border: none;
+  font-size: 1.8em;
+  cursor: pointer;
+  color: var(--color-secondary);
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.modal-close-button:hover {
+  color: var(--color-text);
+}
+
+.modal-body {
+  flex-grow: 1; /* Allows body to take available space */
+}
+
+.modal-footer {
+  border-top: 1px solid var(--color-border-light);
+  padding-top: 15px;
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-shrink: 0; /* Prevent shrinking when content is tall */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
