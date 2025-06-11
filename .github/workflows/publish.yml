@@ -13,20 +13,20 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 🟩
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: GSoC-Backup/Code/package-lock.json
 
-      - name: Install dependencies 👨‍💻
+      - name: Install dependencies
         run: npm --prefix GSoC-Backup/Code install
 
-      - name: Build application 🔨
+      - name: Build application
         run: npm --prefix GSoC-Backup/Code run build
 
       - name: Deploy to GitHub Pages
