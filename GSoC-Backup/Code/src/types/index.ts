@@ -1,10 +1,6 @@
-
 export type NodeType = 'stochastic' | 'deterministic' | 'constant' | 'observed' | 'plate';
 
-
 export type PaletteItemType = NodeType | 'add-stochastic-edge' | 'add-deterministic-edge';
-
-
 export interface GraphNode {
   id: string;
   name: string;
@@ -24,7 +20,6 @@ export interface GraphNode {
   loopRange?: string;
 }
 
-
 export interface GraphEdge {
   id: string;
   name?: string;
@@ -34,9 +29,7 @@ export interface GraphEdge {
   relationshipType?: 'stochastic' | 'deterministic';
 }
 
-
 export type GraphElement = GraphNode | GraphEdge;
-
 
 declare module 'cytoscape' {
   interface NodeSingular {
@@ -75,15 +68,12 @@ declare module 'cytoscape' {
     data(key: 'source'): string;
     data(key: 'target'): string;
     data(key: 'relationshipType'): 'stochastic' | 'deterministic' | undefined;
-
     data(key: string): any;
-
-
     data(key: string, value: any): EdgeSingular;
     data(obj: Partial<GraphEdge>): EdgeSingular;
   }
 
-
+  
   interface Core {
 
     panzoom(options?: any): any;
