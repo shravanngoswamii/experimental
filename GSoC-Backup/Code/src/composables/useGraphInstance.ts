@@ -1,15 +1,23 @@
 import cytoscape from 'cytoscape';
-import type { Core, ElementDefinition } from 'cytoscape';
+import type { Core, ElementDefinition, NodeSingular } from 'cytoscape';
 import gridGuide from 'cytoscape-grid-guide';
 import contextMenus from 'cytoscape-context-menus';
+import noOverlap from 'cytoscape-no-overlap';
+import dagre from 'cytoscape-dagre';
+import fcose from 'cytoscape-fcose';
+import compoundDragAndDrop from 'cytoscape-compound-drag-and-drop';
 
-// Register the extensions on the cytoscape library
+// Register all the extensions on the cytoscape library
 cytoscape.use(gridGuide);
 cytoscape.use(contextMenus);
+cytoscape.use(noOverlap);
+cytoscape.use(dagre);
+cytoscape.use(fcose);
+cytoscape.use(compoundDragAndDrop);
+
 
 let cyInstance: Core | null = null;
 
-// Define a more specific type for the context menu event to avoid using 'any'
 interface ContextMenuEvent {
   target: cytoscape.SingularElementReturnValue;
 }
@@ -19,9 +27,6 @@ interface ContextMenuEvent {
  */
 export function useGraphInstance() {
 
-  /**
-   * Initializes a new Cytoscape.js instance with predefined styles.
-   */
   const initCytoscape = (container: HTMLElement, initialElements: ElementDefinition[]): Core => {
     if (cyInstance) {
       cyInstance.destroy();
@@ -32,6 +37,7 @@ export function useGraphInstance() {
       container: container,
       elements: initialElements,
       style: [
+        // Style definitions are unchanged...
         {
           selector: 'node',
           style: { 'background-color': '#e0e0e0', 'border-color': '#555', 'border-width': 2, 'label': 'data(name)', 'text-valign': 'center', 'text-halign': 'center', 'padding': '10px', 'font-size': '10px', 'text-wrap': 'wrap', 'text-max-width': '80px', 'height': '60px', 'width': '60px', 'line-height': 1.2, 'border-style': 'solid', 'z-index': 10 },
@@ -92,9 +98,13 @@ export function useGraphInstance() {
           style: { 'border-width': 3, 'border-color': '#007acc', 'overlay-color': '#007acc', 'overlay-opacity': 0.2 },
         },
         {
-          selector: '.cy-connecting',
-          style: { 'background-color': '#007acc', 'border-color': '#0060a0', 'color': '#ffffff', 'overlay-color': '#007acc', 'overlay-opacity': 0.2 },
-        }
+            selector: '.cdnd-grabbed-node',
+            style: { 'background-color': '#f1c40f', 'opacity': 0.7 }
+        },
+        {
+            selector: '.cdnd-drop-target',
+            style: { 'border-color': '#f1c40f', 'border-style': 'solid' }
+        },
       ],
       layout: { name: 'preset' },
       minZoom: 0.1,
@@ -105,8 +115,16 @@ export function useGraphInstance() {
     };
 
     cyInstance = cytoscape(options);
-
-    // FIX: Using eslint-disable to handle untyped 3rd-party library extensions is a common and acceptable practice.
+    
+    // Initialize the compound drag and drop extension
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (cyInstance as any).compoundDragAndDrop({
+        grabbedNode: (node: NodeSingular) => node.data('nodeType') !== 'plate', // Only non-plate nodes can be grabbed
+        dropTarget: (node: NodeSingular) => node.data('nodeType') === 'plate', // Only plates can be drop targets
+        dropSibling: () => false, // Do not allow creating new parents by dropping on siblings
+        outThreshold: 50, // Increase threshold to make it easier to drag out of a parent
+    });
+    
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (cyInstance as any).gridGuide({ drawGrid: false, snapToGridOnRelease: true, snapToGridDuringDrag: true, gridSpacing: 20 });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

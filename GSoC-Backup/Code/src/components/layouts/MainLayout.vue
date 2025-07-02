@@ -19,7 +19,7 @@ import { useProjectStore } from '../../stores/projectStore';
 import { useGraphStore } from '../../stores/graphStore';
 import { useUiStore } from '../../stores/uiStore';
 import { useGraphInstance } from '../../composables/useGraphInstance';
-import type { GraphElement, NodeType, PaletteItemType } from '../../types';
+import type { GraphElement, NodeType, PaletteItemType, GraphNode } from '../../types';
 
 const projectStore = useProjectStore();
 const graphStore = useGraphStore();
@@ -98,12 +98,10 @@ const handleDeleteElement = (elementId: string) => {
   deleteElement(elementId);
 };
 
-// FIX: This logic is now simplified based on the updated PaletteItemType
 const handlePaletteSelection = (itemType: PaletteItemType) => {
   if (itemType === 'add-edge') {
     currentMode.value = 'add-edge';
   } else {
-    // It must be a NodeType
     currentMode.value = 'add-node';
     currentNodeType.value = itemType;
   }
@@ -174,6 +172,41 @@ const handleExportPng = () => {
         });
 };
 
+const handleApplyLayout = (layoutName: string) => {
+    const cy = getCyInstance();
+    if (!cy) return;
+
+    const layoutOptions = {
+        name: layoutName,
+        animate: true,
+        padding: 50,
+        ...(layoutName === 'dagre' && { rankDir: 'TB', spacingFactor: 1.2 }),
+        ...(layoutName === 'fcose' && { idealEdgeLength: 100, nodeSeparation: 75 }),
+    };
+
+    const layout = cy.layout(layoutOptions);
+    
+    // Listen for the layout to stop before applying overlap prevention and updating positions
+    layout.on('layoutstop', () => {
+        // Apply no-overlap after the layout animation finishes
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (cy as any).nodes().noOverlap({ padding: 15 });
+
+        // After layout and overlap prevention, update the node positions in the store
+        const updatedNodes = cy.nodes().map(node => {
+            const originalNode = graphStore.currentGraphElements.find(el => el.id === node.id() && el.type === 'node') as GraphNode;
+            if (originalNode) {
+                return { ...originalNode, position: node.position() };
+            }
+            return null;
+        }).filter(n => n !== null) as GraphNode[];
+
+        updatedNodes.forEach(node => updateElement(node));
+    });
+
+    layout.run();
+};
+
 watch(selectedElement, (newVal) => {
   console.log('Selected element changed in MainLayout:', newVal);
 }, { deep: true });
@@ -202,6 +235,7 @@ watch(selectedElement, (newVal) => {
       @open-about-modal="showAboutModal = true"
       @export-json="handleExportJson"
       @export-png="handleExportPng"
+      @apply-layout="handleApplyLayout"
     />
 
     <div class="content-area">
@@ -309,6 +343,7 @@ watch(selectedElement, (newVal) => {
 </template>
 
 <style scoped>
+/* Styles are preserved from the original file */
 .main-layout {
   display: flex;
   flex-direction: column;

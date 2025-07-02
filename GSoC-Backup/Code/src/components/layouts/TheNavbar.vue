@@ -29,6 +29,7 @@ const emit = defineEmits<{
   (e: 'open-about-modal'): void;
   (e: 'export-json'): void;
   (e: 'export-png'): void;
+  (e: 'apply-layout', layoutName: string): void; // New event for applying layouts
 }>();
 
 const displayTitle = computed(() => {
@@ -93,8 +94,19 @@ const handleGridSizeInput = (event: Event) => {
               {{ nodeType.label }}
             </a>
             <div class="dropdown-divider"></div>
-            <!-- MODIFIED: Simplified to a single "Add Edge" option -->
             <a href="#" @click.prevent="emit('update:currentMode', 'add-edge')">Add Edge</a>
+          </template>
+        </DropdownMenu>
+
+        <!-- Layout Menu (New) -->
+        <DropdownMenu>
+          <template #trigger>
+            <BaseButton type="ghost" size="small">Layout</BaseButton>
+          </template>
+          <template #content>
+            <a href="#" @click.prevent="emit('apply-layout', 'dagre')">Dagre (Hierarchical)</a>
+            <a href="#" @click.prevent="emit('apply-layout', 'fcose')">fCoSE (Force-Directed)</a>
+            <a href="#" @click.prevent="emit('apply-layout', 'preset')">Reset to Preset</a>
           </template>
         </DropdownMenu>
 

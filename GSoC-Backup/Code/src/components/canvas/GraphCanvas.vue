@@ -26,7 +26,6 @@ const { enableGridSnapping, disableGridSnapping, setGridSize } = useGridSnapping
 
 const validNodeTypes: NodeType[] = ['stochastic', 'deterministic', 'constant', 'observed', 'plate'];
 
-// This helper function now dynamically determines the relationshipType for edges before rendering.
 const formatElementsForCytoscape = (elements: GraphElement[]): ElementDefinition[] => {
   return elements.map(el => {
     if (el.type === 'node') {
@@ -34,7 +33,6 @@ const formatElementsForCytoscape = (elements: GraphElement[]): ElementDefinition
     } else {
       const edge = el as GraphEdge;
       const targetNode = elements.find(n => n.id === edge.target && n.type === 'node') as GraphNode | undefined;
-      // The relationship is 'stochastic' if the target is stochastic or observed, otherwise it's 'deterministic'.
       const relType = (targetNode?.nodeType === 'stochastic' || targetNode?.nodeType === 'observed') ? 'stochastic' : 'deterministic';
       return { 
         group: 'edges', 
@@ -62,35 +60,22 @@ onMounted(() => {
       emit('canvas-tap', evt);
     });
 
-    cy.on('dragfree', 'node', (evt: EventObject) => {
-      const node = evt.target as NodeSingular;
-      if (node.data('nodeType') === 'plate') return;
+    // REMOVED the old 'dragfree' listener. The new extension handles this.
 
-      const snappedPos = {
-        x: Math.round(node.position('x') / props.gridSize) * props.gridSize,
-        y: Math.round(node.position('y') / props.gridSize) * props.gridSize,
-      };
-      node.position(snappedPos);
+    // ADDED listeners for the compound-drag-and-drop extension
+    cy.on('cdnddrop', 'node', (evt: EventObject, dropTarget: NodeSingular | undefined) => {
+        const node = evt.target as NodeSingular;
+        const newParentId = dropTarget ? dropTarget.id() : undefined;
 
-      let newParentId: string | undefined = undefined;
-      const plates = cy?.nodes('[nodeType="plate"]');
-      if (plates) {
-          for (const plate of plates) {
-            if (plate.id() === node.id()) continue;
+        emit('node-moved', {
+            nodeId: node.id(),
+            position: node.position(), // Get the final position after drop
+            parentId: newParentId,
+        });
 
-            const bb = plate.boundingBox();
-            if (snappedPos.x > bb.x1 && snappedPos.x < bb.x2 && snappedPos.y > bb.y1 && snappedPos.y < bb.y2) {
-              newParentId = plate.id();
-              break;
-            }
-          }
-      }
-
-      emit('node-moved', {
-        nodeId: node.id(),
-        position: snappedPos,
-        parentId: newParentId
-      });
+        // Apply no-overlap after a node is dropped to fix positions
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (cy as any).nodes().noOverlap({ padding: 15 });
     });
 
     cy.on('tap', 'node, edge', (evt: EventObject) => {
@@ -152,7 +137,6 @@ watch(() => props.gridSize, (newValue) => {
 });
 
 watch(() => props.elements, (newElements) => {
-  // FIX 1: Add a guard clause to prevent running if cy is not initialized.
   if (!cy) return;
 
   const formattedElements = formatElementsForCytoscape(newElements);
@@ -167,7 +151,6 @@ watch(() => props.elements, (newElements) => {
     });
 
     formattedElements.forEach(formattedEl => {
-      // FIX 2: Ensure the element has an ID before proceeding.
       if (!formattedEl.data.id) return;
 
       const existingCyEl = cy!.getElementById(formattedEl.data.id);
@@ -182,7 +165,6 @@ watch(() => props.elements, (newElements) => {
           if (newNode.position.x !== currentCyPos.x || newNode.position.y !== currentCyPos.y) {
             existingCyEl.position(newNode.position);
           }
-          // FIX 3: Safely get the parent ID. .parent() returns a collection.
           const parentCollection = existingCyEl.parent();
           const currentParentId = parentCollection.length > 0 ? parentCollection.first().id() : undefined;
           
@@ -211,6 +193,7 @@ watch(() => props.elements, (newElements) => {
 </template>
 
 <style scoped>
+/* Styles are preserved from the original file */
 .cytoscape-container {
   flex-grow: 1;
   background-color: var(--color-background-soft);
