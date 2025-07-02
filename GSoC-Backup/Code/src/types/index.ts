@@ -37,6 +37,13 @@ export interface GraphEdge {
 // A union type for any element that can exist on the graph.
 export type GraphElement = GraphNode | GraphEdge;
 
+// This interface represents the data loaded from an example's model.json file.
+export interface ExampleModel {
+  name: string;
+  graphJSON: GraphElement[];
+}
+
+
 /**
  * Augments the official Cytoscape.js type definitions to provide
  * better type-safety for data properties specific to this application.
@@ -44,19 +51,15 @@ export type GraphElement = GraphNode | GraphEdge;
 declare module 'cytoscape' {
   // By augmenting the Core interface, we can add types for extensions.
   interface Core {
-    // FIX: Add the panzoom extension's type definition.
     panzoom(options?: any): any;
   }
 
   interface NodeSingular {
-    // FIX: Add a generic string key signature to the data method.
-    // This allows calling .data('name'), .data('id'), etc., without TypeScript errors.
     data(key: string): any;
     data(): GraphNode;
   }
 
   interface EdgeSingular {
-    // Overload data() to include our dynamic relationshipType property.
     data(): GraphEdge & { relationshipType?: 'stochastic' | 'deterministic' };
   }
 }

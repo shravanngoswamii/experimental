@@ -60,9 +60,7 @@ onMounted(() => {
       emit('canvas-tap', evt);
     });
 
-    // REMOVED the old 'dragfree' listener. The new extension handles this.
-
-    // ADDED listeners for the compound-drag-and-drop extension
+    // Listeners for the compound-drag-and-drop extension
     cy.on('cdnddrop', 'node', (evt: EventObject, dropTarget: NodeSingular | undefined) => {
         const node = evt.target as NodeSingular;
         const newParentId = dropTarget ? dropTarget.id() : undefined;
@@ -73,9 +71,8 @@ onMounted(() => {
             parentId: newParentId,
         });
 
-        // Apply no-overlap after a node is dropped to fix positions
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (cy as any).nodes().noOverlap({ padding: 15 });
+        // REMOVED: The call to .noOverlap() was incorrect here. Overlap prevention
+        // is now handled by the layout engine (e.g., fCoSE) for better results.
     });
 
     cy.on('tap', 'node, edge', (evt: EventObject) => {
@@ -193,7 +190,6 @@ watch(() => props.elements, (newElements) => {
 </template>
 
 <style scoped>
-/* Styles are preserved from the original file */
 .cytoscape-container {
   flex-grow: 1;
   background-color: var(--color-background-soft);

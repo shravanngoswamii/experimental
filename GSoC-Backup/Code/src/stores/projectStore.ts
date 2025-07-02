@@ -53,7 +53,9 @@ export const useProjectStore = defineStore('project', () => {
       const project = projects.value.find(p => p.id === projectId);
       if (project && project.graphs.length > 0) {
         // Select the first graph in the project, or last opened (future enhancement)
-        graphStore.selectGraph(project.graphs[0].id);
+        if (!graphStore.currentGraphId || !project.graphs.some(g => g.id === graphStore.currentGraphId)) {
+            graphStore.selectGraph(project.graphs[0].id);
+        }
       } else {
         graphStore.selectGraph(null); // No graphs in this project, deselect current graph
       }
@@ -96,22 +98,25 @@ export const useProjectStore = defineStore('project', () => {
    * Also creates an empty content entry for this new graph in the graph store.
    * @param {string} projectId - The ID of the project to add the graph to.
    * @param {string} graphName - The name of the new graph.
+   * @returns {GraphMeta | undefined} The metadata of the newly created graph, or undefined if the project doesn't exist.
    */
-  const addGraphToProject = (projectId: string, graphName: string) => {
+  const addGraphToProject = (projectId: string, graphName: string): GraphMeta | undefined => {
     const project = projects.value.find(p => p.id === projectId);
     if (project) {
       const newGraphMeta: GraphMeta = {
-        id: `graph_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`, // Unique ID
+        id: `graph_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
         name: graphName,
         createdAt: Date.now(),
         lastModified: Date.now(),
       };
-      project.graphs.push(newGraphMeta); // Add metadata to project
-      project.lastModified = Date.now(); // Update project modification timestamp
-      saveProjects(); // Persist changes
-      graphStore.createNewGraphContent(newGraphMeta.id); // Create empty content for new graph
-      graphStore.selectGraph(newGraphMeta.id); // Select the new graph
+      project.graphs.push(newGraphMeta);
+      project.lastModified = Date.now();
+      saveProjects();
+      graphStore.createNewGraphContent(newGraphMeta.id);
+      graphStore.selectGraph(newGraphMeta.id);
+      return newGraphMeta; // FIX: Return the newly created graph metadata
     }
+    return undefined; // Return undefined if the project was not found
   };
 
   /**
@@ -122,10 +127,10 @@ export const useProjectStore = defineStore('project', () => {
   const deleteGraphFromProject = (projectId: string, graphId: string) => {
     const project = projects.value.find(p => p.id === projectId);
     if (project) {
-      project.graphs = project.graphs.filter(g => g.id !== graphId); // Remove metadata
-      project.lastModified = Date.now(); // Update project modification timestamp
-      saveProjects(); // Persist changes
-      graphStore.deleteGraphContent(graphId); // Delete graph content as well
+      project.graphs = project.graphs.filter(g => g.id !== graphId);
+      project.lastModified = Date.now();
+      saveProjects();
+      graphStore.deleteGraphContent(graphId);
     }
   };
 
@@ -162,17 +167,16 @@ export const useProjectStore = defineStore('project', () => {
     if (newProjectId) {
       const project = projects.value.find(p => p.id === newProjectId);
       if (project && project.graphs.length > 0) {
-        // If a project is selected and it has graphs, ensure one is selected in graphStore
         if (!graphStore.currentGraphId || !project.graphs.some(g => g.id === graphStore.currentGraphId)) {
-          graphStore.selectGraph(project.graphs[0].id); // Select the first graph by default
+          graphStore.selectGraph(project.graphs[0].id);
         }
       } else {
-        graphStore.selectGraph(null); // If no graphs in project, deselect graph
+        graphStore.selectGraph(null);
       }
     } else {
-      graphStore.selectGraph(null); // If no project selected, deselect graph
+      graphStore.selectGraph(null);
     }
-  }, { immediate: true }); // Run immediately on component mount
+  }, { immediate: true });
 
   return {
     projects,

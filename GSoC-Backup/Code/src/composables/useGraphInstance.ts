@@ -2,7 +2,6 @@ import cytoscape from 'cytoscape';
 import type { Core, ElementDefinition, NodeSingular } from 'cytoscape';
 import gridGuide from 'cytoscape-grid-guide';
 import contextMenus from 'cytoscape-context-menus';
-import noOverlap from 'cytoscape-no-overlap';
 import dagre from 'cytoscape-dagre';
 import fcose from 'cytoscape-fcose';
 import compoundDragAndDrop from 'cytoscape-compound-drag-and-drop';
@@ -10,7 +9,6 @@ import compoundDragAndDrop from 'cytoscape-compound-drag-and-drop';
 // Register all the extensions on the cytoscape library
 cytoscape.use(gridGuide);
 cytoscape.use(contextMenus);
-cytoscape.use(noOverlap);
 cytoscape.use(dagre);
 cytoscape.use(fcose);
 cytoscape.use(compoundDragAndDrop);
@@ -37,7 +35,7 @@ export function useGraphInstance() {
       container: container,
       elements: initialElements,
       style: [
-        // Style definitions are unchanged...
+        // Node styles (unchanged)
         {
           selector: 'node',
           style: { 'background-color': '#e0e0e0', 'border-color': '#555', 'border-width': 2, 'label': 'data(name)', 'text-valign': 'center', 'text-halign': 'center', 'padding': '10px', 'font-size': '10px', 'text-wrap': 'wrap', 'text-max-width': '80px', 'height': '60px', 'width': '60px', 'line-height': 1.2, 'border-style': 'solid', 'z-index': 10 },
@@ -66,6 +64,9 @@ export function useGraphInstance() {
           selector: 'node[nodeType="observed"]',
           style: { 'background-color': '#e0f0ff', 'border-color': '#007bff', 'border-style': 'dashed', 'shape': 'ellipse' },
         },
+        
+        // FIX: Split edge styling to resolve console warnings.
+        // This first rule applies to ALL edges.
         {
           selector: 'edge',
           style: {
@@ -75,6 +76,12 @@ export function useGraphInstance() {
             'target-arrow-shape': 'triangle',
             'curve-style': 'bezier',
             'z-index': 1,
+          },
+        },
+        // This second rule ONLY applies the label to edges that have a 'name' property.
+        {
+          selector: 'edge[name]',
+          style: {
             'label': 'data(name)',
             'font-size': '8px',
             'text-rotation': 'autorotate',
@@ -83,8 +90,10 @@ export function useGraphInstance() {
             'text-background-padding': '3px',
             'text-border-width': 1,
             'text-border-color': '#ccc',
-          },
+          }
         },
+
+        // Edge type-specific styles (unchanged)
         {
           selector: 'edge[relationshipType="stochastic"]',
           style: { 'line-color': '#dc3545', 'target-arrow-color': '#dc3545', 'line-style': 'dashed' },
@@ -93,6 +102,8 @@ export function useGraphInstance() {
           selector: 'edge[relationshipType="deterministic"]',
           style: { 'line-color': '#28a745', 'target-arrow-color': '#28a745', 'line-style': 'solid' },
         },
+        
+        // Other styles (unchanged)
         {
           selector: '.cy-selected',
           style: { 'border-width': 3, 'border-color': '#007acc', 'overlay-color': '#007acc', 'overlay-opacity': 0.2 },
@@ -119,10 +130,10 @@ export function useGraphInstance() {
     // Initialize the compound drag and drop extension
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (cyInstance as any).compoundDragAndDrop({
-        grabbedNode: (node: NodeSingular) => node.data('nodeType') !== 'plate', // Only non-plate nodes can be grabbed
-        dropTarget: (node: NodeSingular) => node.data('nodeType') === 'plate', // Only plates can be drop targets
-        dropSibling: () => false, // Do not allow creating new parents by dropping on siblings
-        outThreshold: 50, // Increase threshold to make it easier to drag out of a parent
+        grabbedNode: (node: NodeSingular) => node.data('nodeType') !== 'plate',
+        dropTarget: (node: NodeSingular) => node.data('nodeType') === 'plate',
+        dropSibling: () => false,
+        outThreshold: 50,
     });
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

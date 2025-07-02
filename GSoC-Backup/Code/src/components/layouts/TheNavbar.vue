@@ -29,7 +29,8 @@ const emit = defineEmits<{
   (e: 'open-about-modal'): void;
   (e: 'export-json'): void;
   (e: 'export-png'): void;
-  (e: 'apply-layout', layoutName: string): void; // New event for applying layouts
+  (e: 'apply-layout', layoutName: string): void;
+  (e: 'load-example', exampleKey: string): void;
 }>();
 
 const displayTitle = computed(() => {
@@ -48,6 +49,10 @@ const basicNodeTypes: { label: string; value: NodeType }[] = [
   { label: 'Constant Node', value: 'constant' },
   { label: 'Observed Node', value: 'observed' },
   { label: 'Plate (Loop)', value: 'plate' },
+];
+
+const exampleModels = [
+    { name: 'Rats Model', key: 'rats' },
 ];
 
 const setAddNodeType = (type: NodeType) => {
@@ -98,7 +103,7 @@ const handleGridSizeInput = (event: Event) => {
           </template>
         </DropdownMenu>
 
-        <!-- Layout Menu (New) -->
+        <!-- Layout Menu -->
         <DropdownMenu>
           <template #trigger>
             <BaseButton type="ghost" size="small">Layout</BaseButton>
@@ -127,6 +132,18 @@ const handleGridSizeInput = (event: Event) => {
                 max="100" step="5" class="w-20" />
               <span>px</span>
             </div>
+          </template>
+        </DropdownMenu>
+        
+        <!-- Examples Menu -->
+        <DropdownMenu>
+          <template #trigger>
+            <BaseButton type="ghost" size="small">Examples</BaseButton>
+          </template>
+          <template #content>
+             <a v-for="example in exampleModels" :key="example.key" href="#" @click.prevent="emit('load-example', example.key)">
+              {{ example.name }}
+            </a>
           </template>
         </DropdownMenu>
 

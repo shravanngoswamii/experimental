@@ -19,7 +19,7 @@ import { useProjectStore } from '../../stores/projectStore';
 import { useGraphStore } from '../../stores/graphStore';
 import { useUiStore } from '../../stores/uiStore';
 import { useGraphInstance } from '../../composables/useGraphInstance';
-import type { GraphElement, NodeType, PaletteItemType, GraphNode } from '../../types';
+import type { GraphElement, NodeType, PaletteItemType, GraphNode, ExampleModel } from '../../types';
 
 const projectStore = useProjectStore();
 const graphStore = useGraphStore();
@@ -180,21 +180,24 @@ const handleApplyLayout = (layoutName: string) => {
         name: layoutName,
         animate: true,
         padding: 50,
-        ...(layoutName === 'dagre' && { rankDir: 'TB', spacingFactor: 1.2 }),
-        ...(layoutName === 'fcose' && { idealEdgeLength: 100, nodeSeparation: 75 }),
+        fit: true,
+        ...(layoutName === 'dagre' && { 
+            rankDir: 'TB', 
+            spacingFactor: 1.2 
+        }),
+        ...(layoutName === 'fcose' && { 
+            idealEdgeLength: 120, 
+            nodeSeparation: 150,
+            nodeRepulsion: 4500,
+            quality: 'proof',
+        }),
     };
 
     const layout = cy.layout(layoutOptions);
     
-    // Listen for the layout to stop before applying overlap prevention and updating positions
     layout.on('layoutstop', () => {
-        // Apply no-overlap after the layout animation finishes
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (cy as any).nodes().noOverlap({ padding: 15 });
-
-        // After layout and overlap prevention, update the node positions in the store
         const updatedNodes = cy.nodes().map(node => {
-            const originalNode = graphStore.currentGraphElements.find(el => el.id === node.id() && el.type === 'node') as GraphNode;
+            const originalNode = graphStore.currentGraphElements.find(el => el.id === node.id() && el.type === 'node') as GraphNode | undefined;
             if (originalNode) {
                 return { ...originalNode, position: node.position() };
             }
@@ -206,6 +209,39 @@ const handleApplyLayout = (layoutName: string) => {
 
     layout.run();
 };
+
+const handleLoadExample = async (exampleKey: string) => {
+    if (!projectStore.currentProjectId) {
+        alert("Please create or select a project before loading an example.");
+        return;
+    }
+
+    try {
+        // FIX: Construct the URL using Vite's BASE_URL to handle deployment sub-paths.
+        // This ensures the path is correct whether running locally or on a server sub-directory.
+        const baseUrl = import.meta.env.BASE_URL;
+        const fetchUrl = `${baseUrl}examples/${exampleKey}/model.json`;
+
+        const response = await fetch(fetchUrl);
+        if (!response.ok) {
+            throw new Error(`Could not fetch example: ${response.statusText}`);
+        }
+        const modelData: ExampleModel = await response.json();
+
+        const newGraphMeta = projectStore.addGraphToProject(projectStore.currentProjectId, modelData.name);
+        
+        if (newGraphMeta) {
+            graphStore.updateGraphElements(newGraphMeta.id, modelData.graphJSON);
+        }
+        
+        setTimeout(() => handleApplyLayout('dagre'), 100);
+
+    } catch (error) {
+        console.error("Failed to load example model:", error);
+        alert("Failed to load the example model. See console for details.");
+    }
+};
+
 
 watch(selectedElement, (newVal) => {
   console.log('Selected element changed in MainLayout:', newVal);
@@ -236,6 +272,7 @@ watch(selectedElement, (newVal) => {
       @export-json="handleExportJson"
       @export-png="handleExportPng"
       @apply-layout="handleApplyLayout"
+      @load-example="handleLoadExample"
     />
 
     <div class="content-area">
