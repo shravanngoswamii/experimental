@@ -20,7 +20,6 @@ const emit = defineEmits<{
   (e: 'update:currentNodeType', type: NodeType): void;
 }>();
 
-// FIX: 'deleteElement' is removed as it was not used in this component.
 const { elements, addElement, updateElement } = useGraphElements();
 const { getCyInstance } = useGraphInstance();
 
@@ -44,11 +43,8 @@ const handleCanvasTap = (event: EventObject) => {
 
   switch (props.currentMode) {
     case 'add-node':
-      // Allow adding a node on the background or directly inside a plate.
       if (isBackgroundClick || isPlateClick) {
-        // Prevent adding a plate inside another plate.
         if (props.currentNodeType === 'plate' && isPlateClick) {
-            // Using a simple alert for now. A custom modal would be better.
             alert("Nesting plates is not currently supported.");
             return;
         }
@@ -115,13 +111,21 @@ const handleCanvasTap = (event: EventObject) => {
   }
 };
 
-
 /**
- * Handles a node being dragged and dropped.
- * @param nodeData The updated data of the dragged node.
+ * Handles a node being moved and potentially reparented.
+ * @param payload The data of the moved node including its new position and parent.
  */
-const handleNodeDragged = (nodeData: GraphNode) => {
-  updateElement(nodeData);
+const handleNodeMoved = (payload: { nodeId: string, position: { x: number; y: number }, parentId: string | undefined }) => {
+  const elementToUpdate = elements.value.find(el => el.id === payload.nodeId) as GraphNode | undefined;
+
+  if (elementToUpdate) {
+    const updatedNode: GraphNode = {
+      ...elementToUpdate,
+      position: payload.position,
+      parent: payload.parentId
+    };
+    updateElement(updatedNode);
+  }
 };
 
 /**
@@ -133,13 +137,11 @@ const handleNodeDropped = (payload: { nodeType: NodeType; position: { x: number;
   const cy = getCyInstance();
   let parentPlateId: string | undefined = undefined;
 
-  // Find if the drop position is inside any plate
   if (cy) {
     const plates = cy.nodes('[nodeType="plate"]');
     for (const plate of plates) {
       const bb = plate.boundingBox();
       if (position.x > bb.x1 && position.x < bb.x2 && position.y > bb.y1 && position.y < bb.y2) {
-        // Prevent dropping a plate into a plate
         if (nodeType === 'plate') {
           alert("Nesting plates is not currently supported.");
           return;
@@ -169,7 +171,6 @@ const handleNodeDropped = (payload: { nodeType: NodeType; position: { x: number;
   emit('update:currentMode', 'select');
 };
 
-// Watch for mode changes to reset connecting state
 watch(() => props.currentMode, (newMode) => {
   if (newMode !== 'add-edge') {
     sourceNode.value?.removeClass('cy-connecting');
@@ -184,8 +185,8 @@ watch(() => props.currentMode, (newMode) => {
     <CanvasToolbar
       :current-mode="props.currentMode"
       :current-node-type="props.currentNodeType"
-      @update:current-mode="(mode) => emit('update:currentMode', mode)"
-      @update:current-node-type="(type) => emit('update:currentNodeType', type)"
+      @update:current-mode="(mode: string) => emit('update:currentMode', mode)"
+      @update:current-node-type="(type: NodeType) => emit('update:currentNodeType', type)"
       :is-connecting="isConnecting"
       :source-node-name="sourceNode?.data('name')"
     />
@@ -196,7 +197,7 @@ watch(() => props.currentMode, (newMode) => {
       :grid-size="gridSize"
       :current-mode="props.currentMode"
       @canvas-tap="handleCanvasTap"
-      @node-dragged="handleNodeDragged"
+      @node-moved="handleNodeMoved"
       @node-dropped="handleNodeDropped" />
   </div>
 </template>

@@ -14,7 +14,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'canvas-tap', event: EventObject): void;
-  (e: 'node-dragged', nodeData: GraphNode): void;
+  (e: 'node-moved', payload: { nodeId: string, position: { x: number; y: number }, parentId: string | undefined }): void;
   (e: 'node-dropped', payload: { nodeType: NodeType; position: { x: number; y: number } }): void;
 }>();
 
@@ -26,15 +26,11 @@ const { enableGridSnapping, disableGridSnapping, setGridSize } = useGridSnapping
 
 const validNodeTypes: NodeType[] = ['stochastic', 'deterministic', 'constant', 'observed', 'plate'];
 
-/**
- * Helper function to format our GraphElement[] into Cytoscape's ElementDefinition[].
- * Cytoscape requires a 'data' object wrapper.
- */
 const formatElementsForCytoscape = (elements: GraphElement[]): ElementDefinition[] => {
   return elements.map(el => {
     if (el.type === 'node') {
       return { group: 'nodes', data: { ...el }, position: el.position };
-    } else { // 'edge'
+    } else {
       return { group: 'edges', data: { ...el } };
     }
   });
@@ -57,12 +53,34 @@ onMounted(() => {
 
     cy.on('dragfree', 'node', (evt: EventObject) => {
       const node = evt.target as NodeSingular;
+      if (node.data('nodeType') === 'plate') return;
+
       const snappedPos = {
         x: Math.round(node.position('x') / props.gridSize) * props.gridSize,
         y: Math.round(node.position('y') / props.gridSize) * props.gridSize,
       };
       node.position(snappedPos);
-      emit('node-dragged', { ...node.data(), position: snappedPos });
+
+      let newParentId: string | undefined = undefined;
+      // FIX: Added null check for 'cy'
+      const plates = cy?.nodes('[nodeType="plate"]');
+      if (plates) {
+          for (const plate of plates) {
+            if (plate.id() === node.id()) continue;
+
+            const bb = plate.boundingBox();
+            if (snappedPos.x > bb.x1 && snappedPos.x < bb.x2 && snappedPos.y > bb.y1 && snappedPos.y < bb.y2) {
+              newParentId = plate.id();
+              break;
+            }
+          }
+      }
+
+      emit('node-moved', {
+        nodeId: node.id(),
+        position: snappedPos,
+        parentId: newParentId
+      });
     });
 
     cy.on('tap', 'node, edge', (evt: EventObject) => {
@@ -89,6 +107,7 @@ onMounted(() => {
         const droppedItemType = event.dataTransfer.getData('text/plain') as PaletteItemType;
         if (validNodeTypes.includes(droppedItemType as NodeType)) {
           const bbox = cyContainer.value?.getBoundingClientRect();
+          // FIX: Added null check for 'cy'
           if (bbox && cy) {
             const clientX = event.clientX;
             const clientY = event.clientY;
@@ -124,28 +143,34 @@ watch(() => props.gridSize, (newValue) => {
 });
 
 watch(() => props.elements, (newElements) => {
-  if (!cy) return; // Add guard clause
+  // FIX: Added null check for 'cy'
+  if (!cy) return;
 
-  const newElementIds = new Set(newElements.map(el => el.id));
   cy.batch(() => {
-    cy!.elements().forEach(cyEl => {
+    const newElementIds = new Set(newElements.map(el => el.id));
+
+    cy.elements().forEach(cyEl => {
       if (!newElementIds.has(cyEl.id())) {
         cyEl.remove();
       }
     });
 
     newElements.forEach(newEl => {
-      const existingCyEl = cy!.getElementById(newEl.id);
+      const existingCyEl = cy.getElementById(newEl.id);
       if (existingCyEl.empty()) {
         const formattedEl = formatElementsForCytoscape([newEl])[0];
-        cy!.add(formattedEl);
+        cy.add(formattedEl);
       } else {
         existingCyEl.data(newEl);
         if (newEl.type === 'node') {
-          const newNodePos = (newEl as GraphNode).position;
+          const newNode = newEl as GraphNode;
           const currentCyPos = existingCyEl.position();
-          if (newNodePos.x !== currentCyPos.x || newNodePos.y !== currentCyPos.y) {
-            existingCyEl.position(newNodePos);
+          if (newNode.position.x !== currentCyPos.x || newNode.position.y !== currentCyPos.y) {
+            existingCyEl.position(newNode.position);
+          }
+          const currentParentId = existingCyEl.parent().id();
+          if (newNode.parent !== currentParentId) {
+            existingCyEl.move({ parent: newNode.parent ?? null });
           }
         }
       }

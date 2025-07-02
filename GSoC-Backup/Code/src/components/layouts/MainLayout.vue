@@ -7,7 +7,8 @@ import NodePalette from '../left-sidebar/NodePalette.vue';
 import DataInputPanel from '../panels/DataInputPanel.vue';
 import NodePropertiesPanel from '../right-sidebar/NodePropertiesPanel.vue';
 import CodePreviewPanel from '../panels/CodePreviewPanel.vue';
-import TheNavbar from './TheNavbar.vue'; // UPDATED
+import JsonEditorPanel from '../right-sidebar/JsonEditorPanel.vue';
+import TheNavbar from './TheNavbar.vue';
 import BaseModal from '../common/BaseModal.vue';
 import BaseInput from '../ui/BaseInput.vue';
 import BaseButton from '../ui/BaseButton.vue';
@@ -16,14 +17,17 @@ import AboutModal from './AboutModal.vue';
 import { useGraphElements } from '../../composables/useGraphElements';
 import { useProjectStore } from '../../stores/projectStore';
 import { useGraphStore } from '../../stores/graphStore';
+import { useUiStore } from '../../stores/uiStore'; // IMPORTED
+import { useGraphInstance } from '../../composables/useGraphInstance';
 import type { GraphElement, NodeType, PaletteItemType } from '../../types';
 
 const projectStore = useProjectStore();
 const graphStore = useGraphStore();
+const uiStore = useUiStore(); // IMPORTED
 const { selectedElement, updateElement, deleteElement } = useGraphElements();
+const { getCyInstance } = useGraphInstance();
 
 const activeLeftTab = ref<'project' | 'palette' | 'data' | null>('project');
-const activeRightTab = ref<'properties' | 'code'>('properties');
 const isLeftSidebarOpen = ref(true);
 const isRightSidebarOpen = ref(true);
 const currentMode = ref<string>('select');
@@ -79,8 +83,12 @@ const rightSidebarStyle = computed((): StyleValue => ({
   borderLeft: isRightSidebarOpen.value ? '1px solid var(--color-border)' : 'none',
 }));
 
+// MODIFIED: When an element is selected, switch to properties tab if not pinned
 const handleElementSelected = (element: GraphElement | null) => {
   selectedElement.value = element;
+  if (element && !uiStore.isRightTabPinned) {
+    uiStore.setActiveRightTab('properties');
+  }
 };
 
 const handleUpdateElement = (updatedEl: GraphElement) => {
@@ -130,6 +138,44 @@ const saveCurrentGraph = () => {
   }
 };
 
+const triggerDownload = (blob: Blob, fileName: string) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+const handleExportJson = () => {
+    if (!graphStore.currentGraphId) {
+        alert("Please select a graph to export.");
+        return;
+    }
+    const elementsToExport = graphStore.currentGraphElements;
+    const jsonString = JSON.stringify(elementsToExport, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const fileName = `${activeGraphName.value || 'graph'}.json`;
+    triggerDownload(blob, fileName);
+};
+
+const handleExportPng = () => {
+    const cy = getCyInstance();
+    if (!cy) {
+        alert("Graph instance not available.");
+        return;
+    }
+    const png64 = cy.png({ output: 'base64', full: true, bg: 'white' });
+    fetch(png64)
+        .then(res => res.blob())
+        .then(blob => {
+            const fileName = `${activeGraphName.value || 'graph'}.png`;
+            triggerDownload(blob, fileName);
+        });
+};
+
 watch(selectedElement, (newVal) => {
   console.log('Selected element changed in MainLayout:', newVal);
 }, { deep: true });
@@ -137,15 +183,28 @@ watch(selectedElement, (newVal) => {
 
 <template>
   <div class="main-layout">
-    <!-- UPDATED to use TheNavbar -->
-    <TheNavbar :project-name="currentProjectName" :active-graph-name="activeGraphName" :is-grid-enabled="isGridEnabled"
-      @update:is-grid-enabled="isGridEnabled = $event" :grid-size="gridSize" @update:grid-size="gridSize = $event"
-      :current-mode="currentMode" @update:current-mode="currentMode = $event" :current-node-type="currentNodeType"
-      @update:current-node-type="currentNodeType = $event" :is-left-sidebar-open="isLeftSidebarOpen"
-      :is-right-sidebar-open="isRightSidebarOpen" @toggle-left-sidebar="toggleLeftSidebar"
-      @toggle-right-sidebar="toggleRightSidebar" @new-project="showNewProjectModal = true"
-      @new-graph="showNewGraphModal = true" @save-current-graph="saveCurrentGraph"
-      @open-about-modal="showAboutModal = true" />
+    <TheNavbar
+      :project-name="currentProjectName"
+      :active-graph-name="activeGraphName"
+      :is-grid-enabled="isGridEnabled"
+      @update:is-grid-enabled="isGridEnabled = $event"
+      :grid-size="gridSize"
+      @update:grid-size="gridSize = $event"
+      :current-mode="currentMode"
+      @update:current-mode="currentMode = $event"
+      :current-node-type="currentNodeType"
+      @update:current-node-type="currentNodeType = $event"
+      :is-left-sidebar-open="isLeftSidebarOpen"
+      :is-right-sidebar-open="isRightSidebarOpen"
+      @toggle-left-sidebar="toggleLeftSidebar"
+      @toggle-right-sidebar="toggleRightSidebar"
+      @new-project="showNewProjectModal = true"
+      @new-graph="showNewGraphModal = true"
+      @save-current-graph="saveCurrentGraph"
+      @open-about-modal="showAboutModal = true"
+      @export-json="handleExportJson"
+      @export-png="handleExportPng"
+    />
 
     <div class="content-area">
       <aside :class="leftSidebarClass">
@@ -175,24 +234,44 @@ watch(selectedElement, (newVal) => {
         </div>
       </aside>
       <main class="graph-editor-wrapper">
-        <GraphEditor :is-grid-enabled="isGridEnabled" :grid-size="gridSize" :current-mode="currentMode"
-          :elements="graphStore.currentGraphElements" :current-node-type="currentNodeType"
-          @update:current-mode="currentMode = $event" @update:current-node-type="currentNodeType = $event"
-          @element-selected="handleElementSelected" />
+        <GraphEditor
+          :is-grid-enabled="isGridEnabled"
+          :grid-size="gridSize"
+          :current-mode="currentMode"
+          :elements="graphStore.currentGraphElements"
+          :current-node-type="currentNodeType"
+          @update:current-mode="currentMode = $event"
+          @update:current-node-type="currentNodeType = $event"
+          @element-selected="handleElementSelected"
+        />
       </main>
       <aside class="right-sidebar" :style="rightSidebarStyle">
         <div class="tabs-header">
-          <button :class="{ active: activeRightTab === 'properties' }"
-            @click="activeRightTab = 'properties'">Properties</button>
-          <button :class="{ active: activeRightTab === 'code' }" @click="activeRightTab = 'code'">Code</button>
+          <div class="tab-buttons">
+            <button :class="{ active: uiStore.activeRightTab === 'properties' }"
+              @click="uiStore.setActiveRightTab('properties')">Properties</button>
+            <button :class="{ active: uiStore.activeRightTab === 'code' }"
+              @click="uiStore.setActiveRightTab('code')">Code</button>
+            <button :class="{ active: uiStore.activeRightTab === 'json' }"
+              @click="uiStore.setActiveRightTab('json')">JSON</button>
+          </div>
+          <button @click="uiStore.toggleRightTabPinned()" class="pin-button" :class="{ 'pinned': uiStore.isRightTabPinned }" title="Pin Tab">
+            <i class="fas fa-thumbtack"></i>
+          </button>
         </div>
         <div class="tabs-content">
-          <div v-show="activeRightTab === 'properties'">
-            <NodePropertiesPanel :selected-element="selectedElement" @update-element="handleUpdateElement"
-              @delete-element="handleDeleteElement" />
+          <div v-show="uiStore.activeRightTab === 'properties'" class="tab-pane">
+            <NodePropertiesPanel
+              :selected-element="selectedElement"
+              @update-element="handleUpdateElement"
+              @delete-element="handleDeleteElement"
+            />
           </div>
-          <div v-show="activeRightTab === 'code'">
+          <div v-show="uiStore.activeRightTab === 'code'" class="tab-pane">
             <CodePreviewPanel />
+          </div>
+          <div v-show="uiStore.activeRightTab === 'json'" class="tab-pane">
+            <JsonEditorPanel />
           </div>
         </div>
       </aside>
@@ -232,7 +311,7 @@ watch(selectedElement, (newVal) => {
 </template>
 
 <style scoped>
-/* Your original MainLayout.vue styles are preserved here */
+/* Previous styles are preserved */
 .main-layout {
   display: flex;
   flex-direction: column;
@@ -338,11 +417,19 @@ watch(selectedElement, (newVal) => {
 
 .tabs-header {
   display: flex;
+  justify-content: space-between; /* MODIFIED */
+  align-items: center; /* MODIFIED */
   border-bottom: 1px solid var(--color-border-light);
   flex-shrink: 0;
+  padding-right: 10px; /* MODIFIED */
 }
 
-.tabs-header button {
+.tab-buttons {
+  display: flex;
+  flex-grow: 1;
+}
+
+.tab-buttons button {
   flex: 1;
   padding: 10px 15px;
   border: none;
@@ -354,21 +441,45 @@ watch(selectedElement, (newVal) => {
   white-space: nowrap;
 }
 
-.tabs-header button:hover {
+.tab-buttons button:hover {
   background-color: var(--color-background-mute);
 }
 
-.tabs-header button.active {
+.tab-buttons button.active {
   color: var(--color-primary);
   border-bottom-color: var(--color-primary);
   background-color: var(--color-background-soft);
 }
 
+.pin-button {
+  background: none;
+  border: none;
+  color: var(--color-secondary);
+  cursor: pointer;
+  padding: 5px;
+  font-size: 0.9em;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.pin-button:hover {
+  background-color: var(--color-background-mute);
+}
+
+.pin-button.pinned {
+  color: var(--color-primary);
+  transform: rotate(45deg);
+}
+
 .tabs-content {
   flex-grow: 1;
   overflow-y: auto;
-  padding: 15px;
   -webkit-overflow-scrolling: touch;
+}
+
+.tab-pane {
+  height: 100%;
+  overflow-y: auto;
 }
 
 .graph-editor-wrapper {
