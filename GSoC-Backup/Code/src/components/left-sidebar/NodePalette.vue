@@ -13,7 +13,6 @@ const nodeItems: { label: string; type: NodeType; icon: string; styleClass: stri
   { label: 'Plate', type: 'plate', icon: '[]', styleClass: 'plate', description: 'Represents a loop structure' },
 ];
 
-// MODIFIED: Simplified to a single, generic "Add Edge" tool.
 const connectionItems: { label: string; type: 'add-edge'; styleClass: string; description: string }[] = [
   { label: 'Add Edge', type: 'add-edge', styleClass: 'connection', description: 'Connect two nodes' },
 ];
@@ -54,7 +53,6 @@ const onClickPaletteItem = (itemType: PaletteItemType) => {
     <div class="palette-section">
       <h5 class="section-title">Connections</h5>
       <div class="palette-grid">
-        <!-- MODIFIED: Loop over the simplified connectionItems array -->
         <div
           v-for="connection in connectionItems"
           :key="connection.type"
@@ -74,7 +72,6 @@ const onClickPaletteItem = (itemType: PaletteItemType) => {
 </template>
 
 <style scoped>
-/* Styles are preserved from the original file */
 .node-palette {
   padding: 12px;
   background-color: var(--color-background-soft);

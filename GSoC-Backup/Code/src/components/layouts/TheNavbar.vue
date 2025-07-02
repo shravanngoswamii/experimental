@@ -68,11 +68,9 @@ const handleGridSizeInput = (event: Event) => {
 
 <template>
   <nav class="navbar">
-    <!-- Left Section -->
     <div class="navbar-left">
       <div class="navbar-brand">DoodleBUGS</div>
       <div class="navbar-menu">
-        <!-- Project Menu -->
         <DropdownMenu>
           <template #trigger>
             <BaseButton type="ghost" size="small">Project</BaseButton>
@@ -87,7 +85,6 @@ const handleGridSizeInput = (event: Event) => {
           </template>
         </DropdownMenu>
 
-        <!-- Add Menu -->
         <DropdownMenu>
           <template #trigger>
             <BaseButton type="ghost" size="small">Add</BaseButton>
@@ -103,7 +100,6 @@ const handleGridSizeInput = (event: Event) => {
           </template>
         </DropdownMenu>
 
-        <!-- Layout Menu -->
         <DropdownMenu>
           <template #trigger>
             <BaseButton type="ghost" size="small">Layout</BaseButton>
@@ -115,7 +111,6 @@ const handleGridSizeInput = (event: Event) => {
           </template>
         </DropdownMenu>
 
-        <!-- View Menu -->
         <DropdownMenu>
           <template #trigger>
             <BaseButton type="ghost" size="small">View</BaseButton>
@@ -135,7 +130,6 @@ const handleGridSizeInput = (event: Event) => {
           </template>
         </DropdownMenu>
         
-        <!-- Examples Menu -->
         <DropdownMenu>
           <template #trigger>
             <BaseButton type="ghost" size="small">Examples</BaseButton>
@@ -147,7 +141,6 @@ const handleGridSizeInput = (event: Event) => {
           </template>
         </DropdownMenu>
 
-        <!-- Help Menu -->
         <DropdownMenu>
           <template #trigger>
             <BaseButton type="ghost" size="small">Help</BaseButton>
@@ -164,7 +157,6 @@ const handleGridSizeInput = (event: Event) => {
       </div>
     </div>
 
-    <!-- Right Section -->
     <div class="navbar-right">
       <div class="pane-toggles">
         <button @click="emit('toggle-left-sidebar')" :class="{ active: isLeftSidebarOpen }" title="Toggle Left Sidebar">
@@ -190,7 +182,6 @@ const handleGridSizeInput = (event: Event) => {
 </template>
 
 <style scoped>
-/* Styles are preserved from the original file */
 .navbar {
   display: flex;
   justify-content: space-between;

@@ -217,8 +217,6 @@ const handleLoadExample = async (exampleKey: string) => {
     }
 
     try {
-        // FIX: Construct the URL using Vite's BASE_URL to handle deployment sub-paths.
-        // This ensures the path is correct whether running locally or on a server sub-directory.
         const baseUrl = import.meta.env.BASE_URL;
         const fetchUrl = `${baseUrl}examples/${exampleKey}/model.json`;
 
@@ -380,7 +378,6 @@ watch(selectedElement, (newVal) => {
 </template>
 
 <style scoped>
-/* Styles are preserved from the original file */
 .main-layout {
   display: flex;
   flex-direction: column;

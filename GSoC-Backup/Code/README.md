@@ -1,18 +1,17 @@
-# vue-graph-editor
+# DoodleBUGS: Browser-Based Graphical Interface for JuliaBUGS
 
-This template should help get you started developing with Vue 3 in Vite.
+A web-based graphical editor for creating Bayesian models, inspired by DoodleBUGS and designed to work with JuliaBUGS. This project aims to provide an visual interface for building, understanding, and sharing probabilistic models.
 
-## Recommended IDE Setup
+# Project Status: Pre-Alpha
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+This project is currently in the pre-alpha phase of development as part of the Google Summer of Code 2025 program.
 
-## Type Support for `.vue` Imports in TS
+Contributor: @shravanngoswamii
+Mentor: @sunxd3
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+As an early-stage project, it may contain bugs or incomplete features. We appreciate your understanding and feedback as we work to improve it.
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
+We welcome contributions! Feel free to explore the code, report [issues](https://github.com/TuringLang/JuliaBUGS.jl/issues/new?template=doodlebugs.md), or suggest new features. Your involvement is highly encouraged and valued.
 
 ## Project Setup
 
@@ -32,8 +31,4 @@ npm run dev
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+For more information, questions, or to get involved, please contact @shravanngoswamii.

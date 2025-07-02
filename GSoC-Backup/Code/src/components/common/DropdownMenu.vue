@@ -51,7 +51,6 @@ onUnmounted(() => {
   cursor: pointer;
 }
 
-/* This is the same as your original .dropdown-content style */
 .dropdown-content {
   position: absolute;
   top: calc(100% + 5px);

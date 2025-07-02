@@ -60,19 +60,15 @@ onMounted(() => {
       emit('canvas-tap', evt);
     });
 
-    // Listeners for the compound-drag-and-drop extension
     cy.on('cdnddrop', 'node', (evt: EventObject, dropTarget: NodeSingular | undefined) => {
         const node = evt.target as NodeSingular;
         const newParentId = dropTarget ? dropTarget.id() : undefined;
 
         emit('node-moved', {
             nodeId: node.id(),
-            position: node.position(), // Get the final position after drop
+            position: node.position(),
             parentId: newParentId,
         });
-
-        // REMOVED: The call to .noOverlap() was incorrect here. Overlap prevention
-        // is now handled by the layout engine (e.g., fCoSE) for better results.
     });
 
     cy.on('tap', 'node, edge', (evt: EventObject) => {

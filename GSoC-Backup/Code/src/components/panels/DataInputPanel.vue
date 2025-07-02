@@ -1,13 +1,4 @@
-<!--
-This component will display data associated with the BUGS model.
-For now, it's a placeholder. Later it will likely involve:
-- A list of declared data variables
-- Input fields or a way to upload data
-- Displaying sample data or value ranges.
--->
 <script setup lang="ts">
-// import BaseButton from '../ui/BaseButton.vue';
-
 </script>
 
 <template>
@@ -22,8 +13,6 @@ For now, it's a placeholder. Later it will likely involve:
       <div class="data-placeholder">
         <i class="icon-data">📊</i>
         <span>Data definitions and values will appear here.</span>
-        <!-- <BaseButton>Import Data</BaseButton> -->
-        <!-- <BaseButton>Add Manually</BaseButton> -->
       </div>
     </div>
   </div>

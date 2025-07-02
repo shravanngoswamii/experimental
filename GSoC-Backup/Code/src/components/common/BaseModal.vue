@@ -41,8 +41,6 @@ onUnmounted(() => {
 </script>
 
 <style>
-/* Using the global modal styles from global.css for consistency.
-   The animations are defined here to keep them coupled with the component. */
 .modal-overlay {
   position: fixed;
   top: 0;

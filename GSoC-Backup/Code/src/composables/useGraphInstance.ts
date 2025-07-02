@@ -6,13 +6,11 @@ import dagre from 'cytoscape-dagre';
 import fcose from 'cytoscape-fcose';
 import compoundDragAndDrop from 'cytoscape-compound-drag-and-drop';
 
-// Register all the extensions on the cytoscape library
 cytoscape.use(gridGuide);
 cytoscape.use(contextMenus);
 cytoscape.use(dagre);
 cytoscape.use(fcose);
 cytoscape.use(compoundDragAndDrop);
-
 
 let cyInstance: Core | null = null;
 
@@ -20,11 +18,7 @@ interface ContextMenuEvent {
   target: cytoscape.SingularElementReturnValue;
 }
 
-/**
- * Composable for initializing and managing the Cytoscape.js core instance.
- */
 export function useGraphInstance() {
-
   const initCytoscape = (container: HTMLElement, initialElements: ElementDefinition[]): Core => {
     if (cyInstance) {
       cyInstance.destroy();
@@ -35,7 +29,6 @@ export function useGraphInstance() {
       container: container,
       elements: initialElements,
       style: [
-        // Node styles (unchanged)
         {
           selector: 'node',
           style: { 'background-color': '#e0e0e0', 'border-color': '#555', 'border-width': 2, 'label': 'data(name)', 'text-valign': 'center', 'text-halign': 'center', 'padding': '10px', 'font-size': '10px', 'text-wrap': 'wrap', 'text-max-width': '80px', 'height': '60px', 'width': '60px', 'line-height': 1.2, 'border-style': 'solid', 'z-index': 10 },
@@ -64,9 +57,6 @@ export function useGraphInstance() {
           selector: 'node[nodeType="observed"]',
           style: { 'background-color': '#e0f0ff', 'border-color': '#007bff', 'border-style': 'dashed', 'shape': 'ellipse' },
         },
-        
-        // FIX: Split edge styling to resolve console warnings.
-        // This first rule applies to ALL edges.
         {
           selector: 'edge',
           style: {
@@ -78,7 +68,6 @@ export function useGraphInstance() {
             'z-index': 1,
           },
         },
-        // This second rule ONLY applies the label to edges that have a 'name' property.
         {
           selector: 'edge[name]',
           style: {
@@ -92,8 +81,6 @@ export function useGraphInstance() {
             'text-border-color': '#ccc',
           }
         },
-
-        // Edge type-specific styles (unchanged)
         {
           selector: 'edge[relationshipType="stochastic"]',
           style: { 'line-color': '#dc3545', 'target-arrow-color': '#dc3545', 'line-style': 'dashed' },
@@ -102,8 +89,6 @@ export function useGraphInstance() {
           selector: 'edge[relationshipType="deterministic"]',
           style: { 'line-color': '#28a745', 'target-arrow-color': '#28a745', 'line-style': 'solid' },
         },
-        
-        // Other styles (unchanged)
         {
           selector: '.cy-selected',
           style: { 'border-width': 3, 'border-color': '#007acc', 'overlay-color': '#007acc', 'overlay-opacity': 0.2 },
@@ -127,8 +112,6 @@ export function useGraphInstance() {
 
     cyInstance = cytoscape(options);
     
-    // Initialize the compound drag and drop extension
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (cyInstance as any).compoundDragAndDrop({
         grabbedNode: (node: NodeSingular) => node.data('nodeType') !== 'plate',
         dropTarget: (node: NodeSingular) => node.data('nodeType') === 'plate',
@@ -136,9 +119,7 @@ export function useGraphInstance() {
         outThreshold: 50,
     });
     
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (cyInstance as any).gridGuide({ drawGrid: false, snapToGridOnRelease: true, snapToGridDuringDrag: true, gridSpacing: 20 });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (cyInstance as any).contextMenus({ menuItems: [ { id: 'remove', content: 'Remove', selector: 'node, edge', onClickFunction: (evt: ContextMenuEvent) => evt.target.remove() } ] });
 
     return cyInstance;

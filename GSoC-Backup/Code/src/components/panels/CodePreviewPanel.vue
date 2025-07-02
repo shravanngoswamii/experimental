@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import BaseButton from '../ui/BaseButton.vue'; // Updated import path
-// This component will display the generated BUGS code.
-// For now, it's a placeholder. Later it will:
-// - Take the graph elements and generate BUGS code
-// - Display the code in a syntax-highlighted editor
-// - Possibly allow copying the code.
+import BaseButton from '../ui/BaseButton.vue';
 </script>
 
 <template>
@@ -56,8 +51,8 @@ h4 {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  background-color: #282c34; /* Dark background for code */
-  color: #abb2bf; /* Light text for code */
+  background-color: #282c34;
+  color: #abb2bf;
   border-radius: 8px;
   overflow: hidden;
   position: relative;
@@ -68,25 +63,25 @@ h4 {
   margin: 0;
   font-family: 'Fira Code', 'Cascadia Code', monospace;
   font-size: 0.9em;
-  color: #61afef; /* A softer blue for info text */
+  color: #61afef;
 }
 
 .code-block {
   flex-grow: 1;
   padding: 15px;
   margin: 0;
-  overflow: auto; /* Enable scrolling for code */
+  overflow: auto;
   font-family: 'Fira Code', 'Cascadia Code', monospace;
   font-size: 0.85em;
   line-height: 1.4;
-  white-space: pre-wrap; /* Preserve whitespace and wrap */
-  word-break: break-all; /* Break long words */
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 .copy-button {
-  position: sticky; /* Sticky to the bottom of the code-output */
+  position: sticky;
   bottom: 0;
-  align-self: flex-end; /* Align to the right */
+  align-self: flex-end;
   margin: 10px;
   padding: 8px 15px;
   background-color: var(--color-secondary);

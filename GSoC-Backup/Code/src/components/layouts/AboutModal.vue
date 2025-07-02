@@ -32,9 +32,6 @@ defineProps<{
 }>();
 
 const emit = defineEmits(['close']);
-
-//TODO: Auto Fetch Version
-// const appVersion = import.meta.env.VITE_APP_VERSION
 </script>
 
 <style scoped>

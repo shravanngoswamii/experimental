@@ -69,8 +69,6 @@ const handleCanvasTap = (event: EventObject) => {
       if (isNodeClick) {
         const tappedNode = target as NodeSingular;
         if (sourceNode.value && sourceNode.value.id() !== tappedNode.id()) {
-          // MODIFIED: Create a pure GraphEdge without relationshipType.
-          // The rendering logic in GraphCanvas will handle the styling.
           const newEdge: GraphEdge = {
             id: `edge_${crypto.randomUUID().substring(0, 8)}`,
             type: 'edge',
@@ -192,7 +190,6 @@ watch(() => props.currentMode, (newMode) => {
 </template>
 
 <style scoped>
-/* Styles are preserved from the original file */
 .graph-editor-container {
   flex-grow: 1;
   display: flex;

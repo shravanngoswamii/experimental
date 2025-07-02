@@ -2,13 +2,11 @@
 import BaseButton from '../ui/BaseButton.vue';
 import type { NodeType } from '../../types';
 
-// The 'props' constant is removed as it's not used in the script block.
-// The props are still available directly in the template.
 defineProps<{
-  currentMode: string; // 'select', 'add-node', 'add-edge'
-  currentNodeType: NodeType; // The currently selected node type for adding
-  isConnecting: boolean; // Whether an edge connection is in progress
-  sourceNodeName: string | undefined; // Name of the source node if connecting
+  currentMode: string;
+  currentNodeType: NodeType;
+  isConnecting: boolean;
+  sourceNodeName: string | undefined;
 }>();
 
 const emit = defineEmits<{
@@ -16,7 +14,6 @@ const emit = defineEmits<{
   (e: 'update:currentNodeType', type: NodeType): void;
 }>();
 
-// Available node types for BUGS models
 const availableNodeTypes: { label: string; value: NodeType }[] = [
   { label: 'Stochastic Node', value: 'stochastic' },
   { label: 'Deterministic Node', value: 'deterministic' },
@@ -25,18 +22,10 @@ const availableNodeTypes: { label: string; value: NodeType }[] = [
   { label: 'Plate (Loop)', value: 'plate' },
 ];
 
-/**
- * Sets the current mode of the graph editor.
- * @param mode The mode to set ('select', 'add-node', 'add-edge').
- */
 const setMode = (mode: string) => {
   emit('update:currentMode', mode);
 };
 
-/**
- * Updates the currently selected node type for adding new nodes.
- * @param event The change event from the select element.
- */
 const updateNodeType = (event: Event) => {
   const target = event.target as HTMLSelectElement;
   emit('update:currentNodeType', target.value as NodeType);
@@ -87,12 +76,11 @@ const updateNodeType = (event: Event) => {
   background-color: var(--color-background-soft);
   border-bottom: 1px solid var(--color-border-light);
   align-items: center;
-  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
-  flex-shrink: 0; /* Prevent toolbar from shrinking */
+  flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .canvas-toolbar .base-button {
-  /* Override base button styles for toolbar specific look if needed */
   padding: 8px 15px;
   border: 1px solid var(--color-border-dark);
   background-color: #fff;
@@ -115,7 +103,7 @@ const updateNodeType = (event: Event) => {
   display: flex;
   align-items: center;
   gap: 5px;
-  margin-left: 10px; /* Spacing from buttons */
+  margin-left: 10px;
 }
 
 .node-type-selector label {
@@ -133,10 +121,10 @@ const updateNodeType = (event: Event) => {
 }
 
 .connecting-message {
-  margin-left: auto; /* Push to the right */
+  margin-left: auto;
   font-style: italic;
   color: #666;
   font-size: 0.9em;
-  white-space: nowrap; /* Prevent message from wrapping */
+  white-space: nowrap;
 }
 </style>

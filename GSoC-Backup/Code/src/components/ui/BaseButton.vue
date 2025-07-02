@@ -2,18 +2,17 @@
 import { computed } from 'vue';
 
 const props = defineProps<{
-  type?: 'primary' | 'secondary' | 'danger' | 'ghost'; // Added 'ghost' type
-  size?: 'small' | 'medium' | 'large'; // Button size
-  disabled?: boolean; // Whether the button is disabled
+  type?: 'primary' | 'secondary' | 'danger' | 'ghost';
+  size?: 'small' | 'medium' | 'large';
+  disabled?: boolean;
 }>();
 
-// Dynamically compute CSS classes based on props
 const buttonClass = computed(() => {
   return {
-    'base-button': true, // Always apply base styles
-    [`button-${props.type || 'default'}`]: true, // Apply type-specific styles
-    [`button-${props.size || 'medium'}`]: true, // Apply size-specific styles
-    'button-disabled': props.disabled // Apply disabled style if prop is true
+    'base-button': true,
+    [`button-${props.type || 'default'}`]: true,
+    [`button-${props.size || 'medium'}`]: true,
+    'button-disabled': props.disabled
   };
 });
 </script>
@@ -25,7 +24,6 @@ const buttonClass = computed(() => {
 </template>
 
 <style scoped>
-/* Base styles for all buttons */
 .base-button {
   padding: 8px 15px;
   border: 1px solid var(--color-border);
@@ -33,23 +31,20 @@ const buttonClass = computed(() => {
   background-color: var(--color-background-mute);
   color: var(--color-text);
   cursor: pointer;
-  transition: all 0.2s ease; /* Smooth transitions for hover/focus states */
+  transition: all 0.2s ease;
   font-weight: 500;
-  white-space: nowrap; /* Prevent text from wrapping inside the button */
+  white-space: nowrap;
 }
 
-/* Hover state for non-disabled buttons */
 .base-button:hover:not(.button-disabled) {
   background-color: var(--color-border-light);
 }
 
-/* Focus state for accessibility */
 .base-button:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25); /* Focus ring */
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
-/* Primary button styles */
 .button-primary {
   background-color: var(--color-primary);
   color: white;
@@ -61,7 +56,6 @@ const buttonClass = computed(() => {
   border-color: var(--color-primary-hover);
 }
 
-/* Secondary button styles */
 .button-secondary {
   background-color: var(--color-secondary);
   color: white;
@@ -73,7 +67,6 @@ const buttonClass = computed(() => {
   border-color: var(--color-secondary-hover);
 }
 
-/* Danger button styles (for destructive actions) */
 .button-danger {
   background-color: var(--color-danger);
   color: white;
@@ -81,22 +74,20 @@ const buttonClass = computed(() => {
 }
 
 .button-danger:hover:not(.button-disabled) {
-  background-color: #c82333; /* Darker red */
+  background-color: #c82333;
   border-color: #bd2130;
 }
 
-/* Ghost button styles (for transparent background) */
 .button-ghost {
   background-color: transparent;
   border-color: transparent;
-  color: var(--color-text-light); /* Assuming it's on a dark background like the navbar */
+  color: var(--color-text-light);
 }
 
 .button-ghost:hover:not(.button-disabled) {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Sizes */
 .button-small {
   padding: 6px 10px;
   font-size: 0.8em;
@@ -112,7 +103,6 @@ const buttonClass = computed(() => {
   font-size: 1.1em;
 }
 
-/* Disabled state */
 .button-disabled {
   opacity: 0.6;
   cursor: not-allowed;

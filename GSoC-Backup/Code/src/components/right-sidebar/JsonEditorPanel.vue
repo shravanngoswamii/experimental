@@ -34,7 +34,6 @@ const handleJsonInput = () => {
         throw new Error("JSON must be an array of graph elements.");
     }
     if (graphStore.currentGraphId) {
-      // Avoid recursive updates by checking for equality before updating the store
       if (JSON.stringify(graphStore.currentGraphElements) !== JSON.stringify(newElements)) {
         graphStore.updateGraphElements(graphStore.currentGraphId, newElements);
       }
@@ -71,13 +70,13 @@ const handleJsonInput = () => {
 .json-editor-panel {
   display: flex;
   flex-direction: column;
-  height: 100%; /* Ensure panel takes full height of its container */
+  height: 100%;
 }
 
 .header-section {
   padding: 15px;
   padding-bottom: 10px;
-  flex-shrink: 0; /* Prevent header from shrinking */
+  flex-shrink: 0;
 }
 
 h4 {
@@ -97,7 +96,7 @@ h4 {
 }
 
 .json-textarea {
-  flex-grow: 1; /* Allow textarea to fill remaining space */
+  flex-grow: 1;
   width: 100%;
   border: none;
   border-top: 1px solid var(--color-border);
@@ -128,6 +127,6 @@ h4 {
   font-size: 0.8em;
   white-space: pre-wrap;
   word-break: break-all;
-  flex-shrink: 0; /* Prevent error message from shrinking */
+  flex-shrink: 0;
 }
 </style>

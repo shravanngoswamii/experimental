@@ -167,7 +167,6 @@ const cancelDelete = () => {
         </template>
       </template>
 
-      <!-- MODIFIED: Edge properties are simplified -->
       <template v-else-if="isEdge">
         <div class="form-group">
           <label for="edge-source">Source Node ID:</label>
@@ -177,7 +176,6 @@ const cancelDelete = () => {
           <label for="edge-target">Target Node ID:</label>
           <BaseInput id="edge-target" :model-value="(localElement as GraphEdge).target" disabled />
         </div>
-        <!-- REMOVED: The relationship type selector is gone -->
       </template>
 
       <div class="action-buttons">
@@ -201,7 +199,6 @@ const cancelDelete = () => {
   </div>
 </template>
 <style scoped>
-/* Styles are preserved from the original file */
 .node-properties-panel {
   padding: 15px;
   height: 100%;
