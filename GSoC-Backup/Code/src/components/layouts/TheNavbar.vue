@@ -27,7 +27,6 @@ const emit = defineEmits<{
   (e: 'toggle-left-sidebar'): void;
   (e: 'toggle-right-sidebar'): void;
   (e: 'open-about-modal'): void;
-  // ADDED: Emits for export actions
   (e: 'export-json'): void;
   (e: 'export-png'): void;
 }>();
@@ -77,7 +76,6 @@ const handleGridSizeInput = (event: Event) => {
             <a href="#" @click.prevent="emit('new-graph')">New Graph...</a>
             <a href="#" @click.prevent="emit('save-current-graph')">Save Current Graph</a>
             <div class="dropdown-divider"></div>
-            <!-- ADDED: Export options -->
             <a href="#" @click.prevent="emit('export-json')">Export as JSON</a>
             <a href="#" @click.prevent="emit('export-png')">Export as PNG</a>
           </template>
@@ -95,6 +93,7 @@ const handleGridSizeInput = (event: Event) => {
               {{ nodeType.label }}
             </a>
             <div class="dropdown-divider"></div>
+            <!-- MODIFIED: Simplified to a single "Add Edge" option -->
             <a href="#" @click.prevent="emit('update:currentMode', 'add-edge')">Add Edge</a>
           </template>
         </DropdownMenu>

@@ -26,10 +26,6 @@ const { getCyInstance } = useGraphInstance();
 const sourceNode = ref<NodeSingular | null>(null);
 const isConnecting = ref(false);
 
-/**
- * Handles a tap event from the GraphCanvas to create nodes/edges.
- * @param event The Cytoscape EventObject.
- */
 const handleCanvasTap = (event: EventObject) => {
   const { position, target } = event;
   const cy = getCyInstance() as Core;
@@ -73,13 +69,14 @@ const handleCanvasTap = (event: EventObject) => {
       if (isNodeClick) {
         const tappedNode = target as NodeSingular;
         if (sourceNode.value && sourceNode.value.id() !== tappedNode.id()) {
+          // MODIFIED: Create a pure GraphEdge without relationshipType.
+          // The rendering logic in GraphCanvas will handle the styling.
           const newEdge: GraphEdge = {
             id: `edge_${crypto.randomUUID().substring(0, 8)}`,
             type: 'edge',
             source: sourceNode.value.id(),
             target: tappedNode.id(),
             name: `Edge ${sourceNode.value.data('name')} -> ${tappedNode.data('name')}`,
-            relationshipType: 'deterministic'
           };
           addElement(newEdge);
           sourceNode.value?.removeClass('cy-connecting');
@@ -111,10 +108,6 @@ const handleCanvasTap = (event: EventObject) => {
   }
 };
 
-/**
- * Handles a node being moved and potentially reparented.
- * @param payload The data of the moved node including its new position and parent.
- */
 const handleNodeMoved = (payload: { nodeId: string, position: { x: number; y: number }, parentId: string | undefined }) => {
   const elementToUpdate = elements.value.find(el => el.id === payload.nodeId) as GraphNode | undefined;
 
@@ -128,10 +121,6 @@ const handleNodeMoved = (payload: { nodeId: string, position: { x: number; y: nu
   }
 };
 
-/**
- * Handles a node being dropped onto the canvas from the palette.
- * @param payload Contains the nodeType and the position where it was dropped.
- */
 const handleNodeDropped = (payload: { nodeType: NodeType; position: { x: number; y: number } }) => {
   const { nodeType, position } = payload;
   const cy = getCyInstance();
@@ -203,6 +192,7 @@ watch(() => props.currentMode, (newMode) => {
 </template>
 
 <style scoped>
+/* Styles are preserved from the original file */
 .graph-editor-container {
   flex-grow: 1;
   display: flex;

@@ -26,19 +26,9 @@ const { enableGridSnapping, disableGridSnapping, setGridSize } = useGridSnapping
 
 const validNodeTypes: NodeType[] = ['stochastic', 'deterministic', 'constant', 'observed', 'plate'];
 
-const formatElementsForCytoscape = (elements: GraphElement[]): ElementDefinition[] => {
-  return elements.map(el => {
-    if (el.type === 'node') {
-      return { group: 'nodes', data: { ...el }, position: el.position };
-    } else {
-      return { group: 'edges', data: { ...el } };
-    }
-  });
-};
-
 onMounted(() => {
   if (cyContainer.value) {
-    cy = initCytoscape(cyContainer.value, formatElementsForCytoscape(props.elements));
+    cy = initCytoscape(cyContainer.value, []);
 
     setGridSize(props.gridSize);
     if (props.isGridEnabled) {
@@ -62,7 +52,6 @@ onMounted(() => {
       node.position(snappedPos);
 
       let newParentId: string | undefined = undefined;
-      // FIX: Added null check for 'cy'
       const plates = cy?.nodes('[nodeType="plate"]');
       if (plates) {
           for (const plate of plates) {
@@ -107,7 +96,6 @@ onMounted(() => {
         const droppedItemType = event.dataTransfer.getData('text/plain') as PaletteItemType;
         if (validNodeTypes.includes(droppedItemType as NodeType)) {
           const bbox = cyContainer.value?.getBoundingClientRect();
-          // FIX: Added null check for 'cy'
           if (bbox && cy) {
             const clientX = event.clientX;
             const clientY = event.clientY;
@@ -142,8 +130,8 @@ watch(() => props.gridSize, (newValue) => {
   }
 });
 
+// MODIFIED: This watcher now dynamically calculates `relationshipType` for edges.
 watch(() => props.elements, (newElements) => {
-  // FIX: Added null check for 'cy'
   if (!cy) return;
 
   cy.batch(() => {
@@ -156,19 +144,36 @@ watch(() => props.elements, (newElements) => {
     });
 
     newElements.forEach(newEl => {
-      const existingCyEl = cy.getElementById(newEl.id);
+      const existingCyEl = cy!.getElementById(newEl.id);
+      
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let dataForCytoscape: any = { ...newEl };
+
+      if (newEl.type === 'edge') {
+        const targetNode = newElements.find(n => n.id === newEl.target && n.type === 'node') as GraphNode | undefined;
+        const relType = (targetNode?.nodeType === 'stochastic' || targetNode?.nodeType === 'observed') ? 'stochastic' : 'deterministic';
+        dataForCytoscape.relationshipType = relType;
+      }
+
       if (existingCyEl.empty()) {
-        const formattedEl = formatElementsForCytoscape([newEl])[0];
-        cy.add(formattedEl);
+        const elToAdd: ElementDefinition = {
+            group: newEl.type === 'node' ? 'nodes' : 'edges',
+            data: dataForCytoscape,
+        };
+        if (newEl.type === 'node') {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (elToAdd as any).position = (newEl as GraphNode).position;
+        }
+        cy!.add(elToAdd);
       } else {
-        existingCyEl.data(newEl);
+        existingCyEl.data(dataForCytoscape);
         if (newEl.type === 'node') {
           const newNode = newEl as GraphNode;
           const currentCyPos = existingCyEl.position();
           if (newNode.position.x !== currentCyPos.x || newNode.position.y !== currentCyPos.y) {
             existingCyEl.position(newNode.position);
           }
-          const currentParentId = existingCyEl.parent().id();
+          const currentParentId = existingCyEl.parent()?.id();
           if (newNode.parent !== currentParentId) {
             existingCyEl.move({ parent: newNode.parent ?? null });
           }
@@ -176,7 +181,7 @@ watch(() => props.elements, (newElements) => {
       }
     });
   });
-}, { deep: true });
+}, { deep: true, immediate: true });
 </script>
 
 <template>
@@ -194,6 +199,7 @@ watch(() => props.elements, (newElements) => {
 </template>
 
 <style scoped>
+/* Styles are preserved from the original file */
 .cytoscape-container {
   flex-grow: 1;
   background-color: var(--color-background-soft);

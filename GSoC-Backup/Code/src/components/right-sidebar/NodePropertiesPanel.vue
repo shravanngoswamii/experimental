@@ -5,15 +5,19 @@ import BaseInput from '../ui/BaseInput.vue';
 import BaseSelect from '../ui/BaseSelect.vue';
 import BaseButton from '../ui/BaseButton.vue';
 import BaseModal from '../common/BaseModal.vue';
+
 const props = defineProps<{
   selectedElement: GraphElement | null;
 }>();
+
 const emit = defineEmits<{
   (e: 'update-element', element: GraphElement): void;
   (e: 'delete-element', elementId: string): void;
 }>();
+
 const localElement = ref<GraphElement | null>(null);
 const showDeleteConfirmModal = ref(false);
+
 watch(() => props.selectedElement, (newVal) => {
   if (newVal) {
     const newElement = JSON.parse(JSON.stringify(newVal));
@@ -29,7 +33,6 @@ watch(() => props.selectedElement, (newVal) => {
       newElement.loopVariable = newElement.loopVariable ?? '';
       newElement.loopRange = newElement.loopRange ?? '';
     } else if (newElement.type === 'edge') {
-      newElement.relationshipType = newElement.relationshipType ?? '';
       newElement.name = newElement.name ?? '';
     }
     localElement.value = newElement;
@@ -37,9 +40,11 @@ watch(() => props.selectedElement, (newVal) => {
     localElement.value = null;
   }
 }, { deep: true, immediate: true });
+
 const isNode = computed(() => localElement.value?.type === 'node');
 const isEdge = computed(() => localElement.value?.type === 'edge');
 const isPlate = computed(() => isNode.value && (localElement.value as GraphNode).nodeType === 'plate');
+
 const nodeTypes: { value: NodeType; label: string }[] = [
   { value: 'stochastic', label: 'Stochastic' },
   { value: 'deterministic', label: 'Deterministic' },
@@ -47,6 +52,7 @@ const nodeTypes: { value: NodeType; label: string }[] = [
   { value: 'observed', label: 'Observed' },
   { value: 'plate', label: 'Plate' },
 ];
+
 const distributionOptions = [
   { value: 'dnorm', label: 'Normal (dnorm)' },
   { value: 'dbeta', label: 'Beta (dbeta)' },
@@ -59,20 +65,19 @@ const distributionOptions = [
   { value: 'dexp', label: 'Exponential (dexp)' },
   { value: 'dloglik', label: 'Log-Likelihood (dloglik)' },
 ];
-const relationshipTypeOptions = [
-  { value: 'stochastic', label: 'Stochastic (~)' },
-  { value: 'deterministic', label: 'Deterministic (<--)' }
-];
+
 const handleUpdate = () => {
   if (localElement.value) {
     emit('update-element', localElement.value);
   }
 };
+
 const confirmDelete = () => {
   if (localElement.value) {
     showDeleteConfirmModal.value = true;
   }
 };
+
 const executeDelete = () => {
   if (localElement.value) {
     emit('delete-element', localElement.value.id);
@@ -80,6 +85,7 @@ const executeDelete = () => {
   }
   showDeleteConfirmModal.value = false;
 };
+
 const cancelDelete = () => {
   showDeleteConfirmModal.value = false;
 };
@@ -99,6 +105,7 @@ const cancelDelete = () => {
         <label for="element-name">Name:</label>
         <BaseInput id="element-name" v-model="localElement.name!" @input="handleUpdate" />
       </div>
+
       <template v-if="isNode">
         <div class="form-group">
           <label for="node-type">Node Type:</label>
@@ -159,6 +166,8 @@ const cancelDelete = () => {
           <small class="help-text">Define the iteration for this plate, e.g., 'i' in '1:N'</small>
         </template>
       </template>
+
+      <!-- MODIFIED: Edge properties are simplified -->
       <template v-else-if="isEdge">
         <div class="form-group">
           <label for="edge-source">Source Node ID:</label>
@@ -168,12 +177,9 @@ const cancelDelete = () => {
           <label for="edge-target">Target Node ID:</label>
           <BaseInput id="edge-target" :model-value="(localElement as GraphEdge).target" disabled />
         </div>
-        <div class="form-group">
-          <label for="edge-type">Relationship Type:</label>
-          <BaseSelect id="edge-type" v-model="(localElement as GraphEdge).relationshipType!"
-            :options="relationshipTypeOptions" @change="handleUpdate" />
-        </div>
+        <!-- REMOVED: The relationship type selector is gone -->
       </template>
+
       <div class="action-buttons">
         <BaseButton @click="handleUpdate" type="primary">Apply Changes</BaseButton>
         <BaseButton @click="confirmDelete" type="danger">Delete Element</BaseButton>
@@ -195,6 +201,7 @@ const cancelDelete = () => {
   </div>
 </template>
 <style scoped>
+/* Styles are preserved from the original file */
 .node-properties-panel {
   padding: 15px;
   height: 100%;

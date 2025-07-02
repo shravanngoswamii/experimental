@@ -5,7 +5,6 @@ const emit = defineEmits<{
   (e: 'select-palette-item', itemType: PaletteItemType): void;
 }>();
 
-// Define the available node types for the palette
 const nodeItems: { label: string; type: NodeType; icon: string; styleClass: string; description: string }[] = [
   { label: 'Stochastic', type: 'stochastic', icon: '~', styleClass: 'stochastic', description: 'Random variable with a distribution' },
   { label: 'Deterministic', type: 'deterministic', icon: '<-', styleClass: 'deterministic', description: 'Logical function of parents' },
@@ -14,17 +13,11 @@ const nodeItems: { label: string; type: NodeType; icon: string; styleClass: stri
   { label: 'Plate', type: 'plate', icon: '[]', styleClass: 'plate', description: 'Represents a loop structure' },
 ];
 
-// Define connection types for the palette
-const connectionItems: { label: string; type: 'add-stochastic-edge' | 'add-deterministic-edge'; styleClass: string; description: string }[] = [
-  { label: 'Stochastic (~)', type: 'add-stochastic-edge', styleClass: 'stochastic', description: 'Stochastic dependency' },
-  { label: 'Deterministic (<--)', type: 'add-deterministic-edge', styleClass: 'deterministic', description: 'Logical dependency' },
+// MODIFIED: Simplified to a single, generic "Add Edge" tool.
+const connectionItems: { label: string; type: 'add-edge'; styleClass: string; description: string }[] = [
+  { label: 'Add Edge', type: 'add-edge', styleClass: 'connection', description: 'Connect two nodes' },
 ];
 
-/**
- * Handles the drag start event for a palette item.
- * @param event The DragEvent object.
- * @param itemType The type of item being dragged.
- */
 const onDragStart = (event: DragEvent, itemType: PaletteItemType) => {
   if (event.dataTransfer) {
     event.dataTransfer.setData('text/plain', itemType);
@@ -32,10 +25,6 @@ const onDragStart = (event: DragEvent, itemType: PaletteItemType) => {
   }
 };
 
-/**
- * Handles the click event on a palette item.
- * @param itemType The type of item that was clicked.
- */
 const onClickPaletteItem = (itemType: PaletteItemType) => {
   emit('select-palette-item', itemType);
 };
@@ -65,6 +54,7 @@ const onClickPaletteItem = (itemType: PaletteItemType) => {
     <div class="palette-section">
       <h5 class="section-title">Connections</h5>
       <div class="palette-grid">
+        <!-- MODIFIED: Loop over the simplified connectionItems array -->
         <div
           v-for="connection in connectionItems"
           :key="connection.type"
@@ -75,7 +65,7 @@ const onClickPaletteItem = (itemType: PaletteItemType) => {
           @click="onClickPaletteItem(connection.type)"
           :title="connection.description"
         >
-          <div class="card-icon connection-icon" :class="`icon-${connection.type}`"></div>
+          <div class="card-icon connection-icon"></div>
           <span class="card-label">{{ connection.label }}</span>
         </div>
       </div>
@@ -84,6 +74,7 @@ const onClickPaletteItem = (itemType: PaletteItemType) => {
 </template>
 
 <style scoped>
+/* Styles are preserved from the original file */
 .node-palette {
   padding: 12px;
   background-color: var(--color-background-soft);
@@ -162,7 +153,6 @@ const onClickPaletteItem = (itemType: PaletteItemType) => {
   color: #fff;
 }
 
-/* Node Specific Styles */
 .icon-stochastic { background-color: #dc3545; }
 .icon-deterministic { background-color: #28a745; border-radius: 8px; font-size: 1.2em; }
 .icon-constant { background-color: #6c757d; border-radius: 4px; }
@@ -179,7 +169,6 @@ const onClickPaletteItem = (itemType: PaletteItemType) => {
   font-size: 1.2em;
 }
 
-/* Connection Specific Styles */
 .connection-icon {
   width: 100%;
   height: 20px;
@@ -188,7 +177,7 @@ const onClickPaletteItem = (itemType: PaletteItemType) => {
   border-radius: 0;
 }
 
-.connection-icon::before { /* The line */
+.connection-icon::before {
   content: '';
   position: absolute;
   left: 10%;
@@ -196,9 +185,10 @@ const onClickPaletteItem = (itemType: PaletteItemType) => {
   top: 50%;
   height: 2px;
   transform: translateY(-50%);
+  background-color: #6c757d;
 }
 
-.connection-icon::after { /* The arrowhead */
+.connection-icon::after {
   content: '';
   position: absolute;
   right: 10%;
@@ -207,22 +197,7 @@ const onClickPaletteItem = (itemType: PaletteItemType) => {
   width: 0;
   height: 0;
   border-style: solid;
-}
-
-.icon-add-stochastic-edge::before {
-  border-top: 2px dashed #dc3545;
-}
-.icon-add-stochastic-edge::after {
   border-width: 6px 0 6px 10px;
-  border-color: transparent transparent transparent #dc3545;
+  border-color: transparent transparent transparent #6c757d;
 }
-
-.icon-add-deterministic-edge::before {
-  background-color: #28a745;
-}
-.icon-add-deterministic-edge::after {
-  border-width: 6px 0 6px 10px;
-  border-color: transparent transparent transparent #28a745;
-}
-
 </style>

@@ -1,6 +1,8 @@
 export type NodeType = 'stochastic' | 'deterministic' | 'constant' | 'observed' | 'plate';
 
-export type PaletteItemType = NodeType | 'add-stochastic-edge' | 'add-deterministic-edge';
+// MODIFIED: Simplified the PaletteItemType for edges
+export type PaletteItemType = NodeType | 'add-edge';
+
 export interface GraphNode {
   id: string;
   name: string;
@@ -26,7 +28,7 @@ export interface GraphEdge {
   type: 'edge';
   source: string;
   target: string;
-  relationshipType?: 'stochastic' | 'deterministic';
+  // REMOVED: relationshipType is no longer part of the core data model
 }
 
 export type GraphElement = GraphNode | GraphEdge;
@@ -59,8 +61,8 @@ declare module 'cytoscape' {
   }
 
   interface EdgeSingular {
-
-    data(): GraphEdge;
+    // MODIFIED: The relationshipType is now a dynamic property used for styling, not a core data field.
+    data(): GraphEdge & { relationshipType?: 'stochastic' | 'deterministic' };
 
     data(key: 'id'): string;
     data(key: 'name'): string | undefined;
@@ -70,7 +72,7 @@ declare module 'cytoscape' {
     data(key: 'relationshipType'): 'stochastic' | 'deterministic' | undefined;
     data(key: string): any;
     data(key: string, value: any): EdgeSingular;
-    data(obj: Partial<GraphEdge>): EdgeSingular;
+    data(obj: Partial<GraphEdge & { relationshipType?: 'stochastic' | 'deterministic' }>): EdgeSingular;
   }
 
   
