@@ -26,6 +26,27 @@ const { enableGridSnapping, disableGridSnapping, setGridSize } = useGridSnapping
 
 const validNodeTypes: NodeType[] = ['stochastic', 'deterministic', 'constant', 'observed', 'plate'];
 
+// This helper function now dynamically determines the relationshipType for edges before rendering.
+const formatElementsForCytoscape = (elements: GraphElement[]): ElementDefinition[] => {
+  return elements.map(el => {
+    if (el.type === 'node') {
+      return { group: 'nodes', data: { ...el }, position: el.position };
+    } else {
+      const edge = el as GraphEdge;
+      const targetNode = elements.find(n => n.id === edge.target && n.type === 'node') as GraphNode | undefined;
+      // The relationship is 'stochastic' if the target is stochastic or observed, otherwise it's 'deterministic'.
+      const relType = (targetNode?.nodeType === 'stochastic' || targetNode?.nodeType === 'observed') ? 'stochastic' : 'deterministic';
+      return { 
+        group: 'edges', 
+        data: { 
+          ...edge,
+          relationshipType: relType 
+        } 
+      };
+    }
+  });
+};
+
 onMounted(() => {
   if (cyContainer.value) {
     cy = initCytoscape(cyContainer.value, []);
@@ -130,52 +151,43 @@ watch(() => props.gridSize, (newValue) => {
   }
 });
 
-// MODIFIED: This watcher now dynamically calculates `relationshipType` for edges.
 watch(() => props.elements, (newElements) => {
+  // FIX 1: Add a guard clause to prevent running if cy is not initialized.
   if (!cy) return;
+
+  const formattedElements = formatElementsForCytoscape(newElements);
 
   cy.batch(() => {
     const newElementIds = new Set(newElements.map(el => el.id));
 
-    cy.elements().forEach(cyEl => {
+    cy!.elements().forEach(cyEl => {
       if (!newElementIds.has(cyEl.id())) {
         cyEl.remove();
       }
     });
 
-    newElements.forEach(newEl => {
-      const existingCyEl = cy!.getElementById(newEl.id);
+    formattedElements.forEach(formattedEl => {
+      // FIX 2: Ensure the element has an ID before proceeding.
+      if (!formattedEl.data.id) return;
+
+      const existingCyEl = cy!.getElementById(formattedEl.data.id);
       
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let dataForCytoscape: any = { ...newEl };
-
-      if (newEl.type === 'edge') {
-        const targetNode = newElements.find(n => n.id === newEl.target && n.type === 'node') as GraphNode | undefined;
-        const relType = (targetNode?.nodeType === 'stochastic' || targetNode?.nodeType === 'observed') ? 'stochastic' : 'deterministic';
-        dataForCytoscape.relationshipType = relType;
-      }
-
       if (existingCyEl.empty()) {
-        const elToAdd: ElementDefinition = {
-            group: newEl.type === 'node' ? 'nodes' : 'edges',
-            data: dataForCytoscape,
-        };
-        if (newEl.type === 'node') {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (elToAdd as any).position = (newEl as GraphNode).position;
-        }
-        cy!.add(elToAdd);
+        cy!.add(formattedEl);
       } else {
-        existingCyEl.data(dataForCytoscape);
-        if (newEl.type === 'node') {
-          const newNode = newEl as GraphNode;
+        existingCyEl.data(formattedEl.data);
+        if (formattedEl.group === 'nodes') {
+          const newNode = formattedEl as ElementDefinition & { position: {x: number, y: number} };
           const currentCyPos = existingCyEl.position();
           if (newNode.position.x !== currentCyPos.x || newNode.position.y !== currentCyPos.y) {
             existingCyEl.position(newNode.position);
           }
-          const currentParentId = existingCyEl.parent()?.id();
-          if (newNode.parent !== currentParentId) {
-            existingCyEl.move({ parent: newNode.parent ?? null });
+          // FIX 3: Safely get the parent ID. .parent() returns a collection.
+          const parentCollection = existingCyEl.parent();
+          const currentParentId = parentCollection.length > 0 ? parentCollection.first().id() : undefined;
+          
+          if (newNode.data.parent !== currentParentId) {
+            existingCyEl.move({ parent: newNode.data.parent ?? null });
           }
         }
       }
@@ -199,7 +211,6 @@ watch(() => props.elements, (newElements) => {
 </template>
 
 <style scoped>
-/* Styles are preserved from the original file */
 .cytoscape-container {
   flex-grow: 1;
   background-color: var(--color-background-soft);

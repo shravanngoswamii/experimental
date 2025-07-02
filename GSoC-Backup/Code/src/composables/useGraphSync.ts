@@ -20,7 +20,6 @@ export function useGraphSync(getCyInstance: () => Core | null, elements: GraphEl
     }
 
     const newElementIds = new Set(newElements.map(el => el.id));
-    // FIX: Removed unused 'oldElementIds' variable.
 
     // Use a batch operation for better performance
     cy.batch(() => {
@@ -53,7 +52,7 @@ export function useGraphSync(getCyInstance: () => Core | null, elements: GraphEl
                       name: edgeData.name,
                       source: edgeData.source,
                       target: edgeData.target,
-                      relationshipType: edgeData.relationshipType
+                      // REMOVED: relationshipType is no longer accessed here.
                   }
               });
               }

@@ -17,13 +17,13 @@ import AboutModal from './AboutModal.vue';
 import { useGraphElements } from '../../composables/useGraphElements';
 import { useProjectStore } from '../../stores/projectStore';
 import { useGraphStore } from '../../stores/graphStore';
-import { useUiStore } from '../../stores/uiStore'; // IMPORTED
+import { useUiStore } from '../../stores/uiStore';
 import { useGraphInstance } from '../../composables/useGraphInstance';
 import type { GraphElement, NodeType, PaletteItemType } from '../../types';
 
 const projectStore = useProjectStore();
 const graphStore = useGraphStore();
-const uiStore = useUiStore(); // IMPORTED
+const uiStore = useUiStore();
 const { selectedElement, updateElement, deleteElement } = useGraphElements();
 const { getCyInstance } = useGraphInstance();
 
@@ -83,7 +83,6 @@ const rightSidebarStyle = computed((): StyleValue => ({
   borderLeft: isRightSidebarOpen.value ? '1px solid var(--color-border)' : 'none',
 }));
 
-// MODIFIED: When an element is selected, switch to properties tab if not pinned
 const handleElementSelected = (element: GraphElement | null) => {
   selectedElement.value = element;
   if (element && !uiStore.isRightTabPinned) {
@@ -99,12 +98,14 @@ const handleDeleteElement = (elementId: string) => {
   deleteElement(elementId);
 };
 
+// FIX: This logic is now simplified based on the updated PaletteItemType
 const handlePaletteSelection = (itemType: PaletteItemType) => {
-  if (itemType === 'add-stochastic-edge' || itemType === 'add-deterministic-edge') {
+  if (itemType === 'add-edge') {
     currentMode.value = 'add-edge';
   } else {
+    // It must be a NodeType
     currentMode.value = 'add-node';
-    currentNodeType.value = itemType as NodeType;
+    currentNodeType.value = itemType;
   }
   isLeftSidebarOpen.value = false;
 };
@@ -124,15 +125,12 @@ const createNewGraph = () => {
     projectStore.addGraphToProject(projectStore.currentProject.id, newGraphName.value.trim());
     showNewGraphModal.value = false;
     newGraphName.value = '';
-    activeLeftTab.value = 'project';
-    isLeftSidebarOpen.value = true;
   }
 };
 
 const saveCurrentGraph = () => {
   if (graphStore.currentGraphId) {
     graphStore.saveGraph(graphStore.currentGraphId, graphStore.graphContents.get(graphStore.currentGraphId)!);
-    console.log(`Graph "${graphStore.currentGraphId}" saved.`);
   } else {
     console.warn("No graph currently selected to save.");
   }
@@ -311,7 +309,6 @@ watch(selectedElement, (newVal) => {
 </template>
 
 <style scoped>
-/* Previous styles are preserved */
 .main-layout {
   display: flex;
   flex-direction: column;
@@ -417,11 +414,11 @@ watch(selectedElement, (newVal) => {
 
 .tabs-header {
   display: flex;
-  justify-content: space-between; /* MODIFIED */
-  align-items: center; /* MODIFIED */
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid var(--color-border-light);
   flex-shrink: 0;
-  padding-right: 10px; /* MODIFIED */
+  padding-right: 10px;
 }
 
 .tab-buttons {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
-import { useProjectStore } from '../../stores/projectStore';
+import { useProjectStore, type Project, type GraphMeta } from '../../stores/projectStore'; // Import types
 import { useGraphStore } from '../../stores/graphStore';
 import BaseButton from '../ui/BaseButton.vue';
 import BaseModal from '../common/BaseModal.vue';
@@ -140,13 +140,15 @@ const handleNewGraph = () => {
       :style="{ top: `${contextMenu.y}px`, left: `${contextMenu.x}px` }">
       <template v-if="contextMenu.type === 'project'">
         <div class="context-menu-item" @click="handleNewGraph"><i class="fas fa-plus"></i> New Graph</div>
+        <!-- FIX: Added explicit types to callback parameters -->
         <div class="context-menu-item danger"
-          @click="confirmDeletion('project', contextMenu!.id, projectStore.projects.find(p => p.id === contextMenu!.id)!.name)">
+          @click="confirmDeletion('project', contextMenu!.id, projectStore.projects.find((p: Project) => p.id === contextMenu!.id)!.name)">
           <i class="fas fa-trash-alt"></i> Delete Project</div>
       </template>
       <template v-if="contextMenu.type === 'graph'">
+        <!-- FIX: Added explicit types to callback parameters -->
         <div class="context-menu-item danger"
-          @click="confirmDeletion('graph', contextMenu!.id, currentProjectGraphs.find(g => g.id === contextMenu!.id)!.name, currentProject!.id)">
+          @click="confirmDeletion('graph', contextMenu!.id, currentProjectGraphs.find((g: GraphMeta) => g.id === contextMenu!.id)!.name, currentProject!.id)">
           <i class="fas fa-trash-alt"></i> Delete Graph</div>
       </template>
     </div>
@@ -172,7 +174,6 @@ const handleNewGraph = () => {
 </template>
 
 <style scoped>
-/* All original styles are preserved */
 .project-manager {
   display: flex;
   flex-direction: column;
