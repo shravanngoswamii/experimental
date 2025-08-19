@@ -1,0 +1,96 @@
+---
+// src/components/Services.astro
+// This component displays the main repair services offered.
+---
+<section id="services" class="section services-section">
+    <div class="container">
+        <h2 class="section-title">Washing Machine Services</h2>
+        <div class="services-grid">
+            <!-- Service Card 1: Diagnosis & Repair -->
+            <div class="service-card">
+                <div class="card-icon circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16"><path d="M5 8a3 3 0 1 1 6 0A3 3 0 0 1 5 8z"/><path d="M9.5 2a.5.5 0 0 1 .5.5V4h-1V2.5a.5.5 0 0 1 .5-.5zM4.5 2A.5.5 0 0 1 5 2.5V4H4V2.5a.5.5 0 0 1 .5-.5zM2 5h12v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5z"/></svg>
+                </div>
+                <h3 class="card-title">Washer Diagnosis & Repair</h3>
+                <p class="card-description">Fixing no-spin, no-drain, vibration, leaking, and power issues. Expert repair for front-load & top-load brands: LG, Samsung, Whirlpool, IFB, Bosch & more.</p>
+            </div>
+
+            <!-- Service Card 2: Installation & Uninstallation -->
+            <div class="service-card">
+                <div class="card-icon circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16"><path d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11A1.5 1.5 0 0 0 15 13.5V5H1v8.5zM15 4V2.5A1.5 1.5 0 0 0 13.5 1h-11A1.5 1.5 0 0 0 1 2.5V4h14z"/></svg>
+                </div>
+                <h3 class="card-title">Installation & Relocation</h3>
+                <p class="card-description">Professional setup, levelling, inlet/outlet plumbing, and relocation assistance to protect your washer and ensure optimal performance.</p>
+            </div>
+
+            <!-- Service Card 3: Parts Replacement -->
+            <div class="service-card">
+                <div class="card-icon circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a7 7 0 1 0 7 7A7 7 0 0 0 8 1zm3.5 7.5L8 12 4.5 8.5l1-1L8 10l2.5-2.5z"/></svg>
+                </div>
+                <h3 class="card-title">Genuine Parts & Warranty</h3>
+                <p class="card-description">Drum bearings, motor, inlet valves, door lock, pressure switch, belts & PCB. Genuine parts with a 90-day service warranty.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .services-section {
+        background:
+            radial-gradient(600px 240px at 10% -10%, rgba(0,123,255,0.08), transparent 60%),
+            radial-gradient(600px 240px at 90% -10%, rgba(255,193,7,0.12), transparent 60%),
+            linear-gradient(180deg, #fff, var(--secondary-color));
+    }
+
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: clamp(1rem, 1.2vw, 2rem);
+    }
+
+    .service-card {
+        background: rgba(255,255,255,0.7);
+        border: 1px solid #e9ecef;
+        border-radius: 16px;
+        padding: clamp(1.5rem, 1rem + 1.2vw, 2rem);
+        text-align: left;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+
+    .service-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 14px 30px rgba(0,0,0,0.12);
+        background: rgba(255,255,255,0.9);
+    }
+
+    .card-icon {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .card-icon.circle {
+        width: 48px;
+        height: 48px;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        background: rgba(0,123,255,0.1);
+        color: var(--primary-color);
+    }
+
+    .card-title {
+        margin-bottom: 0.5rem;
+        font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+    }
+
+    .card-description {
+        font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1rem);
+        line-height: 1.7;
+        color: #5c6770;
+    }
+</style>

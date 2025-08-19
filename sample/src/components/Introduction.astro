@@ -1,0 +1,43 @@
+---
+// src/components/Introduction.astro
+// This component provides a brief welcome message and introduction to the company.
+---
+<section id="about" class="section intro-section">
+    <div class="container">
+        <div class="intro-grid">
+            <div class="intro-text">
+                <h2 class="section-title" style="text-align: left; margin-bottom: 1.25rem;">Washing Machine Specialists</h2>
+                <p>We fix washing machines—fast. From noisy drums and leaks to error codes and installation, our certified technicians keep your laundry running.</p>
+                <p><strong>Trusted in Mumbai:</strong> Same-day visits across Mumbai, Thane & Navi Mumbai with transparent pricing, genuine parts, and a 90-day service warranty.</p>
+                <a href="#services" class="btn">Our Services</a>
+            </div>
+            <div class="intro-image">
+                <img src="https://images.unsplash.com/photo-1610557892470-55d9e80c0bce" alt="Technician repairing a washing machine in Mumbai" class="intro-photo">
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .intro-section {
+        background: linear-gradient(180deg, var(--secondary-color), #fff);
+        padding-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+        padding-bottom: clamp(2.5rem, 2rem + 2vw, 4rem);
+    }
+    .intro-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: clamp(1.5rem, 2vw, 3rem);
+        align-items: center;
+    }
+    .intro-text p { font-size: clamp(1rem, 0.95rem + 0.3vw, 1.1rem); line-height: 1.7; }
+    .intro-text strong { color: var(--heading-color); }
+    .section-title::after { margin-left: 0; }
+    .intro-photo {
+        border-radius: 16px;
+        box-shadow: var(--box-shadow);
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+</style>

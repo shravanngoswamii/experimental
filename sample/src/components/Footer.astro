@@ -1,0 +1,63 @@
+---
+// src/components/Footer.astro
+// This component creates the footer for the website.
+---
+<footer id="contact" class="site-footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-about">
+                <h4>HomeTech Washer Repair</h4>
+                <p>Specialists in washing machine diagnosis, repair, installation and parts replacement. Genuine parts. 90‑day service warranty.</p>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <p>
+                    <strong>Phone:</strong> <a href="tel:18001037208">1800 103 7208</a><br>
+                    <strong>Email:</strong> <a href="mailto:contact@hometechservice.net">contact@hometechservice.net</a>
+                </p>
+                <p>
+                    <strong>Hours:</strong> Mon–Sun, 8:00 AM – 8:00 PM
+                </p>
+            </div>
+            <div class="footer-area">
+                <h4>Service Area</h4>
+                <p>Mumbai, Thane, Navi Mumbai, Maharashtra.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; {new Date().getFullYear()} HomeTech Washer Repair. All Rights Reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .site-footer {
+        background-color: var(--heading-color);
+        color: rgba(255, 255, 255, 0.8);
+        padding: 4rem 0 2rem;
+    }
+    .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    .site-footer h4 {
+        color: var(--white-color);
+        font-family: 'Montserrat', sans-serif;
+        margin-bottom: 1rem;
+    }
+    .site-footer a {
+        color: var(--accent-color);
+    }
+    .site-footer a:hover {
+        text-decoration: underline;
+    }
+    .footer-bottom {
+        text-align: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 2rem;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+</style>

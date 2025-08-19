@@ -1,0 +1,1179 @@
+Directory structure:
+└── src/
+    ├── components/
+    │   ├── CallToAction.astro
+    │   ├── Footer.astro
+    │   ├── Header.astro
+    │   ├── HeroSlider.astro
+    │   ├── Introduction.astro
+    │   ├── Services.astro
+    │   ├── Welcome.astro
+    │   └── WhyChooseUs.astro
+    ├── layouts/
+    │   └── Layout.astro
+    └── pages/
+        └── index.astro
+
+================================================
+FILE: components/CallToAction.astro
+================================================
+---
+// src/components/CallToAction.astro
+// A dedicated section to encourage users to make contact.
+---
+<section class="cta-section">
+    <div class="container cta-container">
+        <h2>Washer Not Working? We Can Fix It Today.</h2>
+        <p>Book same-day washing machine service in Mumbai, Thane & Navi Mumbai. Certified technicians. Genuine parts. 90â€‘day warranty.</p>
+        <a href="tel:18001037208" class="btn btn-accent">Call Now: 1800 103 7208</a>
+    </div>
+</section>
+
+<style>
+    .cta-section {
+        background-color: var(--primary-color);
+        color: var(--white-color);
+        padding: 4rem 1.5rem;
+        text-align: center;
+        margin: 4rem 0;
+        border-radius: var(--border-radius);
+    }
+    .cta-container h2 {
+        font-size: 2.5rem;
+        color: var(--white-color);
+        margin-bottom: 1rem;
+    }
+    .cta-container p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .cta-container .btn {
+        font-size: 1.2rem;
+        padding: 1rem 2.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+
+
+================================================
+FILE: components/Footer.astro
+================================================
+---
+// src/components/Footer.astro
+// This component creates the footer for the website.
+---
+<footer id="contact" class="site-footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-about">
+                <h4>HomeTech Washer Repair</h4>
+                <p>Specialists in washing machine diagnosis, repair, installation and parts replacement. Genuine parts. 90â€‘day service warranty.</p>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <p>
+                    <strong>Phone:</strong> <a href="tel:18001037208">1800 103 7208</a><br>
+                    <strong>Email:</strong> <a href="mailto:contact@hometechservice.net">contact@hometechservice.net</a>
+                </p>
+                <p>
+                    <strong>Hours:</strong> Monâ€“Sun, 8:00 AM â€“ 8:00 PM
+                </p>
+            </div>
+            <div class="footer-area">
+                <h4>Service Area</h4>
+                <p>Mumbai, Thane, Navi Mumbai, Maharashtra.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; {new Date().getFullYear()} HomeTech Washer Repair. All Rights Reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .site-footer {
+        background-color: var(--heading-color);
+        color: rgba(255, 255, 255, 0.8);
+        padding: 4rem 0 2rem;
+    }
+    .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    .site-footer h4 {
+        color: var(--white-color);
+        font-family: 'Montserrat', sans-serif;
+        margin-bottom: 1rem;
+    }
+    .site-footer a {
+        color: var(--accent-color);
+    }
+    .site-footer a:hover {
+        text-decoration: underline;
+    }
+    .footer-bottom {
+        text-align: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 2rem;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+</style>
+
+
+
+================================================
+FILE: components/Header.astro
+================================================
+---
+// src/components/Header.astro
+// This component creates the top navigation bar for the website.
+---
+<header class="site-header">
+    <div class="container header-container">
+        <a href="/" class="logo">HomeTech Washer Repair</a>
+
+        <button class="nav-toggle" aria-controls="primary-navigation" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+        
+        <nav id="primary-navigation" class="main-nav" data-visible="false" aria-hidden="true">
+            <ul>
+                <li><a href="#services" class="nav-link">Services</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#why-us" class="nav-link">Why Choose Us</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </nav>
+
+        <!-- Backdrop for mobile menu -->
+        <div class="nav-backdrop" hidden></div>
+
+        <div class="header-cta">
+            <span class="cta-text">Need urgent service? Call!</span>
+            <a href="tel:18001037208" class="phone-number">1800 103 7208</a>
+        </div>
+    </div>
+</header>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggle = document.querySelector('.nav-toggle');
+        const nav = document.getElementById('primary-navigation');
+        const backdrop = document.querySelector('.nav-backdrop');
+        const links = nav?.querySelectorAll('a');
+        const header = document.querySelector('.site-header');
+
+        function openNav() {
+            nav?.setAttribute('data-visible', 'true');
+            nav?.setAttribute('aria-hidden', 'false');
+            toggle?.setAttribute('aria-expanded', 'true');
+            document.body.classList.add('no-scroll');
+            backdrop?.removeAttribute('hidden');
+            header?.classList.add('menu-open');
+        }
+        function closeNav() {
+            nav?.setAttribute('data-visible', 'false');
+            nav?.setAttribute('aria-hidden', 'true');
+            toggle?.setAttribute('aria-expanded', 'false');
+            document.body.classList.remove('no-scroll');
+            backdrop?.setAttribute('hidden', '');
+            header?.classList.remove('menu-open');
+        }
+
+        toggle?.addEventListener('click', () => {
+            const isOpen = nav?.getAttribute('data-visible') === 'true';
+            isOpen ? closeNav() : openNav();
+        });
+
+        backdrop?.addEventListener('click', closeNav);
+        links?.forEach((a) => a.addEventListener('click', closeNav));
+
+        // On resize above breakpoint, ensure menu is closed
+        const mq = window.matchMedia('(max-width: 900px)');
+        function handleResize() {
+            if (!mq.matches) closeNav();
+        }
+        window.addEventListener('resize', handleResize);
+
+        // Set active nav link based on scroll position
+        const sections = document.querySelectorAll('section[id]');
+        function setActiveNavLink() {
+            const scrollY = window.scrollY;
+            
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                const sectionTop = rect.top + window.scrollY - 100;
+                const sectionHeight = rect.height;
+                const sectionId = section.getAttribute('id');
+                
+                if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+                    document.querySelector(`.nav-link[href="#${sectionId}"]`)?.classList.add('active');
+                } else {
+                    document.querySelector(`.nav-link[href="#${sectionId}"]`)?.classList.remove('active');
+                }
+            });
+        }
+        // Solid header once scrolled
+        function setHeaderScrolled() {
+            if (window.scrollY > 8) header?.classList.add('scrolled');
+            else header?.classList.remove('scrolled');
+        }
+        
+        window.addEventListener('scroll', setActiveNavLink);
+        window.addEventListener('scroll', setHeaderScrolled);
+        setActiveNavLink(); // Set initial active state
+        setHeaderScrolled();
+    });
+</script>
+
+<style>
+    .site-header {
+        background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+        backdrop-filter: saturate(120%) blur(10px);
+        -webkit-backdrop-filter: saturate(120%) blur(10px);
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+        position: sticky;
+        top: 0;
+        z-index: 4000; /* ensure above all content */
+        box-shadow: 0 1px 12px rgba(0,0,0,0.04);
+    }
+
+    /* More opaque background once scrolled for better readability */
+    .site-header.scrolled { 
+        background: rgba(255,255,255,0.98);
+        border-bottom-color: rgba(0,0,0,0.08);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+
+    /* Fully solid background while the mobile menu is open */
+    .site-header.menu-open {
+        background: #ffffff;
+        border-bottom-color: rgba(0,0,0,0.08);
+        box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+    }
+
+    .header-container {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 1rem;
+        position: relative;
+    }
+
+    .logo {
+        font-family: 'Montserrat', sans-serif;
+        font-size: clamp(1.1rem, 1.2rem + 0.5vw, 1.5rem);
+        font-weight: 700;
+        color: var(--heading-color);
+        white-space: nowrap;
+        z-index: 1201; /* ensure above backdrop */
+        letter-spacing: -0.01em;
+        transition: transform 0.2s ease;
+    }
+    
+    .logo:hover {
+        transform: translateY(-1px);
+    }
+
+    .nav-toggle {
+        display: none;
+        width: 44px;
+        height: 44px;
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 6px;
+        z-index: 1202; /* above nav panel */
+        position: relative;
+        cursor: pointer;
+        padding: 8px;
+        transition: background-color 0.2s ease;
+    }
+    
+    .nav-toggle:hover {
+        background-color: rgba(0,0,0,0.05);
+    }
+
+    .nav-toggle .bar {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: var(--heading-color);
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    /* Animated hamburger to X */
+    .nav-toggle[aria-expanded="true"] .bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+    
+    .nav-toggle[aria-expanded="true"] .bar:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .nav-toggle[aria-expanded="true"] .bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+
+    .main-nav {
+        justify-self: center;
+    }
+
+    .main-nav ul {
+        list-style: none;
+        display: flex;
+        gap: clamp(1.5rem, 2vw, 2.5rem);
+        margin: 0;
+        padding: 0;
+    }
+
+    .nav-link {
+        color: var(--text-color);
+        font-weight: 500;
+        position: relative;
+        padding: 0.75rem 0;
+        transition: color 0.2s ease;
+        font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1.05rem);
+    }
+
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0.5rem;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: var(--primary-color);
+        transition: width 0.3s ease, background-color 0.3s ease;
+        border-radius: 2px;
+    }
+
+    .nav-link:hover {
+        color: var(--primary-color);
+    }
+
+    .nav-link:hover::after, 
+    .nav-link.active::after {
+        width: 100%;
+    }
+    
+    .nav-link.active {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .header-cta { 
+        text-align: right;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    
+    .cta-text { 
+        display: block; 
+        font-size: 0.8rem; 
+        color: var(--text-color); 
+        opacity: 0.8;
+        margin-bottom: 2px;
+    }
+    
+    .phone-number { 
+        font-weight: 700; 
+        color: var(--primary-color); 
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .phone-number::before {
+        content: '';
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23007BFF' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z'/%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+
+    /* Backdrop for mobile menu */
+    .nav-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1100; /* below toggle, above page */
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        transition: opacity 0.3s ease;
+    }
+
+    /* Mobile Navigation */
+    @media (max-width: 900px) {
+        .header-container { grid-template-columns: auto auto 1fr; }
+        .main-nav {
+            position: fixed;
+            inset: 0 0 0 40%; /* off-canvas width */
+            background: var(--white-color);
+            box-shadow: -8px 0 24px rgba(0,0,0,0.12);
+            transform: translateX(100%);
+            transition: transform 0.35s ease;
+            padding: 6rem 1.5rem 2rem;
+            z-index: 5000; /* above everything below header */
+            justify-self: start;
+        }
+        .main-nav[data-visible='true'] { transform: translateX(0); }
+        .main-nav ul { 
+            flex-direction: column; 
+            gap: 1.5rem; 
+        }
+        .nav-link {
+            display: block;
+            font-size: 1.1rem;
+            padding: 0.5rem 0;
+        }
+        .nav-link::after {
+            bottom: 0;
+            height: 3px;
+        }
+        .header-cta { display: none; }
+        .nav-toggle { display: inline-flex; }
+        body.no-scroll { overflow: hidden; }
+    }
+
+    @media (max-width: 560px) {
+        .main-nav { inset: 0 0 0 25%; }
+    }
+
+    @media (max-width: 420px) {
+        .main-nav { 
+            inset: 0; /* full-screen panel on very small devices */
+            text-align: center;
+            padding-top: 8rem;
+        }
+        .main-nav ul {
+            align-items: center;
+        }
+    }
+</style>
+
+
+
+================================================
+FILE: components/HeroSlider.astro
+================================================
+---
+// src/components/HeroSlider.astro
+// This component displays a full-width hero section with a background image slideshow.
+---
+<section class="hero-slider">
+    <div class="slider-container">
+        <!-- Slides using provided images -->
+        <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1670175031931-c4fff145998b');"></div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1610557892470-55d9e80c0bce');"></div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1564448049208-10deaa9044e3');"></div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1749318475359-800b8318ee7f');"></div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1602770199032-dc058e3dbed0');"></div>
+    </div>
+    <div class="hero-gradient"></div>
+    <div class="hero-content container">
+        <div class="hero-card">
+            <h1 class="hero-title">Washing Machine Repair You Can Trust</h1>
+            <p class="hero-subtitle">Same-day service for front-load & top-load washers across Mumbai, Thane & Navi Mumbai. Genuine parts. 90-day warranty.</p>
+            <div class="hero-actions">
+                <a href="#contact" class="btn btn-accent">Book Washing Machine Repair</a>
+                <a href="tel:18001037208" class="btn" style="margin-left: .75rem;">Call 1800 103 7208</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Simple JavaScript for the image slideshow, respects reduced motion
+    document.addEventListener('DOMContentLoaded', () => {
+        const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const slides = document.querySelectorAll('.hero-slider .slide');
+        if (!slides.length) return;
+        let currentSlide = 0;
+        const interval = 5000;
+        if (mq.matches) {
+            // Do not auto-rotate when reduced motion is preferred
+            slides.forEach((s, i) => s.classList.toggle('active', i === 0));
+            return;
+        }
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+        setInterval(nextSlide, interval);
+    });
+</script>
+
+<style>
+    .hero-slider {
+        position: relative;
+        height: min(100svh, 760px);
+        color: var(--white-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+        isolation: isolate; /* ensure overlays sit correctly */
+    }
+
+    @media (max-width: 640px) {
+        .hero-slider { height: 80svh; }
+    }
+
+    .slider-container {
+        position: absolute;
+        inset: 0;
+    }
+
+    .slide {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 1.2s ease-in-out;
+        transform: scale(1.08);
+        animation: kenburns 24s infinite;
+    }
+
+    .slide.active { opacity: 1; }
+
+    .hero-gradient {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(1200px 600px at 50% 20%, rgba(0, 123, 255, 0.45), transparent 60%),
+                    linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.65) 100%);
+        z-index: 1;
+    }
+
+    .hero-content { position: relative; z-index: 2; }
+
+    .hero-card {
+        margin-inline: auto;
+        max-width: 820px;
+        padding: clamp(1rem, 1rem + 2vw, 2rem);
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 16px;
+        backdrop-filter: blur(12px) saturate(120%);
+        -webkit-backdrop-filter: blur(12px) saturate(120%);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+
+    .hero-title {
+        font-size: clamp(1.75rem, 1.1rem + 3vw, 3rem);
+        font-weight: 800;
+        color: var(--white-color);
+        margin-bottom: .8rem;
+        letter-spacing: 0.2px;
+        text-shadow: 0 2px 12px rgba(0,0,0,0.35);
+    }
+
+    .hero-subtitle {
+        font-size: clamp(1rem, 0.9rem + 0.6vw, 1.25rem);
+        max-width: 60ch;
+        margin: 0 auto 1.25rem;
+        color: rgba(255,255,255,0.95);
+    }
+
+    .hero-actions { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; }
+
+    @keyframes kenburns { 0% { transform: scale(1.08);} 100% { transform: scale(1);} }
+
+    @media (prefers-reduced-motion: reduce) {
+        .slide { animation: none; }
+    }
+</style>
+
+
+
+================================================
+FILE: components/Introduction.astro
+================================================
+---
+// src/components/Introduction.astro
+// This component provides a brief welcome message and introduction to the company.
+---
+<section id="about" class="section intro-section">
+    <div class="container">
+        <div class="intro-grid">
+            <div class="intro-text">
+                <h2 class="section-title" style="text-align: left; margin-bottom: 1.25rem;">Washing Machine Specialists</h2>
+                <p>We fix washing machinesâ€”fast. From noisy drums and leaks to error codes and installation, our certified technicians keep your laundry running.</p>
+                <p><strong>Trusted in Mumbai:</strong> Same-day visits across Mumbai, Thane & Navi Mumbai with transparent pricing, genuine parts, and a 90-day service warranty.</p>
+                <a href="#services" class="btn">Our Services</a>
+            </div>
+            <div class="intro-image">
+                <img src="https://images.unsplash.com/photo-1610557892470-55d9e80c0bce" alt="Technician repairing a washing machine in Mumbai" class="intro-photo">
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .intro-section {
+        background: linear-gradient(180deg, var(--secondary-color), #fff);
+        padding-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+        padding-bottom: clamp(2.5rem, 2rem + 2vw, 4rem);
+    }
+    .intro-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: clamp(1.5rem, 2vw, 3rem);
+        align-items: center;
+    }
+    .intro-text p { font-size: clamp(1rem, 0.95rem + 0.3vw, 1.1rem); line-height: 1.7; }
+    .intro-text strong { color: var(--heading-color); }
+    .section-title::after { margin-left: 0; }
+    .intro-photo {
+        border-radius: 16px;
+        box-shadow: var(--box-shadow);
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+</style>
+
+
+
+================================================
+FILE: components/Services.astro
+================================================
+---
+// src/components/Services.astro
+// This component displays the main repair services offered.
+---
+<section id="services" class="section services-section">
+    <div class="container">
+        <h2 class="section-title">Washing Machine Services</h2>
+        <div class="services-grid">
+            <!-- Service Card 1: Diagnosis & Repair -->
+            <div class="service-card">
+                <div class="card-icon circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16"><path d="M5 8a3 3 0 1 1 6 0A3 3 0 0 1 5 8z"/><path d="M9.5 2a.5.5 0 0 1 .5.5V4h-1V2.5a.5.5 0 0 1 .5-.5zM4.5 2A.5.5 0 0 1 5 2.5V4H4V2.5a.5.5 0 0 1 .5-.5zM2 5h12v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5z"/></svg>
+                </div>
+                <h3 class="card-title">Washer Diagnosis & Repair</h3>
+                <p class="card-description">Fixing no-spin, no-drain, vibration, leaking, and power issues. Expert repair for front-load & top-load brands: LG, Samsung, Whirlpool, IFB, Bosch & more.</p>
+            </div>
+
+            <!-- Service Card 2: Installation & Uninstallation -->
+            <div class="service-card">
+                <div class="card-icon circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16"><path d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11A1.5 1.5 0 0 0 15 13.5V5H1v8.5zM15 4V2.5A1.5 1.5 0 0 0 13.5 1h-11A1.5 1.5 0 0 0 1 2.5V4h14z"/></svg>
+                </div>
+                <h3 class="card-title">Installation & Relocation</h3>
+                <p class="card-description">Professional setup, levelling, inlet/outlet plumbing, and relocation assistance to protect your washer and ensure optimal performance.</p>
+            </div>
+
+            <!-- Service Card 3: Parts Replacement -->
+            <div class="service-card">
+                <div class="card-icon circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a7 7 0 1 0 7 7A7 7 0 0 0 8 1zm3.5 7.5L8 12 4.5 8.5l1-1L8 10l2.5-2.5z"/></svg>
+                </div>
+                <h3 class="card-title">Genuine Parts & Warranty</h3>
+                <p class="card-description">Drum bearings, motor, inlet valves, door lock, pressure switch, belts & PCB. Genuine parts with a 90-day service warranty.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .services-section {
+        background:
+            radial-gradient(600px 240px at 10% -10%, rgba(0,123,255,0.08), transparent 60%),
+            radial-gradient(600px 240px at 90% -10%, rgba(255,193,7,0.12), transparent 60%),
+            linear-gradient(180deg, #fff, var(--secondary-color));
+    }
+
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: clamp(1rem, 1.2vw, 2rem);
+    }
+
+    .service-card {
+        background: rgba(255,255,255,0.7);
+        border: 1px solid #e9ecef;
+        border-radius: 16px;
+        padding: clamp(1.5rem, 1rem + 1.2vw, 2rem);
+        text-align: left;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+
+    .service-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 14px 30px rgba(0,0,0,0.12);
+        background: rgba(255,255,255,0.9);
+    }
+
+    .card-icon {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .card-icon.circle {
+        width: 48px;
+        height: 48px;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        background: rgba(0,123,255,0.1);
+        color: var(--primary-color);
+    }
+
+    .card-title {
+        margin-bottom: 0.5rem;
+        font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+    }
+
+    .card-description {
+        font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1rem);
+        line-height: 1.7;
+        color: #5c6770;
+    }
+</style>
+
+
+
+================================================
+FILE: components/Welcome.astro
+================================================
+---
+import astroLogo from '../assets/astro.svg';
+import background from '../assets/background.svg';
+---
+
+<div id="container">
+	<img id="background" src={background.src} alt="" fetchpriority="high" />
+	<main>
+		<section id="hero">
+			<a href="https://astro.build"
+				><img src={astroLogo.src} width="115" height="48" alt="Astro Homepage" /></a
+			>
+			<h1>
+				To get started, open the <code><pre>src/pages</pre></code> directory in your project.
+			</h1>
+			<section id="links">
+				<a class="button" href="https://docs.astro.build">Read our docs</a>
+				<a href="https://astro.build/chat"
+					>Join our Discord <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36"
+						><path
+							fill="currentColor"
+							d="M107.7 8.07A105.15 105.15 0 0 0 81.47 0a72.06 72.06 0 0 0-3.36 6.83 97.68 97.68 0 0 0-29.11 0A72.37 72.37 0 0 0 45.64 0a105.89 105.89 0 0 0-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0 0 32.17 16.15 77.7 77.7 0 0 0 6.89-11.11 68.42 68.42 0 0 1-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0 0 64.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 0 1-10.87 5.19 77 77 0 0 0 6.89 11.1 105.25 105.25 0 0 0 32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69Zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69Z"
+						></path></svg
+					>
+				</a>
+			</section>
+		</section>
+	</main>
+
+	<a href="https://astro.build/blog/astro-5/" id="news" class="box">
+		<svg width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg"
+			><path
+				d="M24.667 12c1.333 1.414 2 3.192 2 5.334 0 4.62-4.934 5.7-7.334 12C18.444 28.567 18 27.456 18 26c0-4.642 6.667-7.053 6.667-14Zm-5.334-5.333c1.6 1.65 2.4 3.43 2.4 5.333 0 6.602-8.06 7.59-6.4 17.334C13.111 27.787 12 25.564 12 22.666c0-4.434 7.333-8 7.333-16Zm-6-5.333C15.111 3.555 16 5.556 16 7.333c0 8.333-11.333 10.962-5.333 22-3.488-.774-6-4-6-8 0-8.667 8.666-10 8.666-20Z"
+				fill="#111827"></path></svg
+		>
+		<h2>What's New in Astro 5.0?</h2>
+		<p>
+			From content layers to server islands, click to learn more about the new features and
+			improvements in Astro 5.0
+		</p>
+	</a>
+</div>
+
+<style>
+	#background {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: -1;
+		filter: blur(100px);
+	}
+
+	#container {
+		font-family: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
+		height: 100%;
+	}
+
+	main {
+		height: 100%;
+		display: flex;
+		justify-content: center;
+	}
+
+	#hero {
+		display: flex;
+		align-items: start;
+		flex-direction: column;
+		justify-content: center;
+		padding: 16px;
+	}
+
+	h1 {
+		font-size: 22px;
+		margin-top: 0.25em;
+	}
+
+	#links {
+		display: flex;
+		gap: 16px;
+	}
+
+	#links a {
+		display: flex;
+		align-items: center;
+		padding: 10px 12px;
+		color: #111827;
+		text-decoration: none;
+		transition: color 0.2s;
+	}
+
+	#links a:hover {
+		color: rgb(78, 80, 86);
+	}
+
+	#links a svg {
+		height: 1em;
+		margin-left: 8px;
+	}
+
+	#links a.button {
+		color: white;
+		background: linear-gradient(83.21deg, #3245ff 0%, #bc52ee 100%);
+		box-shadow:
+			inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+			inset 0 -2px 0 rgba(0, 0, 0, 0.24);
+		border-radius: 10px;
+	}
+
+	#links a.button:hover {
+		color: rgb(230, 230, 230);
+		box-shadow: none;
+	}
+
+	pre {
+		font-family:
+			ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono',
+			monospace;
+		font-weight: normal;
+		background: linear-gradient(14deg, #d83333 0%, #f041ff 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+		margin: 0;
+	}
+
+	h2 {
+		margin: 0 0 1em;
+		font-weight: normal;
+		color: #111827;
+		font-size: 20px;
+	}
+
+	p {
+		color: #4b5563;
+		font-size: 16px;
+		line-height: 24px;
+		letter-spacing: -0.006em;
+		margin: 0;
+	}
+
+	code {
+		display: inline-block;
+		background:
+			linear-gradient(66.77deg, #f3cddd 0%, #f5cee7 100%) padding-box,
+			linear-gradient(155deg, #d83333 0%, #f041ff 18%, #f5cee7 45%) border-box;
+		border-radius: 8px;
+		border: 1px solid transparent;
+		padding: 6px 8px;
+	}
+
+	.box {
+		padding: 16px;
+		background: rgba(255, 255, 255, 1);
+		border-radius: 16px;
+		border: 1px solid white;
+	}
+
+	#news {
+		position: absolute;
+		bottom: 16px;
+		right: 16px;
+		max-width: 300px;
+		text-decoration: none;
+		transition: background 0.2s;
+		backdrop-filter: blur(50px);
+	}
+
+	#news:hover {
+		background: rgba(255, 255, 255, 0.55);
+	}
+
+	@media screen and (max-height: 368px) {
+		#news {
+			display: none;
+		}
+	}
+
+	@media screen and (max-width: 768px) {
+		#container {
+			display: flex;
+			flex-direction: column;
+		}
+
+		#hero {
+			display: block;
+			padding-top: 10%;
+		}
+
+		#links {
+			flex-wrap: wrap;
+		}
+
+		#links a.button {
+			padding: 14px 18px;
+		}
+
+		#news {
+			right: 16px;
+			left: 16px;
+			bottom: 2.5rem;
+			max-width: 100%;
+		}
+
+		h1 {
+			line-height: 1.5;
+		}
+	}
+</style>
+
+
+
+================================================
+FILE: components/WhyChooseUs.astro
+================================================
+---
+// src/components/WhyChooseUs.astro
+// This component highlights the key reasons to choose HomeTech Repair.
+---
+<section id="why-us" class="section why-us-section">
+    <div class="container">
+        <h2 class="section-title">Why Choose HomeTech Washer Repair</h2>
+        <div class="why-us-grid">
+            <div class="feature-item card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16"><path d="M8 4a.5.5 0 0 1 .5.5v4.086l2.043 2.043a.5.5 0 0 1-.707.707l-2.2-2.2A.5.5 0 0 1 7.5 9V4.5A.5.5 0 0 1 8 4z"/><path d="M8 16A8 8 0 1 0 0 8a8 8 0 0 0 8 8zm0-1A7 7 0 0 1 1 8a7 7 0 1 1 14 0A7 7 0 0 1 8 15z"/></svg>
+                </div>
+                <h3>Sameâ€‘Day Service</h3>
+                <p>Rapid response across Mumbai, Thane & Navi Mumbai to get your washer back on track quickly.</p>
+            </div>
+            <div class="feature-item card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16"><path d="M5.338 1.59 8 0l2.662 1.59A7 7 0 0 1 15 7.07c0 4.363-2.94 7.16-6.563 8.74a1.7 1.7 0 0 1-1.374 0C3.44 14.23.5 11.433.5 7.07A7 7 0 0 1 5.338 1.59z"/><path d="M10.97 6.97a.75.75 0 0 1 1.07 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L3.324 9.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 4.492-5.446z"/></svg>
+                </div>
+                <h3>Genuine Parts & 90â€‘Day Warranty</h3>
+                <p>We use quality parts and back our labour with a written warranty for peace of mind.</p>
+            </div>
+            <div class="feature-item card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16"><path d="M13 7c0 1.105-.672 2-1.5 2S10 8.105 10 7s.672-2 1.5-2S13 5.895 13 7zM5.5 9C6.328 9 7 8.105 7 7S6.328 5 5.5 5 4 5.895 4 7s.672 2 1.5 2z"/><path d="M1 14s-1 0-1-1 1-4 5.5-4S11 12 11 13s-1 1-1 1H1zm9 0s-1 0-1-1 1-3 3.5-3S16 13 16 14s-1 1-1 1h-5z"/></svg>
+                </div>
+                <h3>Washer Brand Experts</h3>
+                <p>Experienced with LG, Samsung, Whirlpool, IFB, Bosch, Godrej, Haier & more.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .why-us-section {
+        background:
+            radial-gradient(600px 240px at -10% 0%, rgba(0,123,255,0.08), transparent 60%),
+            radial-gradient(600px 240px at 110% 0%, rgba(255,193,7,0.1), transparent 60%),
+            linear-gradient(180deg, var(--secondary-color), #fff);
+    }
+    .why-us-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: clamp(1rem, 1.2vw, 2rem);
+        text-align: left;
+    }
+    .card {
+        background: rgba(255,255,255,0.7);
+        border: 1px solid #e9ecef;
+        border-radius: 16px;
+        padding: clamp(1.25rem, 1rem + 0.8vw, 1.75rem);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(0,0,0,0.12); background: rgba(255,255,255,0.9); }
+
+    .feature-item { display: grid; align-content: start; gap: 0.5rem; }
+    .feature-icon {
+        display: grid;
+        place-items: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 999px;
+        background: rgba(0,123,255,0.1);
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+    .feature-item h3 { font-size: clamp(1.05rem, 1rem + 0.4vw, 1.25rem); }
+    .feature-item p { color: #5c6770; line-height: 1.7; }
+</style>
+
+
+
+================================================
+FILE: layouts/Layout.astro
+================================================
+---
+// src/layouts/Layout.astro
+// This file serves as the main template for the entire site.
+// It includes the head section with SEO metadata and global styles.
+
+// Props interface for type safety and clarity.
+interface Props {
+	title: string;
+	description: string;
+}
+
+// Destructuring props with default values for robustness.
+const { 
+    title = 'HomeTech Washer Repair â€” Expert Washing Machine Service in Mumbai', 
+    description = 'Same-day washing machine repair in Mumbai, Thane & Navi Mumbai. Front-load & top-load experts. Genuine parts. 90-day service warranty. Call 1800 103 7208.' 
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content={description} />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="robots" content="index, follow" />
+		<link rel="canonical" href={Astro.url} />
+		
+        <!-- SEO Meta Tags -->
+		<title>{title}</title>
+        <meta name="keywords" content="washing machine repair mumbai, washer repair, front load repair, top load repair, washing machine service near me, Mumbai Thane Navi Mumbai" />
+        <meta name="author" content="HomeTech Washer Repair" />
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={Astro.url} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content="https://placehold.co/1200x630/0B5FFF/FFFFFF?text=Washing+Machine+Repair+in+Mumbai" />
+
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={Astro.url} />
+        <meta property="twitter:title" content={title} />
+        <meta property="twitter:description" content={description} />
+        <meta property="twitter:image" content="https://placehold.co/1200x630/0B5FFF/FFFFFF?text=Washing+Machine+Repair+in+Mumbai" />
+
+		<!-- Favicon -->
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+
+        <!-- Global Stylesheet -->
+		<link rel="stylesheet" href="/styles/global.css" />
+
+        <!-- Structured Data: Appliance Repair LocalBusiness -->
+        <script type="application/ld+json">
+        {JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'ApplianceRepair',
+          name: 'HomeTech Washer Repair',
+          url: String(Astro.url),
+          image: 'https://placehold.co/800x600?text=Washing+Machine+Repair',
+          telephone: '+91-18001037208',
+          areaServed: ['Mumbai','Thane','Navi Mumbai'],
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: 'Mumbai',
+            addressRegion: 'Maharashtra',
+            addressCountry: 'IN'
+          },
+          openingHours: ['Mo-Su 08:00-20:00'],
+          sameAs: []
+        })}
+        </script>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
+
+
+================================================
+FILE: pages/index.astro
+================================================
+---
+// src/pages/index.astro
+// This is the main homepage that assembles all the components.
+
+// Import all the components
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import HeroSlider from '../components/HeroSlider.astro';
+import Introduction from '../components/Introduction.astro';
+import Services from '../components/Services.astro';
+import WhyChooseUs from '../components/WhyChooseUs.astro';
+import Footer from '../components/Footer.astro';
+import CallToAction from '../components/CallToAction.astro';
+
+// SEO variables for the Layout component
+const pageTitle = "HomeTech Washer Repair | Washing Machine Service in Mumbai";
+const pageDescription = "Same-day washing machine repair in Mumbai, Thane & Navi Mumbai. Front-load & top-load experts. Genuine parts. 90-day warranty. Book now!";
+
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+	<Header />
+	<main>
+		<HeroSlider />
+		<Introduction />
+		<Services />
+		<CallToAction />
+		<WhyChooseUs />
+	</main>
+	<Footer />
+</Layout>
+
+

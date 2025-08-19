@@ -1,0 +1,40 @@
+---
+// src/components/CallToAction.astro
+// A dedicated section to encourage users to make contact.
+---
+<section class="cta-section">
+    <div class="container cta-container">
+        <h2>Washer Not Working? We Can Fix It Today.</h2>
+        <p>Book same-day washing machine service in Mumbai, Thane & Navi Mumbai. Certified technicians. Genuine parts. 90‑day warranty.</p>
+        <a href="tel:18001037208" class="btn btn-accent">Call Now: 1800 103 7208</a>
+    </div>
+</section>
+
+<style>
+    .cta-section {
+        background-color: var(--primary-color);
+        color: var(--white-color);
+        padding: 4rem 1.5rem;
+        text-align: center;
+        margin: 4rem 0;
+        border-radius: var(--border-radius);
+    }
+    .cta-container h2 {
+        font-size: 2.5rem;
+        color: var(--white-color);
+        margin-bottom: 1rem;
+    }
+    .cta-container p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .cta-container .btn {
+        font-size: 1.2rem;
+        padding: 1rem 2.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+</style>

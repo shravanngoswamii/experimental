@@ -1,0 +1,83 @@
+---
+// src/layouts/Layout.astro
+// This file serves as the main template for the entire site.
+// It includes the head section with SEO metadata and global styles.
+
+// Props interface for type safety and clarity.
+interface Props {
+	title: string;
+	description: string;
+}
+
+// Destructuring props with default values for robustness.
+const { 
+    title = 'HomeTech Washer Repair — Expert Washing Machine Service in Mumbai', 
+    description = 'Same-day washing machine repair in Mumbai, Thane & Navi Mumbai. Front-load & top-load experts. Genuine parts. 90-day service warranty. Call 1800 103 7208.' 
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content={description} />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="robots" content="index, follow" />
+		<link rel="canonical" href={Astro.url} />
+		
+        <!-- SEO Meta Tags -->
+		<title>{title}</title>
+        <meta name="keywords" content="washing machine repair mumbai, washer repair, front load repair, top load repair, washing machine service near me, Mumbai Thane Navi Mumbai" />
+        <meta name="author" content="HomeTech Washer Repair" />
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={Astro.url} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content="https://placehold.co/1200x630/0B5FFF/FFFFFF?text=Washing+Machine+Repair+in+Mumbai" />
+
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={Astro.url} />
+        <meta property="twitter:title" content={title} />
+        <meta property="twitter:description" content={description} />
+        <meta property="twitter:image" content="https://placehold.co/1200x630/0B5FFF/FFFFFF?text=Washing+Machine+Repair+in+Mumbai" />
+
+		<!-- Favicon -->
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+
+        <!-- Global Stylesheet -->
+		<link rel="stylesheet" href="/styles/global.css" />
+
+        <!-- Structured Data: Appliance Repair LocalBusiness -->
+        <script type="application/ld+json">
+        {JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'ApplianceRepair',
+          name: 'HomeTech Washer Repair',
+          url: String(Astro.url),
+          image: 'https://placehold.co/800x600?text=Washing+Machine+Repair',
+          telephone: '+91-18001037208',
+          areaServed: ['Mumbai','Thane','Navi Mumbai'],
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: 'Mumbai',
+            addressRegion: 'Maharashtra',
+            addressCountry: 'IN'
+          },
+          openingHours: ['Mo-Su 08:00-20:00'],
+          sameAs: []
+        })}
+        </script>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>

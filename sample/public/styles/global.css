@@ -1,0 +1,128 @@
+/* src/styles/global.css */
+/* This file contains the global styles and CSS variables for the site. */
+
+/* CSS Variables for easy theme management */
+:root {
+    --primary-color: #007BFF; /* A professional blue */
+    --primary-color-hover: #0069d9; /* darker for hover */
+    --secondary-color: #F8F9FA; /* A light grey for backgrounds */
+    --accent-color: #FFC107; /* A vibrant yellow for highlights */
+    --accent-color-hover: #e0a800; /* darker for hover */
+    --text-color: #343A40; /* Dark grey for readability */
+    --heading-color: #212529; /* Almost black for headings */
+    --white-color: #FFFFFF;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Base Reset and Typography */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--white-color);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    color: var(--heading-color);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+
+p {
+    margin-bottom: 1rem;
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--primary-color-hover);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Utility Classes */
+.container {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 1.5rem;
+}
+
+.section {
+    padding: 4rem 0;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.25rem;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: var(--primary-color);
+    margin: 0.5rem auto 0;
+    border-radius: 2px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn:hover {
+    background-color: var(--primary-color-hover);
+    transform: translateY(-2px);
+    color: var(--white-color);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.btn-accent {
+    background-color: var(--accent-color);
+    color: var(--heading-color);
+}
+
+.btn-accent:hover {
+    background-color: var(--accent-color-hover);
+    color: var(--heading-color);
+}
