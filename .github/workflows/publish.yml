@@ -13,26 +13,31 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Set up Node.js environment
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
+          # Corrected cache path to point to the package-lock.json inside the 'sample' directory.
           cache-dependency-path: sample/package-lock.json
 
-      - name: Install dependencies
+      - name: Install project dependencies
         run: npm --prefix sample install
 
-      - name: Build application
+      - name: Build production-ready application
         run: npm --prefix sample run build
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages # The branch to deploy to
+          # The branch the action should deploy to.
+          branch: gh-pages
+          # The folder in your repository that contains the built site.
           folder: sample/dist
+          # The destination folder on the gh-pages branch.
           target-folder: washer
+          # Automatically clean the target folder before deploying.
           clean: true
