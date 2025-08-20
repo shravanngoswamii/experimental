@@ -1,3 +1,4 @@
+# GitHub Actions workflow for building and deploying the Astro site to GitHub Pages.
 name: Build and Deploy to GitHub Pages
 
 on:
@@ -21,7 +22,6 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          # Corrected cache path to point to the package-lock.json inside the 'sample' directory.
           cache-dependency-path: sample/package-lock.json
 
       - name: Install project dependencies
@@ -30,14 +30,19 @@ jobs:
       - name: Build production-ready application
         run: npm --prefix sample run build
 
+      # New step to create the correct directory structure for deployment
+      - name: Prepare deployment folder
+        run: |
+          mkdir -p deploy/experimental
+          mv sample/dist/* deploy/experimental/washer
+          touch deploy/.nojekyll
+
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           # The branch the action should deploy to.
           branch: gh-pages
-          # The folder in your repository that contains the built site.
-          folder: sample/dist
-          # The destination folder on the gh-pages branch.
-          target-folder: washer
-          # Automatically clean the target folder before deploying.
+          # The folder that contains the correctly structured site and .nojekyll file.
+          folder: deploy
+          # Clean the gh-pages branch before deploying.
           clean: true
