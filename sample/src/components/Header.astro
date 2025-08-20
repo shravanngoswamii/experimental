@@ -1,371 +1,286 @@
 ---
 // src/components/Header.astro
-// This component creates the top navigation bar for the website.
+// A new, fully responsive navigation component.
 ---
 <header class="site-header">
     <div class="container header-container">
-        <a href="/" class="logo">HomeTech Washer Repair</a>
+        <a href="/" class="logo">
+            HomeTech Washer Repair
+        </a>
 
-        <button class="nav-toggle" aria-controls="primary-navigation" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </button>
-        
-        <nav id="primary-navigation" class="main-nav" data-visible="false" aria-hidden="true">
-            <ul>
-                <li><a href="#services" class="nav-link">Services</a></li>
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#why-us" class="nav-link">Why Choose Us</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
-            </ul>
+        <nav class="desktop-nav">
+            <a href="#services" class="nav-link">Services</a>
+            <a href="#about" class="nav-link">About</a>
+            <a href="#why-us" class="nav-link">Why Choose Us</a>
+            <a href="#contact" class="nav-link">Contact</a>
         </nav>
 
-        <!-- Backdrop for mobile menu -->
-        <div class="nav-backdrop" data-visible="false"></div>
-
-        <div class="header-cta">
-            <span class="cta-text">Need urgent service? Call!</span>
-            <a href="tel:18001037208" class="phone-number">1800 103 7208</a>
+        <div class="header-actions">
+            <a href="tel:18001037208" class="btn btn-primary header-cta-btn">
+                <span>Call Now</span>
+            </a>
+            <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Open menu" aria-expanded="false">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
         </div>
     </div>
 </header>
 
+<!-- Full-screen mobile navigation overlay -->
+<div id="mobile-menu" class="mobile-menu-overlay" data-visible="false">
+    <button id="mobile-menu-close" class="mobile-menu-close" aria-label="Close menu">&times;</button>
+    <nav class="mobile-nav">
+        <a href="#services" class="mobile-nav-link">Services</a>
+        <a href="#about" class="mobile-nav-link">About</a>
+        <a href="#why-us" class="mobile-nav-link">Why Choose Us</a>
+        <a href="#contact" class="mobile-nav-link">Contact</a>
+    </nav>
+</div>
+
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const toggle = document.querySelector('.nav-toggle');
-        const nav = document.getElementById('primary-navigation');
-        const backdrop = document.querySelector('.nav-backdrop');
-        const links = nav?.querySelectorAll('a');
+        const menuToggle = document.getElementById('mobile-menu-toggle');
+        const menuClose = document.getElementById('mobile-menu-close');
+        const mobileMenu = document.getElementById('mobile-menu');
         const header = document.querySelector('.site-header');
 
-        function openNav() {
-            nav?.setAttribute('data-visible', 'true');
-            nav?.setAttribute('aria-hidden', 'false');
-            toggle?.setAttribute('aria-expanded', 'true');
-            document.body.classList.add('no-scroll');
-            backdrop?.setAttribute('data-visible', 'true');
-            header?.classList.add('menu-open');
-        }
-        function closeNav() {
-            nav?.setAttribute('data-visible', 'false');
-            nav?.setAttribute('aria-hidden', 'true');
-            toggle?.setAttribute('aria-expanded', 'false');
-            document.body.classList.remove('no-scroll');
-            backdrop?.setAttribute('data-visible', 'false');
-            header?.classList.remove('menu-open');
-        }
+        // Ensure all elements exist before adding event listeners
+        if (menuToggle && menuClose && mobileMenu) {
+            const navLinks = mobileMenu.querySelectorAll('a');
 
-        toggle?.addEventListener('click', () => {
-            const isOpen = nav?.getAttribute('data-visible') === 'true';
-            isOpen ? closeNav() : openNav();
-        });
+            const openMenu = () => {
+                menuToggle.setAttribute('aria-expanded', 'true');
+                mobileMenu.setAttribute('data-visible', 'true');
+                document.body.style.overflow = 'hidden';
+            };
 
-        backdrop?.addEventListener('click', closeNav);
-        links?.forEach((a) => a.addEventListener('click', closeNav));
+            const closeMenu = () => {
+                menuToggle.setAttribute('aria-expanded', 'false');
+                mobileMenu.setAttribute('data-visible', 'false');
+                document.body.style.overflow = '';
+            };
 
-        // On resize above breakpoint, ensure menu is closed
-        const mq = window.matchMedia('(min-width: 901px)');
-        function handleResize() {
-            if (mq.matches) {
-                closeNav();
-            }
-        }
-        window.addEventListener('resize', handleResize);
-
-        // Set active nav link based on scroll position
-        const sections = document.querySelectorAll('section[id]');
-        function setActiveNavLink() {
-            const scrollY = window.scrollY;
+            menuToggle.addEventListener('click', () => {
+                const isVisible = mobileMenu.getAttribute('data-visible') === 'true';
+                if (isVisible) {
+                    closeMenu();
+                } else {
+                    openMenu();
+                }
+            });
             
-            sections.forEach(section => {
-                const rect = section.getBoundingClientRect();
-                const sectionTop = rect.top + window.scrollY - 100;
-                const sectionHeight = rect.height;
-                const sectionId = section.getAttribute('id');
-                
-                const link = document.querySelector(`.nav-link[href="#${sectionId}"]`);
-                if (link) {
-                    if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
-                        link.classList.add('active');
-                    } else {
-                        link.classList.remove('active');
-                    }
+            menuClose.addEventListener('click', closeMenu);
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', closeMenu);
+            });
+        }
+
+        // Add scrolled class to header
+        if (header) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
                 }
             });
         }
-        // Solid header once scrolled
-        function setHeaderScrolled() {
-            if (window.scrollY > 8) {
-                header?.classList.add('scrolled');
-            } else {
-                header?.classList.remove('scrolled');
-            }
-        }
-        
-        window.addEventListener('scroll', setActiveNavLink);
-        window.addEventListener('scroll', setHeaderScrolled);
-        setActiveNavLink(); // Set initial active state
-        setHeaderScrolled();
     });
 </script>
 
 <style>
-    /* Z-INDEX HIERARCHY:
-     * 1300: Mobile Nav Toggle (must be on top to close menu)
-     * 1200: Mobile Nav Panel
-     * 1100: Mobile Nav Backdrop
-     * 1000: Sticky Header
-     * Default: Page Content
-    */
+    :root {
+        --header-height: 70px;
+    }
+
     .site-header {
-        /* Fallback for older browsers */
-        background-color: #fff;
-        /* More opaque background for better readability */
-        background: rgba(255, 255, 255, 0.97);
-        backdrop-filter: saturate(120%) blur(10px);
-        -webkit-backdrop-filter: saturate(120%) blur(10px);
-        padding: 0.75rem 0;
-        border-bottom: 1px solid rgba(0,0,0,0.06);
         position: sticky;
         top: 0;
-        z-index: 1000; /* Ensure header is above page content */
-        box-shadow: 0 1px 12px rgba(0,0,0,0.04);
+        z-index: 1000;
+        width: 100%;
+        padding: 0.5rem 0;
+        background-color: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.07);
         transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .site-header.scrolled { 
-        background: rgba(255,255,255,0.98);
-        border-bottom-color: rgba(0,0,0,0.08);
-        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    }
-
-    .site-header.menu-open {
-        background: #ffffff;
-        box-shadow: none;
+    .site-header.scrolled {
+        background-color: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
 
     .header-container {
-        display: grid;
-        grid-template-columns: auto 1fr auto;
+        display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 1.5rem;
+        height: var(--header-height);
     }
 
     .logo {
         font-family: 'Montserrat', sans-serif;
-        font-size: clamp(1.1rem, 1.2rem + 0.5vw, 1.5rem);
         font-weight: 700;
+        font-size: clamp(1rem, 3vw, 1.25rem);
         color: var(--heading-color);
-        white-space: nowrap;
-        letter-spacing: -0.01em;
-        transition: transform 0.2s ease;
-    }
-    
-    .logo:hover {
-        transform: translateY(-1px);
+        text-decoration: none;
     }
 
-    .nav-toggle {
-        display: none;
-        width: 44px;
-        height: 44px;
-        border: none;
-        border-radius: 8px;
-        background: transparent;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        gap: 6px;
-        z-index: 1300; /* Ensure toggle is on top of nav panel */
-        position: relative; /* Required for z-index to apply */
-        cursor: pointer;
-        padding: 8px;
-        transition: background-color 0.2s ease;
-    }
-    
-    .nav-toggle:hover {
-        background-color: rgba(0,0,0,0.05);
+    /* Desktop Navigation */
+    .desktop-nav {
+        display: none; /* Hidden by default, shown on larger screens */
     }
 
-    .nav-toggle .bar {
-        display: block;
-        width: 24px;
-        height: 2px;
-        background: var(--heading-color);
-        border-radius: 1px;
-        transition: transform 0.3s ease, opacity 0.3s ease;
-    }
-    
-    .nav-toggle[aria-expanded="true"] .bar:nth-child(1) {
-        transform: translateY(8px) rotate(45deg);
-    }
-    
-    .nav-toggle[aria-expanded="true"] .bar:nth-child(2) {
-        opacity: 0;
-    }
-    
-    .nav-toggle[aria-expanded="true"] .bar:nth-child(3) {
-        transform: translateY(-8px) rotate(-45deg);
-    }
-
-    .main-nav {
-        justify-self: center;
-    }
-
-    .main-nav ul {
-        list-style: none;
-        display: flex;
-        gap: clamp(1.5rem, 2vw, 2.5rem);
-        margin: 0;
-        padding: 0;
+    @media (min-width: 768px) {
+        .desktop-nav {
+            display: flex;
+            gap: 2rem;
+        }
     }
 
     .nav-link {
-        color: var(--text-color);
+        font-size: 1rem;
         font-weight: 500;
+        color: var(--text-color);
+        text-decoration: none;
         position: relative;
-        padding: 0.75rem 0;
-        transition: color 0.2s ease;
-        font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1.05rem);
+        padding: 0.5rem 0;
     }
 
     .nav-link::after {
         content: '';
         position: absolute;
-        bottom: 0.5rem;
+        bottom: 0;
         left: 0;
         width: 0;
         height: 2px;
         background-color: var(--primary-color);
         transition: width 0.3s ease;
-        border-radius: 2px;
     }
 
-    .nav-link:hover {
-        color: var(--primary-color);
-    }
-
-    .nav-link:hover::after, 
+    .nav-link:hover::after,
     .nav-link.active::after {
         width: 100%;
     }
     
-    .nav-link.active {
+    .nav-link:hover {
         color: var(--primary-color);
-        font-weight: 600;
     }
 
-    .header-cta { 
-        text-align: right;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-    }
-    
-    .cta-text { 
-        display: block; 
-        font-size: 0.8rem; 
-        color: var(--text-color); 
-        opacity: 0.8;
-        margin-bottom: 2px;
-    }
-    
-    .phone-number { 
-        font-weight: 700; 
-        color: var(--primary-color); 
-        font-size: 1.05rem;
+    .header-actions {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 1rem;
+    }
+
+    .header-cta-btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    /* Mobile Menu Toggle (Hamburger) */
+    .mobile-menu-toggle {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 28px;
+        height: 24px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 1100; /* Above overlay */
+    }
+
+    .mobile-menu-toggle .bar {
+        display: block;
+        width: 100%;
+        height: 3px;
+        background-color: var(--heading-color);
+        border-radius: 2px;
+        transition: all 0.3s ease-in-out;
     }
     
-    .phone-number::before {
-        content: '';
-        display: inline-block;
-        width: 14px;
-        height: 14px;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23007BFF' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z'/%3E%3C/svg%3E");
-        background-size: contain;
-        background-repeat: no-repeat;
+    .mobile-menu-toggle[aria-expanded="true"] {
+        opacity: 0;
+        pointer-events: none;
     }
 
-    /* Backdrop for mobile menu */
-    .nav-backdrop {
+    @media (min-width: 768px) {
+        .mobile-menu-toggle {
+            display: none;
+        }
+    }
+    
+    @media (max-width: 767px) {
+        .header-cta-btn span {
+            display: none; /* Hide text on mobile, icon is enough */
+        }
+        .header-cta-btn::before {
+            content: '📞'; /* Phone icon */
+            font-size: 1.2rem;
+        }
+    }
+
+
+    /* Mobile Menu Overlay */
+    .mobile-menu-overlay {
         position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 1100; /* Below nav panel, above header */
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #ffffff;
+        z-index: 1050;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
+        transform: translateY(-10px);
+        transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
     }
 
-    .nav-backdrop[data-visible="true"] {
+    .mobile-menu-overlay[data-visible="true"] {
         opacity: 1;
         visibility: visible;
+        transform: translateY(0);
+    }
+    
+    .mobile-menu-close {
+        position: absolute;
+        top: 2rem;
+        right: 2rem;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 2.5rem;
+        color: var(--heading-color);
+        line-height: 1;
     }
 
-    /* Mobile Navigation */
-    @media (max-width: 900px) {
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .main-nav {
-            position: fixed;
-            inset: 0 0 0 40%; /* off-canvas width */
-            /* Ensure a solid background color */
-            background-color: #ffffff;
-            box-shadow: -8px 0 24px rgba(0,0,0,0.12);
-            padding: 6rem 1.5rem 2rem;
-            z-index: 1200; /* Above backdrop */
-            
-            /* Hide nav off-screen by default */
-            transform: translateX(100%);
-            visibility: hidden;
-            transition: transform 0.35s ease, visibility 0s 0.35s;
-        }
-        .main-nav[data-visible='true'] {
-            transform: translateX(0);
-            visibility: visible;
-            transition: transform 0.35s ease, visibility 0s;
-        }
-        .main-nav ul { 
-            flex-direction: column; 
-            /* Increased gap for better spacing */
-            gap: 2rem; 
-        }
-        .nav-link {
-            display: block;
-            font-size: 1.2rem; /* Slightly larger font for better readability */
-            /* Increased padding for larger tap targets */
-            padding: 1rem 0;
-        }
-        .nav-link::after {
-            bottom: 0.5rem;
-            height: 3px;
-        }
-        .header-cta { display: none; }
-        .nav-toggle { display: inline-flex; }
-        body.no-scroll { overflow: hidden; }
+    .mobile-nav {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2.5rem;
     }
 
-    @media (max-width: 560px) {
-        .main-nav { inset: 0 0 0 25%; }
+    .mobile-nav-link {
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: var(--heading-color);
+        text-decoration: none;
+        transition: color 0.2s;
     }
 
-    @media (max-width: 420px) {
-        .main-nav { 
-            inset: 0; /* full-screen panel on very small devices */
-            text-align: center;
-            padding-top: 8rem;
-        }
-        .main-nav ul {
-            align-items: center;
-        }
+    .mobile-nav-link:hover {
+        color: var(--primary-color);
     }
 </style>
