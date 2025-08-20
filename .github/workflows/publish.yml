@@ -1,52 +1,38 @@
-# This workflow is configured to build and deploy your Astro site to GitHub Pages.
-name: Deploy to GitHub Pages
+name: Build and Deploy App to GitHub Pages
 
 on:
   push:
     branches:
       - main
 
-# Grant the necessary permissions for the deployment job.
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js environment
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-          # Use the correct path to your package-lock.json inside the 'sample' directory.
-          cache-dependency-path: sample/package-lock.json
-      
-      - name: Install project dependencies
+          cache-dependency-path: GSoC-Backup/Code/package-lock.json
+
+      - name: Install dependencies
         run: npm --prefix sample install
 
-      - name: Build the site
-        # Run the build command within the 'sample' directory.
+      - name: Build application
         run: npm --prefix sample run build
 
-      - name: Upload build artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Specify the path to the build output directory.
-          path: sample/dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages # The branch to deploy to
+          folder: sample/dist
+          target-folder: washer
+          clean: true
