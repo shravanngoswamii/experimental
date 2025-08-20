@@ -1,5 +1,6 @@
 ---
 // src/components/Header.astro
+// This component creates the main navigation header for the site.
 const base = import.meta.env.BASE_URL;
 ---
 <header class="site-header">
@@ -28,7 +29,6 @@ const base = import.meta.env.BASE_URL;
     </div>
 </header>
 
-<!-- Full-screen mobile navigation overlay -->
 <div id="mobile-menu" class="mobile-menu-overlay" data-visible="false">
     <button id="mobile-menu-close" class="mobile-menu-close" aria-label="Close menu">&times;</button>
     <nav class="mobile-nav">

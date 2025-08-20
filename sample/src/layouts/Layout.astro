@@ -1,15 +1,21 @@
 ---
 // src/layouts/Layout.astro
+// This file serves as the main template for the entire site.
+// It includes the head section with SEO metadata and global styles.
+
+// Import global styles to be bundled by Astro.
 import '../styles/global.css';
 
+// Props interface for type safety and clarity.
 interface Props {
 	title: string;
 	description: string;
 }
 
+// Destructuring props with default values for robustness.
 const { 
     title = 'HomeTech Washer Repair — Expert Washing Machine Service in Mumbai', 
-    description = 'Same-day washing machine repair in Mumbai, Thane & Navi Mumbai. Front-load & top-load experts. Genuine parts. 90-day service warranty. Book now!' 
+    description = 'Same-day washing machine repair in Mumbai, Thane & Navi Mumbai. Front-load & top-load experts. Genuine parts. 90-day service warranty. Call 1800 103 7208' 
 } = Astro.props;
 ---
 
