@@ -1,10 +1,10 @@
 ---
 // src/components/Header.astro
-// A new, fully responsive navigation component.
+const base = import.meta.env.BASE_URL;
 ---
 <header class="site-header">
     <div class="container header-container">
-        <a href="/" class="logo">
+        <a href={base} class="logo">
             HomeTech Washer Repair
         </a>
 
