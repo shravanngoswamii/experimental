@@ -1,18 +1,20 @@
-# GitHub Actions workflow for building and deploying the Astro site to GitHub Pages.
-name: Build and Deploy to GitHub Pages
+# This workflow is configured to build and deploy your Astro site to GitHub Pages.
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
       - main
 
+# Grant the necessary permissions for the deployment job.
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -22,24 +24,29 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          # Use the correct path to your package-lock.json inside the 'sample' directory.
           cache-dependency-path: sample/package-lock.json
-
+      
       - name: Install project dependencies
         run: npm --prefix sample install
 
-      - name: Build production-ready application
+      - name: Build the site
+        # Run the build command within the 'sample' directory.
         run: npm --prefix sample run build
 
-      - name: Prepare deployment folder
-        run: |
-          # This line is now corrected to create the full path
-          mkdir -p deploy/experimental/washer
-          mv sample/dist/* deploy/experimental/washer
-          touch deploy/.nojekyll
-
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Upload build artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          branch: gh-pages
-          folder: deploy
-          clean: true
+          # Specify the path to the build output directory.
+          path: sample/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
