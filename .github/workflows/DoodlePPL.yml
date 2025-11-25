@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        path: ['Figma-like-DoodleBUGS', 'GSoC-DoodleBUGS', 'PrimeVue-GSoC-DoodleBUGS-MultiCanvas']
+        path: ['Figma-like-DoodleBUGS-MultiCanvas', 'GSoC-DoodleBUGS', 'PrimeVue-GSoC-DoodleBUGS-MultiCanvas']
       max-parallel: 1
     
     steps:
