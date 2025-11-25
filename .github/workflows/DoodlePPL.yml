@@ -32,6 +32,8 @@ jobs:
 
       - name: Build application
         run: npm --prefix DoodlePPL/${{ matrix.path }} run build
+        env:
+          VITE_APP_BASE_URL: experimental/DoodlePPL/${{ matrix.path }}/
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
