@@ -14,6 +14,7 @@ jobs:
     strategy:
       matrix:
         path: ['Figma-like-DoodleBUGS', 'GSoC-DoodleBUGS', 'PrimeVue-GSoC-DoodleBUGS-MultiCanvas']
+      max-parallel: 1
     
     steps:
       - name: Checkout
