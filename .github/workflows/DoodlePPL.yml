@@ -1,0 +1,41 @@
+name: Build and Deploy DoodleBUGS Apps to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        path: ['Figma-like-DoodleBUGS', 'GSoC-DoodleBUGS', 'PrimeVue-GSoC-DoodleBUGS-MultiCanvas']
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: DoodlePPL/${{ matrix.path }}/package-lock.json
+
+      - name: Install dependencies
+        run: npm --prefix DoodlePPL/${{ matrix.path }} install
+
+      - name: Build application
+        run: npm --prefix DoodlePPL/${{ matrix.path }} run build
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: DoodlePPL/${{ matrix.path }}/dist
+          target-folder: DoodlePPL/${{ matrix.path }}
+          clean: false
