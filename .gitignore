@@ -1,0 +1,25 @@
+node_modules/
+dist/
+build/
+
+# JS package managers
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Logs and local runtime output
+*.log
+*.pid
+
+# Python artifacts
+__pycache__/
+*.pyc
+
+# Julia artifacts
+*.jl.cov
+*.jl.mem
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/settings.json
