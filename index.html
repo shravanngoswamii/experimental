@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TuringLang Deprecated Packages and Repository Guide</title>
+  <title>Experimental Workspace Guide</title>
   <style>
     :root {
       color-scheme: light;
@@ -12,7 +12,6 @@
       --border: rgba(29, 39, 51, 0.12);
       --text: #18212c;
       --muted: #5f6b79;
-      --link: #0f5c4d;
       --shadow: 0 20px 60px rgba(31, 43, 56, 0.08);
       --radius: 24px;
     }
@@ -47,38 +46,40 @@
       box-shadow: var(--shadow);
       -webkit-backdrop-filter: blur(14px);
       backdrop-filter: blur(14px);
+      animation: fade-in 500ms ease-out;
     }
 
     .hero {
-      padding: 3rem 2rem 1.5rem;
-    }
-
-    .eyebrow {
-      margin: 0 0 0.75rem;
-      font-family: "Segoe UI", sans-serif;
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--link);
+      padding: 2.5rem 2rem 1rem;
     }
 
     h1 {
       margin: 0;
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      line-height: 1.05;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.08;
       letter-spacing: -0.03em;
     }
 
     .intro {
-      max-width: 42rem;
-      margin: 1rem 0 0;
+      max-width: 48rem;
+      margin: 0.9rem 0 0;
       color: var(--muted);
       font-size: 1.05rem;
     }
 
-    .table-wrap {
+    .section {
       padding: 0 1rem 1rem;
+    }
+
+    .section-title {
+      margin: 0 0 0.6rem;
+      font-size: clamp(1.25rem, 3.2vw, 1.8rem);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .table-wrap {
+      padding: 0;
     }
 
     table {
@@ -93,7 +94,7 @@
 
     th,
     td {
-      padding: 1rem 1.1rem;
+      padding: 0.95rem 1rem;
       text-align: left;
       vertical-align: top;
       border-bottom: 1px solid var(--border);
@@ -102,7 +103,7 @@
     th {
       background: rgba(24, 33, 44, 0.04);
       font-family: "Segoe UI", sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--muted);
@@ -112,115 +113,12 @@
       border-bottom: 0;
     }
 
-    td:first-child {
-      white-space: nowrap;
-      font-weight: 700;
-    }
-
-    a {
-      color: var(--link);
-      text-decoration-thickness: 0.08em;
-      text-underline-offset: 0.16em;
-    }
-
-    a:hover {
-      text-decoration-thickness: 0.12em;
-    }
-
     .mono {
       font-family: "Consolas", "Courier New", monospace;
       font-size: 0.94rem;
       word-break: break-word;
-    }
-
-    .brand-link {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .brand-link:hover {
-      color: var(--link);
-    }
-
-    .divider {
-      margin: 0 1rem 1rem;
-      border: 0;
-      border-top: 1px solid var(--border);
-    }
-
-    .section {
-      padding: 0 1rem 1rem;
-    }
-
-    .section-title {
-      margin: 0 0 0.5rem;
-      font-size: clamp(1.3rem, 3.2vw, 1.9rem);
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-    }
-
-    .kicker {
-      margin: 0 0 0.35rem;
-      font-family: "Segoe UI", sans-serif;
-      font-size: 0.72rem;
+      white-space: nowrap;
       font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .section-lead {
-      margin: 0 0 1rem;
-      color: var(--muted);
-    }
-
-    .details-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.75rem;
-      margin: 0 0 1rem;
-    }
-
-    .detail-card {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 0.9rem 1rem;
-      background: rgba(255, 255, 255, 0.75);
-    }
-
-    .detail-card h3 {
-      margin: 0 0 0.3rem;
-      font-family: "Segoe UI", sans-serif;
-      font-size: 0.82rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .detail-card p {
-      margin: 0;
-      font-size: 1.06rem;
-      line-height: 1.25;
-    }
-
-    .clean-list {
-      margin: 0;
-      padding-left: 1.1rem;
-      color: var(--muted);
-    }
-
-    .clean-list li + li {
-      margin-top: 0.35rem;
-    }
-
-    .footer-note {
-      margin: 0;
-      padding: 1rem;
-      font-size: 0.92rem;
-      color: var(--muted);
-      border-top: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.58);
     }
 
     @media (max-width: 700px) {
@@ -230,23 +128,11 @@
       }
 
       .hero {
-        padding: 2rem 1.25rem 1rem;
-      }
-
-      .table-wrap {
-        padding: 0 0.75rem 0.75rem;
+        padding: 2rem 1.25rem 0.9rem;
       }
 
       .section {
         padding: 0 0.75rem 0.75rem;
-      }
-
-      .divider {
-        margin: 0 0.75rem 0.75rem;
-      }
-
-      .details-grid {
-        grid-template-columns: 1fr;
       }
 
       table,
@@ -276,7 +162,7 @@
       }
 
       td {
-        padding: 0.9rem 1rem;
+        padding: 0.85rem 1rem;
         border-bottom: 1px solid var(--border);
       }
 
@@ -287,7 +173,7 @@
       td::before {
         content: attr(data-label);
         display: block;
-        margin-bottom: 0.35rem;
+        margin-bottom: 0.3rem;
         font-family: "Segoe UI", sans-serif;
         font-size: 0.72rem;
         font-weight: 700;
@@ -296,14 +182,8 @@
         color: var(--muted);
       }
 
-      td:first-child {
+      .mono {
         white-space: normal;
-      }
-    }
-
-    @media (prefers-reduced-motion: no-preference) {
-      .shell {
-        animation: fade-in 500ms ease-out;
       }
     }
 
@@ -324,129 +204,58 @@
   <main>
     <section class="shell">
       <div class="hero">
-        <p class="eyebrow">TuringLang</p>
-        <h1><a class="brand-link" href="https://github.com/TuringLang/">TuringLang</a> deprecated packages and workspace guide</h1>
+        <h1>Experimental workspace guide</h1>
         <p class="intro">
-          This page lists deprecated packages from the TuringLang organization and includes a detailed map of this repository so contributors can quickly understand what lives where.
+          A minimal map of the main folders in this repository for quick navigation.
         </p>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Package</th>
-              <th>Link</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td data-label="Package">TuringBenchmarking</td>
-              <td data-label="Link" class="mono">
-                <a href="https://turinglang.org/Deprecated/TuringBenchmarking/">turinglang.org/Deprecated/TuringBenchmarking/</a>
-              </td>
-              <td data-label="Notes">Deprecated package.</td>
-            </tr>
-            <tr>
-              <td data-label="Package">TuringCallbacks</td>
-              <td data-label="Link" class="mono">
-                <a href="https://turinglang.org/Deprecated/TuringCallbacks/">turinglang.org/Deprecated/TuringCallbacks/</a>
-              </td>
-              <td data-label="Notes">
-                Callbacks were upstreamed to AbstractMCMC as an extension. See
-                <a href="https://turinglang.org/AbstractMCMC.jl/stable/callbacks/">the AbstractMCMC callbacks documentation</a>.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <hr class="divider">
-
-      <section class="section" aria-labelledby="repo-overview-title">
-        <p class="kicker">Repository overview</p>
-        <h2 id="repo-overview-title" class="section-title">Experimental monorepo with prototypes, papers, and utilities</h2>
-        <p class="section-lead">
-          The root workspace combines frontend prototypes, Julia runtimes, paper-writing artifacts, and helper scripts. It acts as a staging ground for multi-canvas UI ideas, archived GSoC experiments, and publication support assets.
-        </p>
-        <div class="details-grid">
-          <article class="detail-card">
-            <h3>Primary stack</h3>
-            <p>Vue + Vite, Julia runtime services, and script-driven tooling.</p>
-          </article>
-          <article class="detail-card">
-            <h3>Main focus</h3>
-            <p>DoodleBUGS variants, multi-canvas workflows, and model-driven experiments.</p>
-          </article>
-          <article class="detail-card">
-            <h3>Repo shape</h3>
-            <p>Multiple active project roots with shared docs, tests, and utilities.</p>
-          </article>
-        </div>
-      </section>
 
       <section class="section" aria-labelledby="structure-title">
-        <p class="kicker">Directory map</p>
-        <h2 id="structure-title" class="section-title">Key folders and what they contain</h2>
-        <div class="table-wrap" style="padding: 0;">
+        <h2 id="structure-title" class="section-title">Key folders</h2>
+        <div class="table-wrap">
           <table>
             <thead>
               <tr>
                 <th>Path</th>
                 <th>Purpose</th>
-                <th>Notable contents</th>
+                <th>Notes</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td data-label="Path" class="mono">DoodlePPL/</td>
-                <td data-label="Purpose">Main experimentation area for DoodleBUGS and multi-canvas implementations.</td>
-                <td data-label="Notable contents">Figma-like-DoodleBUGS-MultiCanvas, GSoC-DoodleBUGS, PrimeVue variant, runtime server.jl, and model JSON files.</td>
+                <td data-label="Purpose">Active DoodleBUGS and multi-canvas experiments.</td>
+                <td data-label="Notes">Includes Vue/Vite apps plus Julia runtime components.</td>
               </tr>
               <tr>
                 <td data-label="Path" class="mono">GSoC-Backup/</td>
-                <td data-label="Purpose">Archived and comparative snapshots from earlier project iterations.</td>
-                <td data-label="Notable contents">Code, DoodleBUGS, and TEST branches with Vite-based app setups.</td>
+                <td data-label="Purpose">Archived snapshots of earlier implementations.</td>
+                <td data-label="Notes">Useful for diffing behavior and recovering old ideas.</td>
               </tr>
               <tr>
                 <td data-label="Path" class="mono">sample/</td>
-                <td data-label="Purpose">Separate Astro playground for lightweight UI/content experiments.</td>
-                <td data-label="Notable contents">Astro config, page/layout components, styles, and public assets.</td>
+                <td data-label="Purpose">Astro sample project for quick experiments.</td>
+                <td data-label="Notes">Contains pages, layouts, styles, and static assets.</td>
               </tr>
               <tr>
-                <td data-label="Path" class="mono">JOSS-reviews/ and mlg-format/</td>
-                <td data-label="Purpose">Publication and formatting resources for paper submissions and reviews.</td>
-                <td data-label="Notable contents">paper.md, bibliography files, and md-to-pdf helper commands.</td>
+                <td data-label="Path" class="mono">JOSS-reviews/</td>
+                <td data-label="Purpose">Paper and review support material.</td>
+                <td data-label="Notes">Includes references and markdown-to-pdf helpers.</td>
+              </tr>
+              <tr>
+                <td data-label="Path" class="mono">Research-Work/</td>
+                <td data-label="Purpose">Drafts of ongoing research writing.</td>
+                <td data-label="Notes">Multiple project-specific paper draft folders.</td>
               </tr>
               <tr>
                 <td data-label="Path" class="mono">tools/ and navbar/</td>
-                <td data-label="Purpose">Automation scripts for discovery, listing, and HTML navbar insertion tasks.</td>
-                <td data-label="Notable contents">PowerShell project listing scripts and Julia/Shell navbar helpers.</td>
-              </tr>
-              <tr>
-                <td data-label="Path" class="mono">Research-Work/ and OpenSource/</td>
-                <td data-label="Purpose">Draft research writing and open-source setup notes.</td>
-                <td data-label="Notable contents">Paper drafts for deepfake, hibiscus, log analysis, and setup docs.</td>
+                <td data-label="Purpose">Small automation scripts.</td>
+                <td data-label="Notes">Project discovery and navbar insertion utilities.</td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
-
-      <section class="section" aria-labelledby="workflow-title">
-        <p class="kicker">Workflow notes</p>
-        <h2 id="workflow-title" class="section-title">Practical contributor guidance</h2>
-        <ul class="clean-list">
-          <li>Use the DoodlePPL subprojects when testing active UI/runtime ideas.</li>
-          <li>Use GSoC-Backup only for historical comparison or rollback reference.</li>
-          <li>Use tools scripts to quickly locate Node projects or HTML targets before batch edits.</li>
-          <li>Keep documentation and research edits separate from app code commits when possible.</li>
-        </ul>
-      </section>
-
-      <p class="footer-note">
-        Maintainer note: this landing page is intentionally static so it can be served from any basic host without a build step.
-      </p>
     </section>
   </main>
 </body>
