@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TuringLang Deprecated Packages</title>
+  <title>TuringLang Deprecated Packages and Repository Guide</title>
   <style>
     :root {
       color-scheme: light;
@@ -142,6 +142,87 @@
       color: var(--link);
     }
 
+    .divider {
+      margin: 0 1rem 1rem;
+      border: 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .section {
+      padding: 0 1rem 1rem;
+    }
+
+    .section-title {
+      margin: 0 0 0.5rem;
+      font-size: clamp(1.3rem, 3.2vw, 1.9rem);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .kicker {
+      margin: 0 0 0.35rem;
+      font-family: "Segoe UI", sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .section-lead {
+      margin: 0 0 1rem;
+      color: var(--muted);
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin: 0 0 1rem;
+    }
+
+    .detail-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 0.9rem 1rem;
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+    .detail-card h3 {
+      margin: 0 0 0.3rem;
+      font-family: "Segoe UI", sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .detail-card p {
+      margin: 0;
+      font-size: 1.06rem;
+      line-height: 1.25;
+    }
+
+    .clean-list {
+      margin: 0;
+      padding-left: 1.1rem;
+      color: var(--muted);
+    }
+
+    .clean-list li + li {
+      margin-top: 0.35rem;
+    }
+
+    .footer-note {
+      margin: 0;
+      padding: 1rem;
+      font-size: 0.92rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.58);
+    }
+
     @media (max-width: 700px) {
       main {
         width: min(100% - 1rem, 960px);
@@ -154,6 +235,18 @@
 
       .table-wrap {
         padding: 0 0.75rem 0.75rem;
+      }
+
+      .section {
+        padding: 0 0.75rem 0.75rem;
+      }
+
+      .divider {
+        margin: 0 0.75rem 0.75rem;
+      }
+
+      .details-grid {
+        grid-template-columns: 1fr;
       }
 
       table,
@@ -232,9 +325,9 @@
     <section class="shell">
       <div class="hero">
         <p class="eyebrow">TuringLang</p>
-        <h1><a class="brand-link" href="https://github.com/TuringLang/">TuringLang</a> deprecated packages</h1>
+        <h1><a class="brand-link" href="https://github.com/TuringLang/">TuringLang</a> deprecated packages and workspace guide</h1>
         <p class="intro">
-          This page lists deprecated packages from the TuringLang organization and points to their published documentation or replacement guidance.
+          This page lists deprecated packages from the TuringLang organization and includes a detailed map of this repository so contributors can quickly understand what lives where.
         </p>
       </div>
       <div class="table-wrap">
@@ -267,6 +360,93 @@
           </tbody>
         </table>
       </div>
+
+      <hr class="divider">
+
+      <section class="section" aria-labelledby="repo-overview-title">
+        <p class="kicker">Repository overview</p>
+        <h2 id="repo-overview-title" class="section-title">Experimental monorepo with prototypes, papers, and utilities</h2>
+        <p class="section-lead">
+          The root workspace combines frontend prototypes, Julia runtimes, paper-writing artifacts, and helper scripts. It acts as a staging ground for multi-canvas UI ideas, archived GSoC experiments, and publication support assets.
+        </p>
+        <div class="details-grid">
+          <article class="detail-card">
+            <h3>Primary stack</h3>
+            <p>Vue + Vite, Julia runtime services, and script-driven tooling.</p>
+          </article>
+          <article class="detail-card">
+            <h3>Main focus</h3>
+            <p>DoodleBUGS variants, multi-canvas workflows, and model-driven experiments.</p>
+          </article>
+          <article class="detail-card">
+            <h3>Repo shape</h3>
+            <p>Multiple active project roots with shared docs, tests, and utilities.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="structure-title">
+        <p class="kicker">Directory map</p>
+        <h2 id="structure-title" class="section-title">Key folders and what they contain</h2>
+        <div class="table-wrap" style="padding: 0;">
+          <table>
+            <thead>
+              <tr>
+                <th>Path</th>
+                <th>Purpose</th>
+                <th>Notable contents</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="Path" class="mono">DoodlePPL/</td>
+                <td data-label="Purpose">Main experimentation area for DoodleBUGS and multi-canvas implementations.</td>
+                <td data-label="Notable contents">Figma-like-DoodleBUGS-MultiCanvas, GSoC-DoodleBUGS, PrimeVue variant, runtime server.jl, and model JSON files.</td>
+              </tr>
+              <tr>
+                <td data-label="Path" class="mono">GSoC-Backup/</td>
+                <td data-label="Purpose">Archived and comparative snapshots from earlier project iterations.</td>
+                <td data-label="Notable contents">Code, DoodleBUGS, and TEST branches with Vite-based app setups.</td>
+              </tr>
+              <tr>
+                <td data-label="Path" class="mono">sample/</td>
+                <td data-label="Purpose">Separate Astro playground for lightweight UI/content experiments.</td>
+                <td data-label="Notable contents">Astro config, page/layout components, styles, and public assets.</td>
+              </tr>
+              <tr>
+                <td data-label="Path" class="mono">JOSS-reviews/ and mlg-format/</td>
+                <td data-label="Purpose">Publication and formatting resources for paper submissions and reviews.</td>
+                <td data-label="Notable contents">paper.md, bibliography files, and md-to-pdf helper commands.</td>
+              </tr>
+              <tr>
+                <td data-label="Path" class="mono">tools/ and navbar/</td>
+                <td data-label="Purpose">Automation scripts for discovery, listing, and HTML navbar insertion tasks.</td>
+                <td data-label="Notable contents">PowerShell project listing scripts and Julia/Shell navbar helpers.</td>
+              </tr>
+              <tr>
+                <td data-label="Path" class="mono">Research-Work/ and OpenSource/</td>
+                <td data-label="Purpose">Draft research writing and open-source setup notes.</td>
+                <td data-label="Notable contents">Paper drafts for deepfake, hibiscus, log analysis, and setup docs.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="workflow-title">
+        <p class="kicker">Workflow notes</p>
+        <h2 id="workflow-title" class="section-title">Practical contributor guidance</h2>
+        <ul class="clean-list">
+          <li>Use the DoodlePPL subprojects when testing active UI/runtime ideas.</li>
+          <li>Use GSoC-Backup only for historical comparison or rollback reference.</li>
+          <li>Use tools scripts to quickly locate Node projects or HTML targets before batch edits.</li>
+          <li>Keep documentation and research edits separate from app code commits when possible.</li>
+        </ul>
+      </section>
+
+      <p class="footer-note">
+        Maintainer note: this landing page is intentionally static so it can be served from any basic host without a build step.
+      </p>
     </section>
   </main>
 </body>
