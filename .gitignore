@@ -1,6 +1,9 @@
 node_modules/
 dist/
 build/
+.astro/
+.vite/
+.quarto/
 
 # JS package managers
 package-lock.json
