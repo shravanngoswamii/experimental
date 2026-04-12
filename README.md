@@ -11,11 +11,6 @@ Personal sandbox for prototypes, archived experiments, and writing drafts.
 
 ## Useful Tools
 
-- `tools/list-node-projects.ps1`
-- `tools/list-html-targets.ps1`
-- `tools/list-julia-projects.ps1`
-- `tools/list-vite-projects.ps1`
-- `tools/list-astro-pages.ps1`
-- `tools/list-markdown-files.ps1`
+- `tools/list-workspace-items.ps1` (single script for node, vite, julia, html, astro-pages, markdown, and manifests listings)
 
 For primary public-facing work, visit [shravangoswami.com](https://shravangoswami.com).
