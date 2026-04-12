@@ -13,10 +13,13 @@ pnpm-lock.yaml
 # Logs and local runtime output
 *.log
 *.pid
+*.tmp
+*.bak
 
 # Python artifacts
 __pycache__/
 *.pyc
+.pytest_cache/
 
 # Julia artifacts
 *.jl.cov
@@ -26,3 +29,4 @@ __pycache__/
 .DS_Store
 Thumbs.db
 .vscode/settings.json
+.idea/
