@@ -1,10 +1,12 @@
 param(
-  [string]$Root = "."
+  [string]$Root = ".",
+  [switch]$AbsolutePath
 )
 
-$excludePattern = "node_modules|dist|build|\.git"
+$excludePattern = "node_modules|dist|build|\.git|\.next|\.astro|\.vite"
+$resolvedRoot = (Resolve-Path -Path $Root).Path
 
-Get-ChildItem -Path $Root -Recurse -File -Filter "package.json" |
+$projects = Get-ChildItem -Path $resolvedRoot -Recurse -File -Filter "package.json" |
   Where-Object { $_.FullName -notmatch $excludePattern } |
   ForEach-Object {
     $projectDir = $_.DirectoryName
@@ -24,8 +26,15 @@ Get-ChildItem -Path $Root -Recurse -File -Filter "package.json" |
     [PSCustomObject]@{
       Name = Split-Path $projectDir -Leaf
       Framework = $framework
-      Path = $projectDir
+      Path = if ($AbsolutePath) {
+        $projectDir
+      }
+      else {
+        $projectDir.Replace($resolvedRoot, ".").TrimStart('\\')
+      }
     }
   } |
-  Sort-Object Path |
+  Sort-Object Path
+
+$projects |
   Format-Table -AutoSize
