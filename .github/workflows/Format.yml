@@ -24,3 +24,4 @@ jobs:
         with:
           formatter: runic
           paths: julia-samples
+          suggest-changes: true
