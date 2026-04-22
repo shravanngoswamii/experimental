@@ -23,4 +23,5 @@ jobs:
         uses: TuringLang/actions/Format@sg-Runic
         with:
           formatter: runic
+          paths: julia-samples, src
           suggest-changes: true
