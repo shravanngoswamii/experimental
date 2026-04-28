@@ -6,3 +6,11 @@
 [![Vue 3](https://img.shields.io/badge/Vue-3-42b883?logo=vue.js&logoColor=white)](https://vuejs.org)
 [![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)](https://vitejs.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+---
+
+## What Is This?
+
+This repo is the experimental playground behind [shravangoswami.com](https://shravangoswami.com).  
+It hosts iterative prototypes, design explorations, and draft research notes that aren't production-ready yet.  
+Things here may be broken, half-baked, or just weird — and that is the point.
