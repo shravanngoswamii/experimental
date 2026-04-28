@@ -86,3 +86,18 @@ npm run dev
 ```
 
 Open `http://localhost:5173` and draw your first Bayesian graph.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| UI framework | Vue 3 (Composition API) |
+| Build tool | Vite 5 |
+| Language | TypeScript |
+| State management | Pinia |
+| Backend runtime | Julia + HTTP.jl |
+| Probabilistic engine | JuliaBUGS |
+| Static site | Astro (sample/) |
+| Formatting | Runic.jl (CI) |
