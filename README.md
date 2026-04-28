@@ -101,3 +101,11 @@ Open `http://localhost:5173` and draw your first Bayesian graph.
 | Probabilistic engine | JuliaBUGS |
 | Static site | Astro (sample/) |
 | Formatting | Runic.jl (CI) |
+
+---
+
+## Contributing & Contact
+
+Issues, ideas, and pull requests are welcome.  
+For DoodleBUGS-specific bugs, use the [issue template](https://github.com/TuringLang/JuliaBUGS.jl/issues/new?template=doodlebugs.md) in the main JuliaBUGS repo.  
+Find me on [Julia Slack](https://julialang.slack.com/archives/CCYDC34A0) — `@shravanngoswamii`.
