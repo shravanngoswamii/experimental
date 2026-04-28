@@ -43,3 +43,16 @@ GSoC-Backup/
 ├── DoodleBUGS/    ← mid-GSoC checkpoint
 └── TEST/          ← throwaway test harness
 ```
+
+---
+
+## Other Experiments
+
+| Folder | Description |
+|--------|-------------|
+| `sample/` | Astro static-site scaffold used as a template baseline |
+| `JOSS-reviews/` | Draft materials for Journal of Open Source Software reviews |
+| `Research-Work/` | Paper drafts: Deepfake detection, Hibiscus flower analysis, Log analysis tool |
+| `mlg-format/` | Custom MLG citation/bibliography format experiments |
+| `navbar/` | Julia + shell scripts to inject a shared navbar across pages |
+| `OpenSource/` | Notes on open-source setup, distribution, and Gumroad extras |
