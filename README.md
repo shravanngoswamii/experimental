@@ -56,3 +56,14 @@ GSoC-Backup/
 | `mlg-format/` | Custom MLG citation/bibliography format experiments |
 | `navbar/` | Julia + shell scripts to inject a shared navbar across pages |
 | `OpenSource/` | Notes on open-source setup, distribution, and Gumroad extras |
+
+---
+
+## Tools
+
+A single PowerShell script lives in `tools/` to help navigate the workspace:
+
+```powershell
+# List all items — nodes, vite projects, julia envs, html pages, astro pages, markdown, manifests
+.\tools\list-workspace-items.ps1
+```
