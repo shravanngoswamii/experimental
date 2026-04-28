@@ -14,3 +14,18 @@
 This repo is the experimental playground behind [shravangoswami.com](https://shravangoswami.com).  
 It hosts iterative prototypes, design explorations, and draft research notes that aren't production-ready yet.  
 Things here may be broken, half-baked, or just weird — and that is the point.
+
+---
+
+## DoodlePPL — Visual Bayesian Modelling
+
+> Browser-based graphical editor for [JuliaBUGS](https://github.com/TuringLang/JuliaBUGS.jl), inspired by the original DoodleBUGS.
+
+| Variant | Live Demo |
+|---------|-----------|
+| **Figma-like MultiCanvas** | [🔗 Open](https://shravanngoswamii.github.io/experimental/DoodlePPL/Figma-like-DoodleBUGS-MultiCanvas) |
+| **GSoC DoodleBUGS** | [🔗 Open](https://shravanngoswamii.github.io/experimental/DoodlePPL/GSoC-DoodleBUGS) |
+| **PrimeVue MultiCanvas** | [🔗 Open](https://shravanngoswamii.github.io/experimental/DoodlePPL/PrimeVue-GSoC-DoodleBUGS-MultiCanvas) |
+
+Built with **Vue 3 + Vite + TypeScript** on the front end and a **Julia HTTP server** (JuliaBUGS runtime) on the back end.  
+> ⚠️ WebKit / Safari / all iOS browsers are not supported — use Chrome, Edge, or Firefox.
