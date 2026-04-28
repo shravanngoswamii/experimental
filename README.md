@@ -29,3 +29,17 @@ Things here may be broken, half-baked, or just weird — and that is the point.
 
 Built with **Vue 3 + Vite + TypeScript** on the front end and a **Julia HTTP server** (JuliaBUGS runtime) on the back end.  
 > ⚠️ WebKit / Safari / all iOS browsers are not supported — use Chrome, Edge, or Firefox.
+
+---
+
+## GSoC-Backup — Archived Snapshots
+
+Frozen snapshots of the codebase taken at key milestones during **Google Summer of Code 2025**.  
+Useful for diffing how the architecture evolved and recovering anything that got refactored away.
+
+```
+GSoC-Backup/
+├── Code/          ← baseline implementation
+├── DoodleBUGS/    ← mid-GSoC checkpoint
+└── TEST/          ← throwaway test harness
+```
