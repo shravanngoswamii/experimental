@@ -67,3 +67,22 @@ A single PowerShell script lives in `tools/` to help navigate the workspace:
 # List all items — nodes, vite projects, julia envs, html pages, astro pages, markdown, manifests
 .\tools\list-workspace-items.ps1
 ```
+
+---
+
+## Running a DoodlePPL Variant Locally
+
+```sh
+# 1. Install front-end dependencies
+cd DoodlePPL/Figma-like-DoodleBUGS-MultiCanvas
+npm install
+
+# 2. Start the Julia back-end (separate terminal)
+cd runtime
+julia --project=. server.jl
+
+# 3. Start the Vite dev server
+npm run dev
+```
+
+Open `http://localhost:5173` and draw your first Bayesian graph.
