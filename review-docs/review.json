@@ -1,0 +1,3104 @@
+{
+  "version": 1,
+  "id": "dynamicppl-1529",
+  "title": "Model-owned bindings in DynamicPPL",
+  "summary": "Bindings move onto Model. Follow the user-visible behavior, storage design, evaluation rules and migration work.",
+  "review": {
+    "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1529",
+    "title": "bindings: model-owned bindings in a smaller implementation",
+    "base": "8580f5b9b278ad38a02c147456a5518fd050c7a8",
+    "head": "2585c3bbf6667df8d2fa088fcbd270727889c469",
+    "checkedAt": "2026-11-10T05:56:17Z"
+  },
+  "sources": [
+    {
+      "id": "pr",
+      "label": "PR title, approach and local migration report",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1529"
+    },
+    {
+      "id": "model",
+      "label": "Head: Model fields",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/2585c3bbf6667df8d2fa088fcbd270727889c469/src/model.jl#L90-L109"
+    },
+    {
+      "id": "binding",
+      "label": "Head: roots, roles and binding table",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/2585c3bbf6667df8d2fa088fcbd270727889c469/src/binding.jl#L1-L84"
+    },
+    {
+      "id": "roles",
+      "label": "Head: argument and local role lookup",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/2585c3bbf6667df8d2fa088fcbd270727889c469/src/conditionfix.jl#L17-L92"
+    },
+    {
+      "id": "compile",
+      "label": "Head: role branches emitted by the compiler",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/2585c3bbf6667df8d2fa088fcbd270727889c469/src/compiler.jl#L529-L650"
+    },
+    {
+      "id": "handlers",
+      "label": "Head: latent, observation and tracked-value handlers",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/2585c3bbf6667df8d2fa088fcbd270727889c469/src/model.jl#L505-L596"
+    },
+    {
+      "id": "accumulate",
+      "label": "Head: observation accumulation over VarInfo",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/2585c3bbf6667df8d2fa088fcbd270727889c469/src/abstract_varinfo.jl#L282-L290"
+    },
+    {
+      "id": "tracked",
+      "label": "Head: compiler emits model-based tracked-value call",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/2585c3bbf6667df8d2fa088fcbd270727889c469/src/compiler.jl#L409-L427"
+    },
+    {
+      "id": "old-observe",
+      "label": "Base: compiler emits context-based observation call",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/8580f5b9b278ad38a02c147456a5518fd050c7a8/src/compiler.jl#L450-L513"
+    },
+    {
+      "id": "old-tracked",
+      "label": "Base: compiler emits context-based tracked-value call",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/8580f5b9b278ad38a02c147456a5518fd050c7a8/src/compiler.jl#L392-L411"
+    },
+    {
+      "id": "migration",
+      "label": "Head: condition/fix migration guide",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/2585c3bbf6667df8d2fa088fcbd270727889c469/docs/src/conditionfix.md"
+    },
+    {
+      "id": "smc",
+      "label": "Tested Turing: SMCContext observation hook",
+      "url": "https://github.com/TuringLang/Turing.jl/blob/67a9f804e376a1fc18ed8362532458063f443864/src/mcmc/particle_mcmc.jl#L197-L211"
+    },
+    {
+      "id": "produce",
+      "label": "Tested Turing: particle likelihood accumulator",
+      "url": "https://github.com/TuringLang/Turing.jl/blob/67a9f804e376a1fc18ed8362532458063f443864/src/mcmc/particle_mcmc.jl#L221-L249"
+    },
+    {
+      "id": "saved",
+      "label": "Tested Turing: context-based tracked-value hook",
+      "url": "https://github.com/TuringLang/Turing.jl/blob/67a9f804e376a1fc18ed8362532458063f443864/src/mcmc/particle_mcmc.jl#L305-L313"
+    },
+    {
+      "id": "followup",
+      "label": "Rebuilt explicit-evaluation PR and its Turing migration plan",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1532"
+    },
+    {
+      "id": "map-accumulator",
+      "label": "Head: selected accumulator update",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/2585c3bbf6667df8d2fa088fcbd270727889c469/src/abstract_varinfo.jl#L312-L320"
+    }
+  ],
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Overview",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "DynamicPPL runs the probabilistic models used by Turing. A model combines observations with unknown values it generates. Observations contribute a likelihood score. A fixed value is supplied without adding a score.",
+          "refs": [
+            "pr",
+            "migration"
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Previously, conditioning or removing an observation could leave the original model argument in use. This PR stores supplied values and their roles in a binding table on the model.",
+          "refs": [
+            "pr",
+            "old-observe",
+            "roles"
+          ]
+        },
+        {
+          "type": "text",
+          "text": "For readings [1.0, 2.0], condition can replace the second reading with 3.0. decondition can instead make that reading unknown. Both changes leave the original input intact. The next page shows the same calls on both revisions.",
+          "refs": [
+            "pr",
+            "compile"
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Summary",
+          "columns": [
+            "Area",
+            "Change"
+          ],
+          "rows": [
+            [
+              "Users",
+              "Arguments and explicit bindings follow the same role rules. Some existing binding and submodel calls need migration."
+            ],
+            [
+              "Design",
+              "Model owns the bindings. Generated code chooses observed, fixed or latent behavior at each probability statement."
+            ],
+            [
+              "Review",
+              "Check migration rules and downstream observation hooks. The tested older Turing revision needs changes."
+            ]
+          ],
+          "refs": [
+            "pr",
+            "compile",
+            "migration"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "approach",
+      "title": "Example",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Here y holds two readings and mu is their unknown mean. A statement such as y[i] ~ Normal(mu, 1) gives one reading a probability distribution. Calling the model draws unknown values from their priors. It does not fit a posterior.",
+          "refs": [
+            "migration"
+          ]
+        },
+        {
+          "type": "code",
+          "title": "Two readings",
+          "language": "julia",
+          "code": "using DynamicPPL, Distributions, Random\n\n@model function readings(y)\n    mu ~ Normal()\n    for i in eachindex(y)\n        y[i] ~ Normal(mu, 1)\n    end\n    return y\nend\nm = readings([1.0, 2.0])\nchanged = condition(m; y=[1.0, 3.0])\npartial = decondition(m, @varname(y[2]))\nchanged(Xoshiro(1))\npartial(Xoshiro(1))"
+        },
+        {
+          "type": "compare",
+          "title": "Argument override",
+          "before": "condition(m; y=[1.0, 3.0]) returns [1.0, 2.0]. At mu=0.0 its log likelihood is -4.337877066409345. The model uses the original argument.",
+          "after": "The same call returns [1.0, 3.0]. Its log likelihood is -6.837877066409346. The model-owned binding overrides the argument.",
+          "refs": [
+            "old-observe",
+            "roles"
+          ]
+        },
+        {
+          "type": "compare",
+          "title": "Partial deconditioning",
+          "before": "decondition(m, @varname(y[2])) returns [1.0, 2.0] with Xoshiro(1). The argument element stays observed.",
+          "after": "The same call returns [1.0, 0.46089361482929836] with Xoshiro(1). The second element is latent. Calling the original m still returns [1.0, 2.0]."
+        },
+        {
+          "type": "text",
+          "text": "fix supplies a value without scoring its distribution. Fixing both readings gives log likelihood 0.0 on both revisions. These comparisons use the recorded base/head and Julia 1.13.3."
+        },
+        {
+          "type": "details",
+          "title": "Reproduce the comparison",
+          "text": "Run examples/dynamicppl-1529.jl in each reviewed environment. examples/evidence.json records the outputs and environment fingerprints. The random second reading depends on that Julia/RNG version."
+        }
+      ]
+    },
+    {
+      "id": "ownership",
+      "title": "Binding storage",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A binding connects a variable name to a supplied value and a role. For the running example, y is the root name and y[2] is an indexed address inside it. Conditioning now changes Model.values instead of adding a CondFixContext wrapper.",
+          "refs": [
+            "pr",
+            "model",
+            "binding"
+          ]
+        },
+        {
+          "type": "diagram",
+          "id": "binding-ownership",
+          "title": "Model bindings",
+          "text": "Read from Model to BindingTable to BindingRoot. The lower branches show the roles a supplied value can carry.",
+          "direction": "TB",
+          "nodes": [
+            {
+              "id": "model",
+              "label": "Model",
+              "kind": "type",
+              "text": "Stores the callable, arguments, binding table, context and removals.",
+              "refs": [
+                "model"
+              ]
+            },
+            {
+              "id": "table",
+              "label": "BindingTable",
+              "kind": "type",
+              "text": "Stores roots in VarNamedTuple, a collection addressed by names, fields and indices.",
+              "refs": [
+                "binding"
+              ],
+              "signature": "BindingTable{V<:VarNamedTuple}: roots::V"
+            },
+            {
+              "id": "root",
+              "label": "BindingRoot",
+              "kind": "type",
+              "text": "Holds storage, constraints and a whole value or partial-value tree.",
+              "refs": [
+                "binding"
+              ],
+              "signature": "BindingRoot{V,S,C}: value::V, storage::S, constraints::C"
+            },
+            {
+              "id": "bound",
+              "label": "BoundValue",
+              "kind": "type",
+              "text": "Wraps a supplied value. Type parameter R records its role.",
+              "refs": [
+                "binding"
+              ],
+              "signature": "BoundValue{R<:BindingRole,T}: value::T"
+            },
+            {
+              "id": "role",
+              "label": "BindingRole",
+              "kind": "type",
+              "text": "Parent of the three role types. Used as a BoundValue type parameter.",
+              "refs": [
+                "binding"
+              ]
+            },
+            {
+              "id": "condition",
+              "label": "ConditionRole",
+              "kind": "type",
+              "text": "Explicit observation from condition. Adds likelihood.",
+              "refs": [
+                "binding",
+                "compile"
+              ]
+            },
+            {
+              "id": "argument",
+              "label": "ArgumentRole",
+              "kind": "type",
+              "text": "Argument binding. Bound values select observation.",
+              "refs": [
+                "binding",
+                "roles"
+              ]
+            },
+            {
+              "id": "fixed",
+              "label": "FixRole",
+              "kind": "type",
+              "text": "Fixed value. Read without adding density.",
+              "refs": [
+                "binding",
+                "compile"
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "id": "owns",
+              "from": "model",
+              "to": "table",
+              "label": "stores",
+              "status": "source",
+              "text": "Model.values is constrained to BindingTable.",
+              "refs": [
+                "model"
+              ]
+            },
+            {
+              "id": "roots",
+              "from": "table",
+              "to": "root",
+              "label": "maps names to",
+              "status": "source",
+              "text": "Constructs a BindingRoot per relevant argument.",
+              "refs": [
+                "roles"
+              ]
+            },
+            {
+              "id": "whole",
+              "from": "root",
+              "to": "bound",
+              "label": "may store",
+              "status": "source",
+              "text": "Whole bindings may store BoundValue. Partial bindings may use trees.",
+              "refs": [
+                "binding",
+                "roles"
+              ]
+            },
+            {
+              "id": "role-param",
+              "from": "bound",
+              "to": "role",
+              "label": "constrains role by",
+              "status": "source",
+              "text": "R is constrained to BindingRole.",
+              "refs": [
+                "binding"
+              ]
+            },
+            {
+              "id": "condition-subtype",
+              "from": "condition",
+              "to": "role",
+              "label": "subtype of",
+              "status": "source",
+              "text": "Declared subtype.",
+              "refs": [
+                "binding"
+              ]
+            },
+            {
+              "id": "argument-subtype",
+              "from": "argument",
+              "to": "role",
+              "label": "subtype of",
+              "status": "source",
+              "text": "Declared subtype.",
+              "refs": [
+                "binding"
+              ]
+            },
+            {
+              "id": "fixed-subtype",
+              "from": "fixed",
+              "to": "role",
+              "label": "subtype of",
+              "status": "source",
+              "text": "Declared subtype.",
+              "refs": [
+                "binding"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "BindingTable maps names such as y to BindingRoot entries. A root retains the value, its storage and conversion constraints. BoundValue wraps a supplied value. Its role distinguishes an explicit observation, an argument observation and a fixed value. VarNamedTuple is the name-addressed value collection used here. It can retain storage for partial edits.",
+          "refs": [
+            "binding"
+          ]
+        },
+        {
+          "type": "text",
+          "text": "This lets a later edit address y[2] without losing y[1] or the array shape. Partial deconditioning retains storage for the remaining edits. Equality and hashing also account for binding state, including retained constraints and removal instructions.",
+          "refs": [
+            "migration"
+          ]
+        },
+        {
+          "type": "details",
+          "title": "Partial storage",
+          "text": "A partial binding such as y[2] => value needs storage at binding time. BindingRoot records storage and role constraints. Supported containers are listed in the PR body.",
+          "refs": [
+            "binding",
+            "pr"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evaluation",
+      "title": "Evaluation",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Before the body runs, generated code prepares bound arguments. At each ~ statement it looks up the role for that address. In the running example, changing y changes the supplied observation. Removing y[2] selects the latent branch for that index.",
+          "refs": [
+            "compile",
+            "migration"
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Role behavior",
+          "columns": [
+            "Role",
+            "Value",
+            "Score"
+          ],
+          "rows": [
+            [
+              "Observed",
+              "Use the supplied reading. Both argument observations and condition select this behavior.",
+              "Add its likelihood."
+            ],
+            [
+              "Fixed",
+              "Read the fixed binding and assign it to the left-hand side.",
+              "Add no density."
+            ],
+            [
+              "Latent",
+              "Use the latent-value handler for an unknown reading. The example draws it from the prior.",
+              "Use the latent path and its prior accounting."
+            ]
+          ],
+          "refs": [
+            "compile",
+            "handlers"
+          ]
+        },
+        {
+          "type": "diagram",
+          "id": "tilde-paths",
+          "title": "Variable roles",
+          "text": "Follow the branch matching y[i]. “nothing” means that no observed or fixed binding was found.",
+          "direction": "TB",
+          "nodes": [
+            {
+              "id": "site",
+              "label": "y[i] ~ Normal(mu, 1)",
+              "kind": "value",
+              "text": "The running y[i] observation. Submodels use a separate path.",
+              "refs": [
+                "compile"
+              ]
+            },
+            {
+              "id": "lookup",
+              "label": "_argument_role",
+              "kind": "method",
+              "text": "Chooses a role from model bindings and the argument value. Local variables use _local_role.",
+              "refs": [
+                "roles"
+              ],
+              "signature": "_argument_role(model, vn, argument, local_value)"
+            },
+            {
+              "id": "read-fixed",
+              "label": "_bound_data_at",
+              "kind": "method",
+              "text": "Reads fixed data, checks placeholders and assigns the LHS without density.",
+              "refs": [
+                "compile",
+                "roles"
+              ],
+              "signature": "_bound_data_at(model, vn, root, local_value)"
+            },
+            {
+              "id": "assume",
+              "label": "tilde_assume!!",
+              "kind": "method",
+              "text": "Handles latent values. Applies the prefix and delegates to context dispatch.",
+              "refs": [
+                "handlers"
+              ],
+              "signature": "tilde_assume!!(model::Model, context::AbstractContext, right::Distribution, vn::VarName, template::Any, vi::AbstractVarInfo)"
+            },
+            {
+              "id": "observe",
+              "label": "tilde_observe!!",
+              "kind": "method",
+              "text": "Handles observations. Applies prefix metadata and accumulates likelihood.",
+              "refs": [
+                "handlers"
+              ],
+              "signature": "tilde_observe!!(prefix, prefix_template, right::Distribution, left, vn, template, vi)"
+            }
+          ],
+          "edges": [
+            {
+              "id": "choose",
+              "from": "site",
+              "to": "lookup",
+              "label": "calls to choose role",
+              "status": "source",
+              "text": "Argument LHS dispatch.",
+              "refs": [
+                "compile"
+              ]
+            },
+            {
+              "id": "fixed-path",
+              "from": "site",
+              "to": "read-fixed",
+              "label": "FixRole: reads",
+              "status": "source",
+              "text": "Reads the value and bypasses tilde handlers.",
+              "refs": [
+                "compile"
+              ]
+            },
+            {
+              "id": "latent-path",
+              "from": "site",
+              "to": "assume",
+              "label": "nothing: calls",
+              "status": "source",
+              "text": "Role nothing selects the latent path for an ordinary distribution.",
+              "refs": [
+                "compile"
+              ]
+            },
+            {
+              "id": "observed-path",
+              "from": "site",
+              "to": "observe",
+              "label": "observed: calls",
+              "status": "source",
+              "text": "A role other than FixRole or nothing selects observation. Lookup maps bound ArgumentRole values to ConditionRole.",
+              "refs": [
+                "compile",
+                "binding"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "This source-based diagram shows generated code for an argument. Local variables use a related lookup. Submodels use a separate path. The latent handler delegates through contexts.",
+          "refs": [
+            "compile",
+            "handlers"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compatibility",
+      "title": "Migration",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "This changes public behavior as well as storage. The guide supplies replacements for older calls. These rules are checked in source. Only the running example and the downstream checks listed later were executed for this review.",
+          "refs": [
+            "migration"
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Binding and removal rules",
+          "columns": [
+            "Existing use",
+            "Required change"
+          ],
+          "rows": [
+            [
+              "A partial binding such as y[2] => 3.0",
+              "Supply storage at binding time: a concrete argument, whole binding, storage-carrying VarNamedTuple or final @of template. A later allocation in the body is too late."
+            ],
+            [
+              "A missing or nothing argument",
+              "Bind it completely or pass concrete array storage. Templates alone cannot leave part of that argument unbound."
+            ],
+            [
+              "Missing data",
+              "Whole missing/nothing arguments and missing elements of a top-level Array can be latent. Nested missing values and placeholders in explicit bindings throw. One multivariate tilde cannot mix roles."
+            ],
+            [
+              "Overlapping observed and fixed values",
+              "Remove the old role before assigning the new one. A later binding in the same role replaces selected values."
+            ],
+            [
+              "Dict binding inputs or implicit @vnt import",
+              "Use supported named inputs or pairs. InitFromParams still accepts dictionaries. Import @vnt explicitly."
+            ],
+            [
+              "decondition or unfix",
+              "Removal reaches submodels too. Removing a whole name covers descendants. Removing an index preserves siblings and does not restore overwritten data."
+            ]
+          ],
+          "refs": [
+            "migration"
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Submodels and storage",
+          "columns": [
+            "Area",
+            "Rule"
+          ],
+          "rows": [
+            [
+              "Submodels",
+              "Give each child a name. Observe it through condition rather than its arguments. Update addresses to include the child name. Unprefixed submodels are removed."
+            ],
+            [
+              "Partial edits",
+              "Supported: Array, array-backed ComponentArray, same-type tuples, SVector, bits MVector, NamedTuple fields and opted-in structs. Unsupported wrappers such as OffsetArray and DimArray require whole-value binding."
+            ],
+            [
+              "Typed storage",
+              "Values must fit the declared type exactly. Use runtime-compatible storage for AD values. Remove both roles before changing a root shape."
+            ],
+            [
+              "Prefixes and fields",
+              "Use absolute names on prefixed models. Address NamedTuple fields with properties such as y.a."
+            ]
+          ],
+          "refs": [
+            "pr",
+            "migration"
+          ]
+        },
+        {
+          "type": "compare",
+          "title": "Behavior changes",
+          "before": "The body could still see an original missing argument after fix. Passing old.context through contextualize could transfer conditioning/fixing state.",
+          "after": "Bindings apply before the body. ismissing(x) in fix(f(missing); x=0.0) returns false. Context transfer no longer carries bindings. Replay model listings when their addresses and storage fit, then reapply removal instructions separately.",
+          "refs": [
+            "pr",
+            "migration"
+          ]
+        },
+        {
+          "type": "details",
+          "title": "Lower-level migration",
+          "text": "Use model queries instead of conditioned(context), fixed(context) and removed role helpers. Direct Model construction needs args_on_lhs metadata and an evaluator with argument preparation and binding lookup. Prefer @model.\n\nVarInfo collection queries now need a value-recording accumulator. Keyword splats are nested under their generated default name. A closure tilde variable cannot shadow a model argument. The guide also covers submodel address restrictions, storage snapshots and field removal.",
+          "refs": [
+            "migration"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "downstream",
+      "title": "Turing changes",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Turing’s particle samplers retain scores and derived values while a model runs. SMC is sequential Monte Carlo. PG is particle Gibbs. Their integration depends on which handler receives each generated event. A := statement records a derived value rather than sampling it.",
+          "refs": [
+            "smc",
+            "produce",
+            "tracked"
+          ]
+        },
+        {
+          "type": "compare",
+          "title": "Observation and := entry points",
+          "before": "The compiler passes __model__.context to tilde_observe!! and store_coloneq_value!!. Turing at 67a9f80 specializes those calls on SMCContext and copies the resulting VarInfo into the particle.",
+          "after": "Observation passes prefix metadata. Tracked-value storage passes Model. Those calls select new overloads. The tested SMCContext mirroring methods no longer handle these generated paths.",
+          "refs": [
+            "old-observe",
+            "old-tracked",
+            "compile",
+            "tracked",
+            "smc",
+            "saved"
+          ]
+        },
+        {
+          "type": "diagram",
+          "id": "downstream-paths",
+          "title": "Changed hooks and nearby callers",
+          "text": "The generated evaluator sends observations to likelihood accumulators and derived values to the raw-value accumulator. Select a method for its signature.",
+          "direction": "TB",
+          "nodes": [
+            {
+              "id": "eval",
+              "label": "Generated evaluator",
+              "kind": "value",
+              "text": "Generated observation and := sites. saved := 2mu records a derived value when extraction is enabled.",
+              "refs": [
+                "compile",
+                "tracked"
+              ]
+            },
+            {
+              "id": "observe",
+              "label": "tilde_observe!!",
+              "kind": "method",
+              "text": "Handles observations. Applies prefix metadata and accumulates likelihood.",
+              "refs": [
+                "handlers"
+              ],
+              "signature": "tilde_observe!!(prefix, prefix_template, right::Distribution, left, vn, template, vi)"
+            },
+            {
+              "id": "accumulate",
+              "label": "accumulate_observe!! (VarInfo)",
+              "kind": "method",
+              "text": "Updates VarInfo accumulators, which store results such as log likelihood.",
+              "refs": [
+                "accumulate"
+              ],
+              "signature": "accumulate_observe!!(vi::AbstractVarInfo, right, left, vn, template)"
+            },
+            {
+              "id": "particle",
+              "label": "accumulate_observe!! (particle)",
+              "kind": "method",
+              "text": "ProduceLogLikelihoodAccumulator computes likelihood and yields the particle increment through acclogp.",
+              "refs": [
+                "produce"
+              ],
+              "signature": "accumulate_observe!!(acc::ProduceLogLikelihoodAccumulator, dist, left, vn, template)"
+            },
+            {
+              "id": "tracked",
+              "label": "store_coloneq_value!!",
+              "kind": "method",
+              "text": "Takes Model and sends the tracked value to its raw-value accumulator.",
+              "refs": [
+                "handlers"
+              ],
+              "signature": "store_coloneq_value!!(model::Model, vn::VarName, right::Any, template::Any, vi::AbstractVarInfo)"
+            },
+            {
+              "id": "map",
+              "label": "map_accumulator!!",
+              "kind": "method",
+              "text": "Updates RAW_VALUE_ACCNAME through store_colon_eq!!.",
+              "refs": [
+                "handlers",
+                "map-accumulator"
+              ],
+              "signature": "map_accumulator!!(func, vi::AbstractVarInfo, accname::Val)"
+            }
+          ],
+          "edges": [
+            {
+              "id": "observes",
+              "from": "eval",
+              "to": "observe",
+              "label": "calls for observations",
+              "status": "source",
+              "text": "Passes prefix and prefix_template.",
+              "refs": [
+                "compile"
+              ]
+            },
+            {
+              "id": "accumulates",
+              "from": "observe",
+              "to": "accumulate",
+              "label": "calls",
+              "status": "source",
+              "text": "Calls accumulate_observe!!.",
+              "refs": [
+                "handlers"
+              ]
+            },
+            {
+              "id": "particle-acc",
+              "from": "accumulate",
+              "to": "particle",
+              "label": "dispatches for particle accumulator",
+              "status": "source",
+              "text": "Applies when VarInfo contains ProduceLogLikelihoodAccumulator.",
+              "refs": [
+                "accumulate",
+                "produce"
+              ]
+            },
+            {
+              "id": "tracks",
+              "from": "eval",
+              "to": "tracked",
+              "label": "calls for tracked values",
+              "status": "source",
+              "text": "Requires is_extracting_colon_eq_values.",
+              "refs": [
+                "tracked"
+              ]
+            },
+            {
+              "id": "raw",
+              "from": "tracked",
+              "to": "map",
+              "label": "calls",
+              "status": "source",
+              "text": "Stores through the selected accumulator.",
+              "refs": [
+                "handlers"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "finding",
+          "status": "verified",
+          "title": "Turing metadata needs migration",
+          "text": "With Turing 67a9f80, SMC/PG passed 60 metadata checks on base. Head had 40 failures and 20 errors: saved loglikelihood was zero and the trailing := value was missing. The author reports separate local Turing changes.",
+          "refs": [
+            "smc",
+            "saved",
+            "pr"
+          ]
+        },
+        {
+          "type": "details",
+          "title": "Reused evidence",
+          "text": "The worklog checkpoint and particle-metadata probe record this DynamicPPL base/head with Turing 67a9f80. Hooks were reinspected. The 60-check run was reused, not rerun. It does not test the author's local migration."
+        }
+      ]
+    },
+    {
+      "id": "tradeoffs",
+      "title": "Design review",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The main benefit is a single place to ask which values are supplied. The cost is explicit storage and migration rules. These are review judgments based on the design above.",
+          "refs": [
+            "pr",
+            "migration"
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Design choices",
+          "columns": [
+            "Choice",
+            "Benefit",
+            "Cost or question"
+          ],
+          "rows": [
+            [
+              "Model-owned bindings",
+              "Argument overrides and binding queries share one representation.",
+              "Callers that copied context state must now copy binding state deliberately."
+            ],
+            [
+              "Storage known at binding time",
+              "Partial edits can check shape and conversion before execution.",
+              "Users must supply a shape before binding a local array element."
+            ],
+            [
+              "One role per executed tilde",
+              "Observed, fixed and latent accounting is explicit.",
+              "Mixed-role multivariate statements need a different model structure."
+            ],
+            [
+              "Direct accumulator paths",
+              "Observation and derived-value events have explicit destinations.",
+              "Existing context-only extensions need a migration plan."
+            ]
+          ],
+          "refs": [
+            "pr",
+            "compile",
+            "migration",
+            "tracked"
+          ]
+        },
+        {
+          "type": "finding",
+          "status": "suggestion",
+          "title": "Turing migration reference",
+          "text": "The tested Turing revision loses particle metadata on head. The author reports a local migration. Link that commit and include the score and derived-value check.",
+          "refs": [
+            "pr",
+            "followup",
+            "smc",
+            "saved"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "review-actions",
+      "title": "Suggested edits",
+      "blocks": [
+        {
+          "type": "diff",
+          "title": "Add an extension migration note",
+          "text": "Mention the changed observation and tracked-value hooks near the guide's start. Checked against compiler and handler source. The documentation edit is unbuilt.",
+          "path": "docs/src/conditionfix.md",
+          "before": "# Conditioning and fixing\n\n`condition` stores observations on a model; their distributions contribute to the\nlikelihood. `fix` stores values whose distributions contribute no density. Both\nreturn a model with the requested bindings. `rand` draws its remaining latent\nvariables from their prior distributions, not from the posterior.\n",
+          "after": "# Conditioning and fixing\n\n`condition` stores observations on a model; their distributions contribute to the\nlikelihood. `fix` stores values whose distributions contribute no density. Both\nreturn a model with the requested bindings. `rand` draws its remaining latent\nvariables from their prior distributions, not from the posterior.\n\nObservation calls now take prefix metadata.\nTracked values go directly to accumulators.\nContext-only hooks may miss these events.\n",
+          "scope": "suggestion",
+          "verification": "source-checked",
+          "refs": [
+            "migration",
+            "compile",
+            "handlers",
+            "tracked",
+            "followup"
+          ]
+        },
+        {
+          "type": "proposal",
+          "kind": "title",
+          "title": "PR title",
+          "text": "Name the ownership change.",
+          "current": "bindings: model-owned bindings in a smaller implementation",
+          "suggested": "Store model bindings on Model",
+          "refs": [
+            "pr"
+          ]
+        },
+        {
+          "type": "proposal",
+          "kind": "description",
+          "title": "PR description",
+          "text": "Keep the core rules and link the full migration. Retain the author's local Turing result.",
+          "current": "Replaces #1523 and #1521. #1502–#1504 will follow as a new series on this PR.\n\nConditioning and fixing move out of `CondFixContext` into a binding table that each `Model` owns. `conditioned` and `fixed` read it, and `==` and `hash` include it. An argument on a tilde's left-hand side is observed, except where it is wholly `missing` or `nothing`, or at `missing` elements of a top-level `Array`; those are latent and drawn into a copy, so `args` is never mutated. Nested `missing` throws; `main` treated it as latent.\n\nA partial binding such as `x[1] => v` needs storage for `x` at binding time: an argument, a whole binding, a `VarNamedTuple` or an `@of` template. Partial bindings and latent copies support `Array`, array-backed `ComponentArray`, same-type tuples, `SVector`, bits `MVector`, `NamedTuple`, and structs that opt in through `DynamicPPL._binding_optic`. Partial edits of other containers, such as `OffsetArray` and `DimArray`, throw; whole values still bind. Submodels must be named and are observed through `condition`, not their arguments.\n\nDictionaries are rejected, except by `InitFromParams`. Two changes are silent: argument bindings apply before the body runs, so `ismissing(x)` in `fix(f(missing); x=0.0)` now returns `false`; and `contextualize(new, old.context)` no longer carries bindings. `HISTORY.md` and `docs/src/conditionfix.md` give the migration. Locally, Turing needed small changes; its tests then pass, apart from failures also seen against `main`.\n\n#1523 implements the same design in +4,511 net source lines and +14,799 test lines; this PR needs +1,441 and +2,260. It also fixes three defects in #1523: a binding silently dropped under a prefixed submodel, typed-template constraints never released, and a `MethodError` for a wholly missing slice.\n",
+          "suggested": "Conditioning and fixing move from CondFixContext to a binding table on Model. Argument observations use the same table, so bindings can override them without mutating arguments. Equality and hashing include bindings.\n\nPartial bindings need storage. Named submodels receive observations through condition. Dictionaries are rejected except by InitFromParams.\n\nBindings apply before the body runs. contextualize no longer transfers them. See HISTORY.md and the [migration guide](https://github.com/TuringLang/DynamicPPL.jl/blob/2585c3bbf6667df8d2fa088fcbd270727889c469/docs/src/conditionfix.md) for breaking changes and supported containers.\n\nReplaces #1523 and #1521. Prefix, context and RNG changes follow separately.\n\nMy local Turing migration passes its tests apart from failures also seen on main.",
+          "refs": [
+            "pr",
+            "migration"
+          ]
+        },
+        {
+          "type": "prompt",
+          "title": "Check the Turing migration",
+          "text": "Use the author's migration commit when available.",
+          "instructions": "Compare the author's exact Turing migration commit with 67a9f804e376a1fc18ed8362532458063f443864, using the plan in DynamicPPL #1532. Run SMC or PG with a trailing := value. Check saved loglikelihood and metadata. Report revisions, reproduced failures and open questions. Update the review.",
+          "refs": [
+            "smc",
+            "produce",
+            "saved",
+            "tracked",
+            "followup"
+          ]
+        },
+        {
+          "type": "prompt",
+          "title": "Explain the running example",
+          "text": "Keep the public API explanation short.",
+          "instructions": "Explain condition, decondition and fix using the two-reading example. Check the same inputs on base and head. Update the public API comparison and source links. Include only diagram details needed for this example.",
+          "refs": [
+            "pr",
+            "compile",
+            "migration"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "linked-context",
+      "title": "Related work",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "This PR replaces #1521 and #1523. The related follow-ups cover prefix handling (#1531), explicit evaluation inputs (#1532) and RNG state (#1533).",
+          "refs": [
+            "pr",
+            "followup"
+          ]
+        },
+        {
+          "type": "linked-work",
+          "id": "linked-work",
+          "title": "Issues and PRs",
+          "text": "Earlier designs and follow-ups are listed below. Unread items are marked.",
+          "root": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+          "checkedAt": "2026-11-10T04:31:29.971Z",
+          "scope": "Bodies, paginated comments, submitted/inline reviews and incoming timeline references. Text mentions may be quoted or incidental.",
+          "analysis": "reviewed",
+          "complete": false,
+          "limits": {
+            "maxDepth": 2,
+            "maxItems": 30
+          },
+          "notes": [],
+          "nodes": [
+            {
+              "id": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1529",
+              "title": "bindings: model-owned bindings in a smaller implementation",
+              "kind": "pr",
+              "state": "open",
+              "summary": "Stores observations, fixed values and argument bindings on Model.",
+              "status": "read"
+            },
+            {
+              "id": "gh-7f9de889ceb4c9982e4c7809ce6cbfdb3950f5fd92dd8ddd44136eb1f6fc8871",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1502",
+              "title": "model: store prefixes directly on the model",
+              "kind": "pr",
+              "state": "closed",
+              "summary": "Earlier prefix PR, replaced by #1531.",
+              "status": "read"
+            },
+            {
+              "id": "gh-f8c555c9e710015bf133a3032723525f6fef3c00610212701ce800e55f70d358",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1503",
+              "title": "evaluation: replace the context hierarchy with explicit inputs",
+              "kind": "pr",
+              "state": "closed",
+              "summary": "Earlier explicit-evaluation PR, replaced by #1532.",
+              "status": "read"
+            },
+            {
+              "id": "gh-40cd53d687db0a9c172fca17c09a29205e4f0b212ea668902c90133d4c838994",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1504",
+              "title": "rng: preserve explicit random state during density evaluation",
+              "kind": "pr",
+              "state": "closed",
+              "summary": "Earlier RNG PR, replaced by #1533.",
+              "status": "read"
+            },
+            {
+              "id": "gh-911111f7cb3cec505a1a7468c8432fddf52ff937a4428143b29438acedcc71b3",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1523",
+              "title": "bindings: resolve model bindings against explicit storage",
+              "kind": "pr",
+              "state": "closed",
+              "summary": "Replaces #1501 with earlier binding resolution. Superseded by #1529.",
+              "status": "read"
+            },
+            {
+              "id": "gh-a77a1309b1ceab97ba568c04317acc84af1824415d87f51a3c83bd6561dc7f2d",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1521",
+              "title": "Reject tilde assignments that replace containers under thread-safe evaluation",
+              "kind": "pr",
+              "state": "merged",
+              "summary": "Checks container identity during thread-safe tilde writes. #1529 incorporates it. Discussion withdraws the Ref advice.",
+              "status": "read"
+            },
+            {
+              "id": "gh-4058a406529cbc8195965fda60d45f84864f28a53dd2b97fb5b70cbecc5f15a0",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1531",
+              "title": "model: store prefixes directly on the model",
+              "kind": "pr",
+              "state": "open",
+              "summary": "Rebuilds #1502 on #1529. Stores prefixes and parent templates on Model, with scalar integer prefix indices.",
+              "status": "read"
+            },
+            {
+              "id": "gh-e62f08809a14c3b5cdd7cdcf62762a7925f5dfb003e202dd032c354a5f354b32",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1532",
+              "title": "evaluation: replace the context hierarchy with explicit inputs",
+              "kind": "pr",
+              "state": "open",
+              "summary": "Rebuilds #1503 after prefixes. Separates evaluation inputs from outputs and lists the Turing migration.",
+              "status": "read"
+            },
+            {
+              "id": "gh-cce1dabae4a2350a88996efebb8d6620d5ee70ee9bb2375df196a8932371ae0f",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1221",
+              "title": "Get rid of PrefixContext & make submodels much better",
+              "kind": "issue",
+              "state": "open",
+              "summary": "Proposes independent submodel evaluation to preserve storage shape. #1531 passes templates down for restricted prefix indices.",
+              "status": "read"
+            },
+            {
+              "id": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+              "title": "Separate model-evaluation inputs from outputs",
+              "kind": "issue",
+              "state": "open",
+              "summary": "Proposes reading Model/Context inputs and writing VarInfo outputs.",
+              "status": "read"
+            },
+            {
+              "id": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+              "title": "contexts: remove parent contexts, store`fixed` and `conditioned` in model",
+              "kind": "pr",
+              "state": "closed",
+              "summary": "Earlier broad context-removal PR, replaced by the #1503 stack. Most unread links come from its issue list.",
+              "status": "read"
+            },
+            {
+              "id": "gh-950b3d8d34733c9ff151fa7293385042bfb7c80cb3eaaeb400afabe19d05e06b",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/721",
+              "title": "Should we always pass `rng` to the model?",
+              "kind": "issue",
+              "state": "open",
+              "summary": "Discusses model randomness and shared versus separate sampler/model RNGs.",
+              "status": "read"
+            },
+            {
+              "id": "gh-27a2fd61979360e28889a949e561d41319583f53f25b75b4153a9d39b29be686",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1533",
+              "title": "rng: preserve explicit random state during density evaluation",
+              "kind": "pr",
+              "state": "open",
+              "summary": "Rebuilds #1504 after contexts. Carries an explicit RNG through density evaluation.",
+              "status": "read"
+            },
+            {
+              "id": "gh-90514687610ab3e3fef79e78d5e2ce1918b437fa530e7ba02a5d48c364b3efdd",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1501",
+              "title": "model: unify conditioned, fixed, and argument bindings",
+              "kind": "pr",
+              "state": "closed",
+              "summary": "Earlier unified-binding design, replaced by #1523.",
+              "status": "read"
+            },
+            {
+              "id": "gh-8eb122391757061cbf213f89fde10d150b578f82b1bf2dc3293585f1af6fbebc",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1519",
+              "title": "Threaded tildes into a `Vector{Any}` can drop a write",
+              "kind": "issue",
+              "state": "closed",
+              "summary": "Reports lost threaded writes into Vector{Any}. Not rerun here.",
+              "status": "read"
+            },
+            {
+              "id": "gh-ee7088b405b3a843abf797b74b8a34bf12f64a1269889388177583378970fa2d",
+              "url": "https://github.com/TuringLang/AbstractPPL.jl/pull/200",
+              "title": "Mutate abstractly typed arrays in place in `with_mutation` setters",
+              "kind": "pr",
+              "state": "merged",
+              "summary": "Mutates abstractly typed Arrays and Array-backed SubArrays in setters. Other wrappers keep the BangBang path.",
+              "status": "read"
+            },
+            {
+              "id": "gh-2c7fa17caaefde8084c0efc32e0378d121b8619c657a2cbea16959bde1f68b9c",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1534",
+              "title": "benchmarks: add fixed and argument-observation models",
+              "kind": "pr",
+              "state": "merged",
+              "summary": "Extracts benchmark models that run on main for comparisons with the PR stack.",
+              "status": "read"
+            },
+            {
+              "id": "gh-9bfa8ab8f10db8a51dfd22f892d420f8222b16d706befb70e55db0761fa18a4c",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1216",
+              "title": "TuringLang/DynamicPPL.jl#1216",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-41a94e5a3df74e705bf8029b04d4209033b76095678c057e4e78a9a5363a2b08",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1222",
+              "title": "TuringLang/DynamicPPL.jl#1222",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-fd7415a51558ddd2585bfa434cb55460880fe84a1004cb16fb046c086e668e60",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/815",
+              "title": "TuringLang/DynamicPPL.jl#815",
+              "kind": "pr",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-99219be10a53f67d2696c185ac3244113f9a16976f313b4ac38bc76ed9ff8f02",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1011",
+              "title": "TuringLang/DynamicPPL.jl#1011",
+              "kind": "pr",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-5cfddfd770b71b928e126c0faa53aba40a0c166ed6c8d267a35e3f5b5a2e210b",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/895",
+              "title": "TuringLang/DynamicPPL.jl#895",
+              "kind": "issue",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-9d1179c7826d5d86451ef6dd00434fcd581272e38b985164d16986fdfbc0ef9d",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1184",
+              "title": "TuringLang/DynamicPPL.jl#1184",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-b91953a7eb019e486bfd82ae5040af2de46450a82f62429c5ea5cc65f78fafec",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1376",
+              "title": "TuringLang/DynamicPPL.jl#1376",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-50e6e69795055fd159825502516c6095be2a306d5899d28f50174e0bb25069d3",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/744",
+              "title": "TuringLang/DynamicPPL.jl#744",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-ea5c5da7b31ead2ea63b9df6d656cc50fccdb0e3e77c11122d0d48dd74a4c7a6",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/955",
+              "title": "TuringLang/DynamicPPL.jl#955",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-5497d744f58a69db8478632b0f38569fb88f09ea877d3aa7b49b7e661c6dbe61",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1212",
+              "title": "TuringLang/DynamicPPL.jl#1212",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-3a5d7162ad51512851159380c3147a7a380a6474c4ddcaefc2d86583795b68d9",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1264",
+              "title": "TuringLang/DynamicPPL.jl#1264",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-841f9f8857b8eac358f99fe98afe447e78dfa87444b275fe6650a06b8f199478",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/836",
+              "title": "TuringLang/DynamicPPL.jl#836",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-9f99fc1e5a3188567189e8bd22117f5eb3f9ad7c258d92ec8b4eebfebe1c07b2",
+              "url": "https://github.com/TuringLang/Turing.jl/issues/2803",
+              "title": "TuringLang/Turing.jl#2803",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-34795123462828dedaae6b4ddad11dd8c34bdf9a12cdd2bda0c78f37a8300b90",
+              "url": "https://github.com/TuringLang/Turing.jl/issues/2863",
+              "title": "TuringLang/Turing.jl#2863",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-f3805822f67cf7ee1950ce9cb6d579e541bfbdda0d3c52b39ab45283853c8ee9",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1480",
+              "title": "TuringLang/DynamicPPL.jl#1480",
+              "kind": "issue",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-0f766bd42acabbc6145ca3db34b735cf1e88255da18cc223c5a7000a59688918",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1500",
+              "title": "TuringLang/DynamicPPL.jl#1500",
+              "kind": "pr",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-d0958b03d34c3b2259f2b8674cd74ef395c3699e3b81bf727545441832b89124",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1012",
+              "title": "TuringLang/DynamicPPL.jl#1012",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-104afca24a9fd828a47d34d30f112e50558d397c08500885cd1a4a89b8eeb662",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1464",
+              "title": "TuringLang/DynamicPPL.jl#1464",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-5a14cf9f8aae78d4e305d550ab44f4405e45af5f0d7996b6497ab175052136fe",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/958",
+              "title": "TuringLang/DynamicPPL.jl#958",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-54d2d2b3669b594c73d1e24aeed093af18e8b093656e990f6fc21bfde44f0327",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1246",
+              "title": "TuringLang/DynamicPPL.jl#1246",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-d9a78519150e93288642564301e5a85d83bb54d74bd2bfe865feb2e175923950",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/759",
+              "title": "TuringLang/DynamicPPL.jl#759",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-023a2ad9e08af39c9e0ef97571d7d0c7def09cbfd54ae898b310620fb22386d7",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1201",
+              "title": "TuringLang/DynamicPPL.jl#1201",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-317e05a35338674159ae4f413b48f15268f295b6cc7817b931cee8eda9aceda7",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/273",
+              "title": "TuringLang/DynamicPPL.jl#273",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-0c0e37bc748621e98909b5fe2798bedd4336af47be030e4cb2fd2f64eb87af1d",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/969",
+              "title": "TuringLang/DynamicPPL.jl#969",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-bb55064e39a0616cb22a7fbb5e6fe6bf94c35bd4ded05f827452e3f81bbfcff4",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1361",
+              "title": "TuringLang/DynamicPPL.jl#1361",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-894605e5462d07ac44ccb8aa0f722e72cc2161f45b5cef403f7a5dade41590a9",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1458",
+              "title": "TuringLang/DynamicPPL.jl#1458",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-5370f91f2d69d938e697e33282f33bcce911c0d1e40850df4e632f638c95a714",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1481",
+              "title": "TuringLang/DynamicPPL.jl#1481",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-601717ee314ab2ed6598022f22a12f02374ee0bb9b46365722dc178763030a27",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1482",
+              "title": "TuringLang/DynamicPPL.jl#1482",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-d7c657abefad47cd338da9f8f7573db3b06324b0384137509d395190e910bac2",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/249",
+              "title": "TuringLang/DynamicPPL.jl#249",
+              "kind": "unknown",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            },
+            {
+              "id": "gh-d00ba22add47b5c64999077c131d184345b4cfd165ddd58bf35b1237d480a199",
+              "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1096",
+              "title": "TuringLang/DynamicPPL.jl#1096",
+              "kind": "pr",
+              "state": "unknown",
+              "summary": "Not read.",
+              "status": "unread",
+              "detail": "Depth limit."
+            }
+          ],
+          "edges": [
+            {
+              "id": "edge-5231475e5cb2ec8725192926a4d46b982089eacece4d9e6c2544a4a99e8b32c6",
+              "from": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "to": "gh-7f9de889ceb4c9982e4c7809ce6cbfdb3950f5fd92dd8ddd44136eb1f6fc8871",
+              "label": "names earlier follow-up",
+              "text": "The root body names the old prefix PR. #1531 has since replaced it.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1529",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-3f8f9fbe379b116184a415331e91c3bb71a03af8ecb2b2df39384e4bed585cc7",
+              "from": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "to": "gh-f8c555c9e710015bf133a3032723525f6fef3c00610212701ce800e55f70d358",
+              "label": "names earlier follow-up",
+              "text": "The root body names the old evaluation PR. #1532 has since replaced it.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1529",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-45131fa066d64dd2a4a1836335f621e6d22bcaf50332e1d3343c5b9b42e94f7c",
+              "from": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "to": "gh-40cd53d687db0a9c172fca17c09a29205e4f0b212ea668902c90133d4c838994",
+              "label": "names earlier follow-up",
+              "text": "The root body names the old RNG PR. #1533 has since replaced it.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1529",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-d8f06e5b25a1960384e50eb6392c9ab1d136390d4be31d87fa65bb6e02aa3f5c",
+              "from": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "to": "gh-911111f7cb3cec505a1a7468c8432fddf52ff937a4428143b29438acedcc71b3",
+              "label": "replaces",
+              "text": "The root PR body explicitly replaces this binding implementation.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1529",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-93163af87e9655385849e238a5ed6248a116b452d570d894a50532d8a86fe73e",
+              "from": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "to": "gh-a77a1309b1ceab97ba568c04317acc84af1824415d87f51a3c83bd6561dc7f2d",
+              "label": "incorporates",
+              "text": "The root PR body says it replaces this thread-safety PR.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1529",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-619e59ed289bf51235db569581a648133d31b751630c1e1ff11ad1f547a0e0db",
+              "from": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "to": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1529#issuecomment-6693914273",
+                  "text": "Comment"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1529#issuecomment-6693997934",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-57ff10244c2a3ef2a109885dc122ee0e0e73b9d157a728ac443596a0ac0a038b",
+              "from": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "to": "gh-4058a406529cbc8195965fda60d45f84864f28a53dd2b97fb5b70cbecc5f15a0",
+              "label": "followed by",
+              "text": "The #1531 body says it was rebuilt on #1529.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1529",
+                  "text": "Timeline"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1531",
+                  "text": "PR body"
+                }
+              ]
+            },
+            {
+              "id": "edge-5aed5796fa34ce946e72777ccc34582e1281218bba0dbbbf20fb4952f6dd8b51",
+              "from": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "to": "gh-e62f08809a14c3b5cdd7cdcf62762a7925f5dfb003e202dd032c354a5f354b32",
+              "label": "migration described by",
+              "text": "The #1532 body explains which Turing migration changes come from #1529.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1529",
+                  "text": "Timeline"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1532",
+                  "text": "PR body"
+                }
+              ]
+            },
+            {
+              "id": "edge-f157b667cd01807ba6277cb0cb7ddfacac09b8eb4e2ad63d986b1ca8ad06d47f",
+              "from": "gh-7f9de889ceb4c9982e4c7809ce6cbfdb3950f5fd92dd8ddd44136eb1f6fc8871",
+              "to": "gh-cce1dabae4a2350a88996efebb8d6620d5ee70ee9bb2375df196a8932371ae0f",
+              "label": "addresses",
+              "text": "The prefix PR discusses the storage-template problem in this issue.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1502",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-fc3c626874116d728cfcf75d710a98a1a947aa0c01c13b3a9d7289515071a929",
+              "from": "gh-7f9de889ceb4c9982e4c7809ce6cbfdb3950f5fd92dd8ddd44136eb1f6fc8871",
+              "to": "gh-7f9de889ceb4c9982e4c7809ce6cbfdb3950f5fd92dd8ddd44136eb1f6fc8871",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1502#issuecomment-5704647019",
+                  "text": "Comment"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1502#issuecomment-5704691011",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-9a070dfb3e76827c5bc1614163641a80f5de38c788d19579709c757feac220f9",
+              "from": "gh-7f9de889ceb4c9982e4c7809ce6cbfdb3950f5fd92dd8ddd44136eb1f6fc8871",
+              "to": "gh-4058a406529cbc8195965fda60d45f84864f28a53dd2b97fb5b70cbecc5f15a0",
+              "label": "replaced by",
+              "text": "A closing comment in #1502 points to #1531.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1502#issuecomment-6725750045",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-ecbd7204f2e30c53d5761b979c401654972f66b2a8be1e5552f8bf71d8afadfd",
+              "from": "gh-7f9de889ceb4c9982e4c7809ce6cbfdb3950f5fd92dd8ddd44136eb1f6fc8871",
+              "to": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1502",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-889060f7a690314ff83128f67a69e4c33b269167e079641d35d9e44e3eaf076e",
+              "from": "gh-7f9de889ceb4c9982e4c7809ce6cbfdb3950f5fd92dd8ddd44136eb1f6fc8871",
+              "to": "gh-4058a406529cbc8195965fda60d45f84864f28a53dd2b97fb5b70cbecc5f15a0",
+              "label": "replaced by",
+              "text": "A closing comment in #1502 points to #1531.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1502",
+                  "text": "Timeline"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1531",
+                  "text": "PR body"
+                }
+              ]
+            },
+            {
+              "id": "edge-587c3339046e93009ab107d2d9caed9a0cddb32943995413ffecd1c42d9462b5",
+              "from": "gh-f8c555c9e710015bf133a3032723525f6fef3c00610212701ce800e55f70d358",
+              "to": "gh-911111f7cb3cec505a1a7468c8432fddf52ff937a4428143b29438acedcc71b3",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1503",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-c9c46df2292d9d1f891f58251942e37a9d440a242cdeb685fe2435b3808f3835",
+              "from": "gh-f8c555c9e710015bf133a3032723525f6fef3c00610212701ce800e55f70d358",
+              "to": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "label": "addresses",
+              "text": "The evaluation PR says it closes this design issue.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1503",
+                  "text": "Body"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1503#pullrequestreview-5228523081",
+                  "text": "Review"
+                }
+              ]
+            },
+            {
+              "id": "edge-e8acc5a0b0f985e237db2d5b9d68b1ba43fba93589f89efad53ee1f1f3c8a4d6",
+              "from": "gh-f8c555c9e710015bf133a3032723525f6fef3c00610212701ce800e55f70d358",
+              "to": "gh-f8c555c9e710015bf133a3032723525f6fef3c00610212701ce800e55f70d358",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1503#issuecomment-5704646481",
+                  "text": "Comment"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1503#issuecomment-5704755959",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-b5fa3e3453be700f0b295d4e5829d458c04cec69134e3098275128c3eed88ac3",
+              "from": "gh-f8c555c9e710015bf133a3032723525f6fef3c00610212701ce800e55f70d358",
+              "to": "gh-e62f08809a14c3b5cdd7cdcf62762a7925f5dfb003e202dd032c354a5f354b32",
+              "label": "replaced by",
+              "text": "A closing comment in #1503 points to #1532.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1503#issuecomment-6725749657",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-799433d6c6b2a3ebc80183c172a5ce81c1b28bbbcaf2313bc9b3c3aea10db9ba",
+              "from": "gh-f8c555c9e710015bf133a3032723525f6fef3c00610212701ce800e55f70d358",
+              "to": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1503",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-174c8ccde4de2b7ad083e9c428588d97f713a9a5e886d658c509d42dda5eb32d",
+              "from": "gh-f8c555c9e710015bf133a3032723525f6fef3c00610212701ce800e55f70d358",
+              "to": "gh-e62f08809a14c3b5cdd7cdcf62762a7925f5dfb003e202dd032c354a5f354b32",
+              "label": "replaced by",
+              "text": "A closing comment in #1503 points to #1532.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1503",
+                  "text": "Timeline"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1532",
+                  "text": "PR body"
+                }
+              ]
+            },
+            {
+              "id": "edge-6ac04ac305a5747afe4ba5fba8227810a0a39bb8b14e427c467c1b74e55d3f64",
+              "from": "gh-40cd53d687db0a9c172fca17c09a29205e4f0b212ea668902c90133d4c838994",
+              "to": "gh-950b3d8d34733c9ff151fa7293385042bfb7c80cb3eaaeb400afabe19d05e06b",
+              "label": "addresses",
+              "text": "The RNG PR says it closes this issue.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1504",
+                  "text": "Body"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1504#pullrequestreview-5228521561",
+                  "text": "Review"
+                }
+              ]
+            },
+            {
+              "id": "edge-089325ccb7dc851fcc7088f93d678f00cfc507d6dc7f31608836b17d4b9c865e",
+              "from": "gh-40cd53d687db0a9c172fca17c09a29205e4f0b212ea668902c90133d4c838994",
+              "to": "gh-40cd53d687db0a9c172fca17c09a29205e4f0b212ea668902c90133d4c838994",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1504#issuecomment-5704720541",
+                  "text": "Comment"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1504#issuecomment-5704839957",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-80677f0902f67412dfb8c755f181d110bd61afc22346a1d19a7e4d1fd6fafe65",
+              "from": "gh-40cd53d687db0a9c172fca17c09a29205e4f0b212ea668902c90133d4c838994",
+              "to": "gh-27a2fd61979360e28889a949e561d41319583f53f25b75b4153a9d39b29be686",
+              "label": "replaced by",
+              "text": "A closing comment in #1504 points to #1533.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1504#issuecomment-6725749234",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-79431fab83269211512e6d753469b14f79f40bb735f560816b3161b86662e205",
+              "from": "gh-40cd53d687db0a9c172fca17c09a29205e4f0b212ea668902c90133d4c838994",
+              "to": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1504",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-f18d436db5c73a3922a6bafa38bb7512c486ad4c9b69f91f4be4812897b499bc",
+              "from": "gh-40cd53d687db0a9c172fca17c09a29205e4f0b212ea668902c90133d4c838994",
+              "to": "gh-27a2fd61979360e28889a949e561d41319583f53f25b75b4153a9d39b29be686",
+              "label": "replaced by",
+              "text": "A closing comment in #1504 points to #1533.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1504",
+                  "text": "Timeline"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1533",
+                  "text": "PR body"
+                }
+              ]
+            },
+            {
+              "id": "edge-3bc71960ba2bd010f485458c87fde84fe46523b2178dc563446c3a3bb02ec1f4",
+              "from": "gh-911111f7cb3cec505a1a7468c8432fddf52ff937a4428143b29438acedcc71b3",
+              "to": "gh-90514687610ab3e3fef79e78d5e2ce1918b437fa530e7ba02a5d48c364b3efdd",
+              "label": "replaces",
+              "text": "The #1523 body names #1501 as its predecessor.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1523",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-695b0f8d73dd2727c483521f32d9a744ad17de358d8f8e312bbc18a3995a7e3e",
+              "from": "gh-911111f7cb3cec505a1a7468c8432fddf52ff937a4428143b29438acedcc71b3",
+              "to": "gh-911111f7cb3cec505a1a7468c8432fddf52ff937a4428143b29438acedcc71b3",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1523#issuecomment-6527314575",
+                  "text": "Comment"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1523#issuecomment-6527317834",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-473f041c522c90b31e25789a15c8ab124f44f918be53f060775da7d2ab039be4",
+              "from": "gh-911111f7cb3cec505a1a7468c8432fddf52ff937a4428143b29438acedcc71b3",
+              "to": "gh-90514687610ab3e3fef79e78d5e2ce1918b437fa530e7ba02a5d48c364b3efdd",
+              "label": "replaces",
+              "text": "The #1523 body names #1501 as its predecessor.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1523",
+                  "text": "Timeline"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1501",
+                  "text": "PR body"
+                }
+              ]
+            },
+            {
+              "id": "edge-282a3c5f84c2b1f2d244b7addd2de10619e742a272fde1398f310db046639895",
+              "from": "gh-911111f7cb3cec505a1a7468c8432fddf52ff937a4428143b29438acedcc71b3",
+              "to": "gh-f8c555c9e710015bf133a3032723525f6fef3c00610212701ce800e55f70d358",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1523",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-836f3425853f82d522e4e65b6255a6093565db1339137641bbdef9e9d04dabab",
+              "from": "gh-911111f7cb3cec505a1a7468c8432fddf52ff937a4428143b29438acedcc71b3",
+              "to": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1523",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-c667dc4eddf5d389359304379d453eb23f96816586b1b45e570b4c7f66e1e818",
+              "from": "gh-a77a1309b1ceab97ba568c04317acc84af1824415d87f51a3c83bd6561dc7f2d",
+              "to": "gh-8eb122391757061cbf213f89fde10d150b578f82b1bf2dc3293585f1af6fbebc",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1521",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-ae1f384a1059a9a0cc7a7acfe6b75c1bda49a936f3c15fa0cdd2e8d745edef59",
+              "from": "gh-a77a1309b1ceab97ba568c04317acc84af1824415d87f51a3c83bd6561dc7f2d",
+              "to": "gh-ee7088b405b3a843abf797b74b8a34bf12f64a1269889388177583378970fa2d",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1521",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-498591b261c5bd38abb74fdf4b2a9ea1aa4ea223abe40845d8d0c917e0b9a56e",
+              "from": "gh-a77a1309b1ceab97ba568c04317acc84af1824415d87f51a3c83bd6561dc7f2d",
+              "to": "gh-a77a1309b1ceab97ba568c04317acc84af1824415d87f51a3c83bd6561dc7f2d",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1521#issuecomment-6323520190",
+                  "text": "Comment"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1521#issuecomment-6323550568",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-16ade0ae1b36c2522d148983f80d3a82ec72ed4b1fde4c7f9f509c5a3e0d6c57",
+              "from": "gh-a77a1309b1ceab97ba568c04317acc84af1824415d87f51a3c83bd6561dc7f2d",
+              "to": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1521",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-53094e4398a1b4828dea11e38ab4e9bf02c4fba9931f373b7599eb1c8aabafc3",
+              "from": "gh-4058a406529cbc8195965fda60d45f84864f28a53dd2b97fb5b70cbecc5f15a0",
+              "to": "gh-7f9de889ceb4c9982e4c7809ce6cbfdb3950f5fd92dd8ddd44136eb1f6fc8871",
+              "label": "replaces",
+              "text": "The #1531 body explicitly replaces #1502.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1531",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-17659e403c845469071a3d025af99e353f0ffdb2f196310d406be3d556fac29f",
+              "from": "gh-4058a406529cbc8195965fda60d45f84864f28a53dd2b97fb5b70cbecc5f15a0",
+              "to": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "label": "built on",
+              "text": "The #1531 body says it was rebuilt on #1529.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1531",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-cfcb7a96e4f1e4d1648f33b009509b70f056af689c47f27f8f1be802b70acadf",
+              "from": "gh-4058a406529cbc8195965fda60d45f84864f28a53dd2b97fb5b70cbecc5f15a0",
+              "to": "gh-cce1dabae4a2350a88996efebb8d6620d5ee70ee9bb2375df196a8932371ae0f",
+              "label": "addresses",
+              "text": "The new prefix PR discusses the issue and states its restricted template approach.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1531",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-18cb5a804fc9f9afa543df3f021371c7e3f35316bc34707c03424d9eb1ff7159",
+              "from": "gh-4058a406529cbc8195965fda60d45f84864f28a53dd2b97fb5b70cbecc5f15a0",
+              "to": "gh-4058a406529cbc8195965fda60d45f84864f28a53dd2b97fb5b70cbecc5f15a0",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1531#issuecomment-6725833045",
+                  "text": "Comment"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1531#issuecomment-6725834390",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-cfb96549d57dbbc87e1b2ac7084f64df09ca6b6055e35a934050fe3072754b26",
+              "from": "gh-4058a406529cbc8195965fda60d45f84864f28a53dd2b97fb5b70cbecc5f15a0",
+              "to": "gh-7f9de889ceb4c9982e4c7809ce6cbfdb3950f5fd92dd8ddd44136eb1f6fc8871",
+              "label": "replaces",
+              "text": "The #1531 body explicitly replaces #1502.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1531",
+                  "text": "Timeline"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1502",
+                  "text": "PR body"
+                }
+              ]
+            },
+            {
+              "id": "edge-16f863d2cc0c88ed8b8e685da2baae12ba87c2384a512874bfd2290839257013",
+              "from": "gh-e62f08809a14c3b5cdd7cdcf62762a7925f5dfb003e202dd032c354a5f354b32",
+              "to": "gh-f8c555c9e710015bf133a3032723525f6fef3c00610212701ce800e55f70d358",
+              "label": "replaces",
+              "text": "The #1532 body explicitly replaces #1503.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1532",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-ee3ea67a34900e7fd013ae43c5ea38c35baf3a508e7026ce180886d5e059cabc",
+              "from": "gh-e62f08809a14c3b5cdd7cdcf62762a7925f5dfb003e202dd032c354a5f354b32",
+              "to": "gh-136afa320295a51cc6936e21a5662542bcc0b3504064f0173a31a5848e9d66af",
+              "label": "describes migration from",
+              "text": "The #1532 body lists inherited binding changes separately.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1532",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-ed4a322474584b00e2117884d8dd02a90b0c895e04d95c22b5fe732bd9a1e1de",
+              "from": "gh-e62f08809a14c3b5cdd7cdcf62762a7925f5dfb003e202dd032c354a5f354b32",
+              "to": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "label": "addresses",
+              "text": "The new evaluation PR says it closes this design issue.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1532",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-d4f5ffdae8cfacbf064c717ec0256722ff76d72f454040f567bab26ca4089c74",
+              "from": "gh-e62f08809a14c3b5cdd7cdcf62762a7925f5dfb003e202dd032c354a5f354b32",
+              "to": "gh-e62f08809a14c3b5cdd7cdcf62762a7925f5dfb003e202dd032c354a5f354b32",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1532#issuecomment-6725808370",
+                  "text": "Comment"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1532#issuecomment-6725926520",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-b1b2e434fc618c591a54a1a0339cc29d6b5b0c64241456eb089022365881a32b",
+              "from": "gh-e62f08809a14c3b5cdd7cdcf62762a7925f5dfb003e202dd032c354a5f354b32",
+              "to": "gh-f8c555c9e710015bf133a3032723525f6fef3c00610212701ce800e55f70d358",
+              "label": "replaces",
+              "text": "The #1532 body explicitly replaces #1503.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1532",
+                  "text": "Timeline"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1503",
+                  "text": "PR body"
+                }
+              ]
+            },
+            {
+              "id": "edge-da93036d0e5fa44a181acf73c0291f26e39893c0ce3d2995e4b61fc1aa8cff53",
+              "from": "gh-e62f08809a14c3b5cdd7cdcf62762a7925f5dfb003e202dd032c354a5f354b32",
+              "to": "gh-2c7fa17caaefde8084c0efc32e0378d121b8619c657a2cbea16959bde1f68b9c",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1532",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-6602ba4579aa1e64d2ec3b30095a054214d6747368f2ad4a85978c29c10d63ca",
+              "from": "gh-cce1dabae4a2350a88996efebb8d6620d5ee70ee9bb2375df196a8932371ae0f",
+              "to": "gh-9bfa8ab8f10db8a51dfd22f892d420f8222b16d706befb70e55db0761fa18a4c",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1221",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-18475b16bb95cbb7689e5a4caee9ec762859ee5aa7c1dda07bea0b2ea4193f45",
+              "from": "gh-cce1dabae4a2350a88996efebb8d6620d5ee70ee9bb2375df196a8932371ae0f",
+              "to": "gh-41a94e5a3df74e705bf8029b04d4209033b76095678c057e4e78a9a5363a2b08",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1221",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-b2413faedc24894288ed0dbb7064b8320fed8e5c528c58cfe47ccdb79fad4516",
+              "from": "gh-cce1dabae4a2350a88996efebb8d6620d5ee70ee9bb2375df196a8932371ae0f",
+              "to": "gh-fd7415a51558ddd2585bfa434cb55460880fe84a1004cb16fb046c086e668e60",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1221#issuecomment-3795591211",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-d63fe06853b486e2b9d92f23d52cf462b57a770838cf2fc5e2d9c8b9f54e31a1",
+              "from": "gh-cce1dabae4a2350a88996efebb8d6620d5ee70ee9bb2375df196a8932371ae0f",
+              "to": "gh-99219be10a53f67d2696c185ac3244113f9a16976f313b4ac38bc76ed9ff8f02",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1221",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-ed5bb3c0387a4ab0be3089865c14a57496ba6a10f4538289208502d771b69032",
+              "from": "gh-cce1dabae4a2350a88996efebb8d6620d5ee70ee9bb2375df196a8932371ae0f",
+              "to": "gh-5cfddfd770b71b928e126c0faa53aba40a0c166ed6c8d267a35e3f5b5a2e210b",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1221",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-f70d947f808275a9f266df65b20b51583a4d5f60eb2d4ff0d0cc79b2ee401934",
+              "from": "gh-cce1dabae4a2350a88996efebb8d6620d5ee70ee9bb2375df196a8932371ae0f",
+              "to": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1221",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-f1942dac13ead88560ba5788fa5027b42560653b0e73898728afb00a92189d65",
+              "from": "gh-cce1dabae4a2350a88996efebb8d6620d5ee70ee9bb2375df196a8932371ae0f",
+              "to": "gh-7f9de889ceb4c9982e4c7809ce6cbfdb3950f5fd92dd8ddd44136eb1f6fc8871",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1221",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-024e3711631c73fe7a42c4bde6901cf33212dc32c92fe195681f740830f4ac18",
+              "from": "gh-cce1dabae4a2350a88996efebb8d6620d5ee70ee9bb2375df196a8932371ae0f",
+              "to": "gh-4058a406529cbc8195965fda60d45f84864f28a53dd2b97fb5b70cbecc5f15a0",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1221",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-9cb45540e2cb39a97b7d2ecd1d9f0758cadcb280a9a21da7a979a2d4d9050404",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-950b3d8d34733c9ff151fa7293385042bfb7c80cb3eaaeb400afabe19d05e06b",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-4003960a966431abbfc113085a400cc457b2d1ea46763f2e348aea1aed942efb",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-5cfddfd770b71b928e126c0faa53aba40a0c166ed6c8d267a35e3f5b5a2e210b",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-64c36d39766d20915535498eb017642a820c5a648da1348f39d7f90f11a7e571",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-9d1179c7826d5d86451ef6dd00434fcd581272e38b985164d16986fdfbc0ef9d",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-5d6d112b7c1114bda15716a4bf8f8a50fa16ccdc05c545da6af678542b285775",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-b91953a7eb019e486bfd82ae5040af2de46450a82f62429c5ea5cc65f78fafec",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-a615a237d09829f637460bcb919a096b29a6471a29316090d6761f1dedf4680a",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-0851227017a0298ec967fe4361a11451435fb657ee2607568c7a51d36ec584b5",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-50e6e69795055fd159825502516c6095be2a306d5899d28f50174e0bb25069d3",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-ed210290a3923f46ef586d0a12f7a1ca191cd4be3e43dbf9240bbac1e6220a3d",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-ea5c5da7b31ead2ea63b9df6d656cc50fccdb0e3e77c11122d0d48dd74a4c7a6",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-09186bfda1361b5795ff4d3515b885d901f867a2d5186c09c6ca846d20f6c8a4",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-5497d744f58a69db8478632b0f38569fb88f09ea877d3aa7b49b7e661c6dbe61",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-55aec357b4c40f7978ea3a6daa531cf2a9c1cd154ec054619336f7b9b3dfd8ec",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-3a5d7162ad51512851159380c3147a7a380a6474c4ddcaefc2d86583795b68d9",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-e9f54e49b08e5c3e360e8f1b5b5fa5b2bb1b8b40c1f45c2ad272f93d96c80bed",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-841f9f8857b8eac358f99fe98afe447e78dfa87444b275fe6650a06b8f199478",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-4b12686943bcd49bf7ed3104e823089cb8ad903ee299e4305eb715a91c73e340",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-9f99fc1e5a3188567189e8bd22117f5eb3f9ad7c258d92ec8b4eebfebe1c07b2",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-f579e8a022409b26e9732837e4f03175a8f3c0bd6aa6f7029b0f9f687ae99638",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-34795123462828dedaae6b4ddad11dd8c34bdf9a12cdd2bda0c78f37a8300b90",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-1c1686a0ea6d73aa3aad592b0291a4e7d928ca02dce4cdf3d9aa261ad2432348",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-9d1179c7826d5d86451ef6dd00434fcd581272e38b985164d16986fdfbc0ef9d",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-c0c1351b0d715ad6fce689ddf9edce3cad12fb8662ca12615e926eecacea5c6c",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-5cfddfd770b71b928e126c0faa53aba40a0c166ed6c8d267a35e3f5b5a2e210b",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-65e728faf0914329aa98165ff3c171bc83c500ba05c77695a2efa7c5b12855e9",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-f3805822f67cf7ee1950ce9cb6d579e541bfbdda0d3c52b39ab45283853c8ee9",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-9f1a929afc9a1222fb0e8921cabc1ff18247c2c66148c87c5e6ca9e79beaf18a",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-c7a65d05548cd80003542ed9edfff67963b9314ccfe779b869ddc4410c0e2abd",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-f8c555c9e710015bf133a3032723525f6fef3c00610212701ce800e55f70d358",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-4e290f6952d7531a166ef46706de6769077aae151ac762eea3454ccba6b60655",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-0f766bd42acabbc6145ca3db34b735cf1e88255da18cc223c5a7000a59688918",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-716d63ad212bf52d9f72953e22ec83760b346b3a001e06c1cd4883ef1c6bd621",
+              "from": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "to": "gh-e62f08809a14c3b5cdd7cdcf62762a7925f5dfb003e202dd032c354a5f354b32",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1469",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-c2963702bbde316d5a1c5649f2722177833cc5c1f39581778fc61fa925291be7",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-d0958b03d34c3b2259f2b8674cd74ef395c3699e3b81bf727545441832b89124",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-45b2336ef3f31c2c775d1eba714b2bd3cd593c09704b2450a28414750bcbb36b",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-104afca24a9fd828a47d34d30f112e50558d397c08500885cd1a4a89b8eeb662",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-3f06cfed69b2516ac424fe26efe113b6e40fd8086cea9df68acbe3b369b5913f",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-950b3d8d34733c9ff151fa7293385042bfb7c80cb3eaaeb400afabe19d05e06b",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-acd92a7b0a999f1833b30fb7555d719ba4a9601ec455aec714f6539f505c5577",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-b91953a7eb019e486bfd82ae5040af2de46450a82f62429c5ea5cc65f78fafec",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-c90dba954c8e44a13b93f724e4305cfa6008699389a9bfda8d93667817b79218",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-5a14cf9f8aae78d4e305d550ab44f4405e45af5f0d7996b6497ab175052136fe",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-d753e96b4108990b99343c2f208d73d5defde8005aeedb23dcd0ec89be09bc5b",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-54d2d2b3669b594c73d1e24aeed093af18e8b093656e990f6fc21bfde44f0327",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-254b6e221363584f4d5390a4112fce08f1285ef11a4d2034bc2ffca36c5af5b7",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-b0362cca3c06593935ae3e25d6810dec1d7958713828ca7093599831db278b76",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-d9a78519150e93288642564301e5a85d83bb54d74bd2bfe865feb2e175923950",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-9fa050131615751c0b1779e40a4a520f20e00ec981f7f29b99fc1d85322c61cf",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-9d1179c7826d5d86451ef6dd00434fcd581272e38b985164d16986fdfbc0ef9d",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-229d3e4e13bfb82198446dc176379b195b329235e8d30dbb755f3c32537e3d04",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-5cfddfd770b71b928e126c0faa53aba40a0c166ed6c8d267a35e3f5b5a2e210b",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-9703a9c26371ef8e7f03a69ff63908f78556df196ccc39e03d7d3123275313fe",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-cce1dabae4a2350a88996efebb8d6620d5ee70ee9bb2375df196a8932371ae0f",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-da5c2c914418dcc0e878c47a56e0a0fa52e854343ae486241b44ece211361def",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-023a2ad9e08af39c9e0ef97571d7d0c7def09cbfd54ae898b310620fb22386d7",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-d48f57ef389330e1772a359cde3fef3e97cd2d2f0cbffb27aa7a86f09f3d28d5",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-317e05a35338674159ae4f413b48f15268f295b6cc7817b931cee8eda9aceda7",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-3b7c22caecb03349b795b85c18e0d60a2bd6fc3052176d875dbe28fc731144ad",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-0c0e37bc748621e98909b5fe2798bedd4336af47be030e4cb2fd2f64eb87af1d",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-5892ee1c5e836add94bf42076cad1b61595dde912cdfe042e3f4c73ec2a74658",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-bb55064e39a0616cb22a7fbb5e6fe6bf94c35bd4ded05f827452e3f81bbfcff4",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468#discussion_r3958578486",
+                  "text": "Inline review"
+                }
+              ]
+            },
+            {
+              "id": "edge-a1219e94d1e32255900e5ef3296a145514c7279b413aae7d9a7f8d82b22ae19c",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-894605e5462d07ac44ccb8aa0f722e72cc2161f45b5cef403f7a5dade41590a9",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-682b56e7b4e81192f5b7d726a5e9e33eb1ff8540e827175d08d4ca13cf7670bd",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-5370f91f2d69d938e697e33282f33bcce911c0d1e40850df4e632f638c95a714",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-53c5c30e8dd0891cb69e4929bfc29015f44ce17449f0d4a8e1306e1f6cf22603",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-601717ee314ab2ed6598022f22a12f02374ee0bb9b46365722dc178763030a27",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-af9d37b0925da4fb136b34f61e688762e8ef8bfd70d21f6843ef0c73a394aa12",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468#issuecomment-5484011741",
+                  "text": "Comment"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468#issuecomment-5547764352",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-94a3562ccbec0e5b9c15513ed9cef844cd4b6f9ff4d5403a27e355589eb08d32",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-f8c555c9e710015bf133a3032723525f6fef3c00610212701ce800e55f70d358",
+              "label": "replaced by",
+              "text": "A closing comment in #1468 points to the #1503 stack.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468#issuecomment-5705516602",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-14e6a7e2d68607cc1edf5a86f2f370b69d4cce80a0eb72760fd077b284a741dc",
+              "from": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "to": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1468",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-4fd8fdfab503e7386de14da6fafecb82e0851d8acee4f761c7a0c41b46a1a2c2",
+              "from": "gh-950b3d8d34733c9ff151fa7293385042bfb7c80cb3eaaeb400afabe19d05e06b",
+              "to": "gh-d7c657abefad47cd338da9f8f7573db3b06324b0384137509d395190e910bac2",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/721",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-c3bcdf11294b2f51b7c39acd922fd7f14e3b658c487bea788de549fd344b4f41",
+              "from": "gh-950b3d8d34733c9ff151fa7293385042bfb7c80cb3eaaeb400afabe19d05e06b",
+              "to": "gh-d00ba22add47b5c64999077c131d184345b4cfd165ddd58bf35b1237d480a199",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/721",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-d70b711eb2b70eb66cb309579f9f07344ba84590cdb8b245a67a40ad3adfe7c4",
+              "from": "gh-950b3d8d34733c9ff151fa7293385042bfb7c80cb3eaaeb400afabe19d05e06b",
+              "to": "gh-43ab5087eecc7f1bf471abe73dea08af7977a37b1afe6f30309d9c1365d45cde",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/721",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-ad6b8287990fc300231307db37874fa14434347d89c5bc2cb4bde0886f3c8d33",
+              "from": "gh-950b3d8d34733c9ff151fa7293385042bfb7c80cb3eaaeb400afabe19d05e06b",
+              "to": "gh-1b6f8b35ff625420792d4f465a5a44d9816bbc3bc39537c86965b798eb11d717",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/721",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-3f12a5f1828fb635d763d7b7465e282e3088a6c182657bf508e8482046b89f2b",
+              "from": "gh-950b3d8d34733c9ff151fa7293385042bfb7c80cb3eaaeb400afabe19d05e06b",
+              "to": "gh-40cd53d687db0a9c172fca17c09a29205e4f0b212ea668902c90133d4c838994",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/721",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-784ff47c643e0dc677be66502ea04a346a0a05d16ece8d36292dc5ff91548e19",
+              "from": "gh-950b3d8d34733c9ff151fa7293385042bfb7c80cb3eaaeb400afabe19d05e06b",
+              "to": "gh-27a2fd61979360e28889a949e561d41319583f53f25b75b4153a9d39b29be686",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/721",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-36fc7df5c3a7e272f58818a85f5c666329ba1d408d944d0ca57d4f5911b95165",
+              "from": "gh-27a2fd61979360e28889a949e561d41319583f53f25b75b4153a9d39b29be686",
+              "to": "gh-40cd53d687db0a9c172fca17c09a29205e4f0b212ea668902c90133d4c838994",
+              "label": "replaces",
+              "text": "The #1533 body explicitly replaces #1504.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1533",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-5a0b09b1da89c86a9ec26d1a2bec6943a2bf31413a3df11e1dc002d27359b6ff",
+              "from": "gh-27a2fd61979360e28889a949e561d41319583f53f25b75b4153a9d39b29be686",
+              "to": "gh-950b3d8d34733c9ff151fa7293385042bfb7c80cb3eaaeb400afabe19d05e06b",
+              "label": "addresses",
+              "text": "The new RNG PR says it closes this issue.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1533",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-3a6f060964f5a2c0b931c491a1d9e51fc6e6e414b7a5bbab5f0bac8e831265c4",
+              "from": "gh-27a2fd61979360e28889a949e561d41319583f53f25b75b4153a9d39b29be686",
+              "to": "gh-27a2fd61979360e28889a949e561d41319583f53f25b75b4153a9d39b29be686",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1533#issuecomment-6725829967",
+                  "text": "Comment"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1533#issuecomment-6725996895",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-8055e2dedaf24c4619750f6f92e1df76a337096ff29140ef9f43fd3b8b5158d8",
+              "from": "gh-27a2fd61979360e28889a949e561d41319583f53f25b75b4153a9d39b29be686",
+              "to": "gh-40cd53d687db0a9c172fca17c09a29205e4f0b212ea668902c90133d4c838994",
+              "label": "replaces",
+              "text": "The #1533 body explicitly replaces #1504.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1533",
+                  "text": "Timeline"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1504",
+                  "text": "PR body"
+                }
+              ]
+            },
+            {
+              "id": "edge-33097050d76c2619cc1be7d5f8df33d1c7b9d0d83a890b54272ae46112397ddd",
+              "from": "gh-90514687610ab3e3fef79e78d5e2ce1918b437fa530e7ba02a5d48c364b3efdd",
+              "to": "gh-d0958b03d34c3b2259f2b8674cd74ef395c3699e3b81bf727545441832b89124",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1501",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-baa9aca3f43e6089a1572dbbe35d1ee7117d1902a178b091a1c38f76f3fe4ae0",
+              "from": "gh-90514687610ab3e3fef79e78d5e2ce1918b437fa530e7ba02a5d48c364b3efdd",
+              "to": "gh-5a14cf9f8aae78d4e305d550ab44f4405e45af5f0d7996b6497ab175052136fe",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1501",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-d694765e47496e6069d0a492a4b0102fd16af62bf6a42cc23721774d04053a0b",
+              "from": "gh-90514687610ab3e3fef79e78d5e2ce1918b437fa530e7ba02a5d48c364b3efdd",
+              "to": "gh-104afca24a9fd828a47d34d30f112e50558d397c08500885cd1a4a89b8eeb662",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1501",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-55d2ff43b62d0540f5204b5f9947bc4d0fec10a8389de918670e483266e7c65a",
+              "from": "gh-90514687610ab3e3fef79e78d5e2ce1918b437fa530e7ba02a5d48c364b3efdd",
+              "to": "gh-54d2d2b3669b594c73d1e24aeed093af18e8b093656e990f6fc21bfde44f0327",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1501",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-f212e49bd429f57eefca5d8d0f5160afe6468499e4275e01707895c7e6b36485",
+              "from": "gh-90514687610ab3e3fef79e78d5e2ce1918b437fa530e7ba02a5d48c364b3efdd",
+              "to": "gh-90514687610ab3e3fef79e78d5e2ce1918b437fa530e7ba02a5d48c364b3efdd",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1501#issuecomment-5704673158",
+                  "text": "Comment"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1501#issuecomment-5705477122",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-8f73e86d44fe297c91f54bd61546c0ec6d785a92d918bb2c2cb49c2685ecf0e8",
+              "from": "gh-90514687610ab3e3fef79e78d5e2ce1918b437fa530e7ba02a5d48c364b3efdd",
+              "to": "gh-911111f7cb3cec505a1a7468c8432fddf52ff937a4428143b29438acedcc71b3",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1501#issuecomment-6527259281",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-a695a49a93b191686f57e2580218fdce28ae3b05d7beea401f89caf538275957",
+              "from": "gh-90514687610ab3e3fef79e78d5e2ce1918b437fa530e7ba02a5d48c364b3efdd",
+              "to": "gh-f8c555c9e710015bf133a3032723525f6fef3c00610212701ce800e55f70d358",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1501",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-07cf79c859f31944a8fe48bba1b0dc69acbdd7d55b61d7dbdc9f98619aaa87b9",
+              "from": "gh-90514687610ab3e3fef79e78d5e2ce1918b437fa530e7ba02a5d48c364b3efdd",
+              "to": "gh-911111f7cb3cec505a1a7468c8432fddf52ff937a4428143b29438acedcc71b3",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1501",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-1bd0c50a4973a1db3ed7577112b44430eb52c95030b51efdcd1f732ab3bc72e3",
+              "from": "gh-8eb122391757061cbf213f89fde10d150b578f82b1bf2dc3293585f1af6fbebc",
+              "to": "gh-ee7088b405b3a843abf797b74b8a34bf12f64a1269889388177583378970fa2d",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1519",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-7faa4395593e20cf9c295a803943d293cc098345177de1f807d74e1f58fac4d8",
+              "from": "gh-8eb122391757061cbf213f89fde10d150b578f82b1bf2dc3293585f1af6fbebc",
+              "to": "gh-a77a1309b1ceab97ba568c04317acc84af1824415d87f51a3c83bd6561dc7f2d",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/issues/1519",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-68805a737940cb7f1544d4da78cd232e7581f4c7e9cd97ebf75238590595277a",
+              "from": "gh-ee7088b405b3a843abf797b74b8a34bf12f64a1269889388177583378970fa2d",
+              "to": "gh-8eb122391757061cbf213f89fde10d150b578f82b1bf2dc3293585f1af6fbebc",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/AbstractPPL.jl/pull/200",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-1c4cf1dde669de887218569406a473922be1abc05aeb09afbf9365168ed32a27",
+              "from": "gh-ee7088b405b3a843abf797b74b8a34bf12f64a1269889388177583378970fa2d",
+              "to": "gh-ee7088b405b3a843abf797b74b8a34bf12f64a1269889388177583378970fa2d",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/AbstractPPL.jl/pull/200#issuecomment-6301927740",
+                  "text": "Comment"
+                },
+                {
+                  "url": "https://github.com/TuringLang/AbstractPPL.jl/pull/200#issuecomment-6301971940",
+                  "text": "Comment"
+                }
+              ]
+            },
+            {
+              "id": "edge-cdb7038b78cf2b46b1d9643f6a8f513c423b4bdc57a5e36ba97bf90de91cd702",
+              "from": "gh-ee7088b405b3a843abf797b74b8a34bf12f64a1269889388177583378970fa2d",
+              "to": "gh-a77a1309b1ceab97ba568c04317acc84af1824415d87f51a3c83bd6561dc7f2d",
+              "label": "referenced by",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/AbstractPPL.jl/pull/200",
+                  "text": "Timeline"
+                }
+              ]
+            },
+            {
+              "id": "edge-92598a8f6a9dbb30e610ce7a69b66b7d38b96a3ee0fbb1fcfeee85ee0ffba8dc",
+              "from": "gh-2c7fa17caaefde8084c0efc32e0378d121b8619c657a2cbea16959bde1f68b9c",
+              "to": "gh-e62f08809a14c3b5cdd7cdcf62762a7925f5dfb003e202dd032c354a5f354b32",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1534",
+                  "text": "Body"
+                }
+              ]
+            },
+            {
+              "id": "edge-968dca16f3ec1e119c2ea626adfe4dbdb4038b3ce7466338e05772a7b75b82f2",
+              "from": "gh-2c7fa17caaefde8084c0efc32e0378d121b8619c657a2cbea16959bde1f68b9c",
+              "to": "gh-2c7fa17caaefde8084c0efc32e0378d121b8619c657a2cbea16959bde1f68b9c",
+              "label": "mentions",
+              "text": "Collected reference.",
+              "evidence": [
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1534#issuecomment-6726722821",
+                  "text": "Comment"
+                },
+                {
+                  "url": "https://github.com/TuringLang/DynamicPPL.jl/pull/1534#issuecomment-6726724211",
+                  "text": "Comment"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "checks",
+      "title": "Checks",
+      "blocks": [
+        {
+          "type": "check",
+          "status": "passed",
+          "title": "Source snapshot",
+          "text": "PR metadata and discussion checked 2026-11-10. Base/head and merge base match the recorded review. Discussion contained bot reports. Linked predecessors and follow-ups were read."
+        },
+        {
+          "type": "check",
+          "status": "passed",
+          "title": "Public API",
+          "text": "The readings probe checked argument overrides, partial deconditioning, input preservation and fixed-value likelihood on both revisions with Julia 1.13.3. Results and environment fingerprints: examples/evidence.json."
+        },
+        {
+          "type": "check",
+          "status": "passed",
+          "title": "Source checks",
+          "text": "The diff helper found 50 changed Julia files. Reflection checked BindingRoot fields and selected tilde_observe!! signatures/bodies. Caller searches support the diagrams."
+        },
+        {
+          "type": "check",
+          "status": "unverified",
+          "title": "Unchecked",
+          "text": "Full DynamicPPL tests were not rerun. The author's local Turing migration was unavailable as a source revision. No complete call graph or performance result is established."
+        }
+      ]
+    }
+  ]
+}
