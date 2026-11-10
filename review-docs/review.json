@@ -409,7 +409,8 @@
             "migration"
           ]
         }
-      ]
+      ],
+      "group": "overview"
     },
     {
       "id": "approach",
@@ -453,7 +454,8 @@
           "title": "Reproduce the comparison",
           "text": "Run examples/dynamicppl-1529.jl in each reviewed environment. examples/evidence.json records the outputs and environment fingerprints. The random second reading depends on that Julia/RNG version."
         }
-      ]
+      ],
+      "group": "changes"
     },
     {
       "id": "ownership",
@@ -835,7 +837,8 @@
             "pr"
           ]
         }
-      ]
+      ],
+      "group": "design"
     },
     {
       "id": "definition-types",
@@ -1231,7 +1234,8 @@
             ]
           }
         }
-      ]
+      ],
+      "group": "details"
     },
     {
       "id": "evaluation",
@@ -1389,7 +1393,8 @@
             "handlers"
           ]
         }
-      ]
+      ],
+      "group": "design"
     },
     {
       "id": "compatibility",
@@ -1487,7 +1492,8 @@
             "migration"
           ]
         }
-      ]
+      ],
+      "group": "changes"
     },
     {
       "id": "downstream",
@@ -1660,7 +1666,8 @@
           "title": "Reused evidence",
           "text": "The worklog checkpoint and particle-metadata probe record this DynamicPPL base/head with Turing 67a9f80. Hooks were reinspected. The 60-check run was reused, not rerun. It does not test the author's local migration."
         }
-      ]
+      ],
+      "group": "changes"
     },
     {
       "id": "tradeoffs",
@@ -1723,7 +1730,8 @@
             "saved"
           ]
         }
-      ]
+      ],
+      "group": "review"
     },
     {
       "id": "review-actions",
@@ -1793,7 +1801,8 @@
             "migration"
           ]
         }
-      ]
+      ],
+      "group": "details"
     },
     {
       "id": "linked-context",
@@ -3901,7 +3910,8 @@
             }
           ]
         }
-      ]
+      ],
+      "group": "details"
     },
     {
       "id": "definition-groups",
@@ -5075,7 +5085,8 @@
             ]
           }
         }
-      ]
+      ],
+      "group": "details"
     },
     {
       "id": "definitions",
@@ -21286,7 +21297,8 @@
           ],
           "omissions": []
         }
-      ]
+      ],
+      "group": "details"
     },
     {
       "id": "checks",
@@ -21316,7 +21328,8 @@
           "title": "Unchecked",
           "text": "Full DynamicPPL tests were not rerun. The author's local Turing migration was unavailable as a source revision. No complete call graph or performance result is established."
         }
-      ]
+      ],
+      "group": "review"
     }
   ]
 }
