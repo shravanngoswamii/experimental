@@ -1,0 +1,139 @@
+{
+  "version": 1,
+  "revision": "8580f5b9b278ad38a02c147456a5518fd050c7a8",
+  "repository": "https://github.com/TuringLang/DynamicPPL.jl",
+  "id": "binding-ownership",
+  "title": "Model bindings",
+  "text": "Selected binding storage and role types at the reviewed base. Other model fields and contexts are outside this diagram.",
+  "nodes": [
+    {
+      "id": "model",
+      "label": "Model",
+      "kind": "type",
+      "text": "Stores the evaluator, arguments, defaults and context.",
+      "refs": [
+        "definition-base-4439b24aa0d8"
+      ]
+    },
+    {
+      "id": "old-context",
+      "label": "CondFixContext",
+      "kind": "type",
+      "text": "Stores conditioned or fixed values and a child context.",
+      "refs": [
+        "definition-base-3a4225559110"
+      ]
+    },
+    {
+      "id": "collection",
+      "label": "VarNamedTuple",
+      "kind": "type",
+      "text": "A collection addressed by variable names, fields and indices.",
+      "refs": [
+        "definition-base-3aa12a8fcd20"
+      ]
+    },
+    {
+      "id": "old-role",
+      "label": "ConditionOrFix",
+      "kind": "type",
+      "text": "Parent of the old condition and fix role types.",
+      "refs": [
+        "definition-base-3a4225559110"
+      ]
+    },
+    {
+      "id": "old-condition",
+      "label": "Condition",
+      "kind": "type",
+      "text": "Selects observation handling in CondFixContext.",
+      "refs": [
+        "definition-base-3a4225559110"
+      ]
+    },
+    {
+      "id": "old-fixed",
+      "label": "Fix",
+      "kind": "type",
+      "text": "Selects fixed-value handling in CondFixContext.",
+      "refs": [
+        "definition-base-3a4225559110"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "old-model-context",
+      "from": "model",
+      "to": "old-context",
+      "label": "may store",
+      "text": "Conditioning and fixing use model context wrappers.",
+      "status": "source",
+      "refs": [
+        "definition-base-3a4225559110"
+      ]
+    },
+    {
+      "id": "old-values",
+      "from": "old-context",
+      "to": "collection",
+      "label": "stores values in",
+      "text": "The values field holds VarNamedTuple.",
+      "status": "source",
+      "refs": [
+        "definition-base-3a4225559110"
+      ]
+    },
+    {
+      "id": "old-role-param",
+      "from": "old-context",
+      "to": "old-role",
+      "label": "constrains role by",
+      "text": "CF is constrained by ConditionOrFix.",
+      "status": "source",
+      "refs": [
+        "definition-base-3a4225559110"
+      ]
+    },
+    {
+      "id": "old-condition-role",
+      "from": "old-condition",
+      "to": "old-role",
+      "label": "subtype of",
+      "text": "Condition is an old role type.",
+      "status": "source",
+      "refs": [
+        "definition-base-3a4225559110"
+      ]
+    },
+    {
+      "id": "old-fix-role",
+      "from": "old-fixed",
+      "to": "old-role",
+      "label": "subtype of",
+      "text": "Fix is an old role type.",
+      "status": "source",
+      "refs": [
+        "definition-base-3a4225559110"
+      ]
+    }
+  ],
+  "direction": "TB",
+  "sources": [
+    {
+      "id": "definition-base-4439b24aa0d8",
+      "label": "Base: src/model.jl",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/8580f5b9b278ad38a02c147456a5518fd050c7a8/src/model.jl#L1"
+    },
+    {
+      "id": "definition-base-3a4225559110",
+      "label": "Base: src/contexts/conditionfix.jl",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/8580f5b9b278ad38a02c147456a5518fd050c7a8/src/contexts/conditionfix.jl#L1"
+    },
+    {
+      "id": "definition-base-3aa12a8fcd20",
+      "label": "Base: src/varnamedtuple.jl",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/8580f5b9b278ad38a02c147456a5518fd050c7a8/src/varnamedtuple.jl#L1"
+    }
+  ]
+}

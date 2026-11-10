@@ -1,0 +1,256 @@
+{
+  "version": 1,
+  "revision": "2585c3bbf6667df8d2fa088fcbd270727889c469",
+  "repository": "https://github.com/TuringLang/DynamicPPL.jl",
+  "id": "binding-ownership",
+  "title": "Model bindings",
+  "text": "Read from Model to BindingTable to BindingRoot. The lower branches show the roles a supplied value can carry.",
+  "direction": "TB",
+  "nodes": [
+    {
+      "id": "model",
+      "label": "Model",
+      "kind": "type",
+      "text": "Stores the callable, arguments, binding table, context and removals.",
+      "refs": [
+        "model"
+      ]
+    },
+    {
+      "id": "table",
+      "label": "BindingTable",
+      "kind": "type",
+      "text": "Stores roots in VarNamedTuple, a collection addressed by names, fields and indices.",
+      "refs": [
+        "binding"
+      ],
+      "signature": "BindingTable{V<:VarNamedTuple}: roots::V"
+    },
+    {
+      "id": "root",
+      "label": "BindingRoot",
+      "kind": "type",
+      "text": "Holds storage, constraints and a whole value or partial-value tree.",
+      "refs": [
+        "binding"
+      ],
+      "signature": "BindingRoot{V,S,C}: value::V, storage::S, constraints::C"
+    },
+    {
+      "id": "bound",
+      "label": "BoundValue",
+      "kind": "type",
+      "text": "Wraps a supplied value. Type parameter R records its role.",
+      "refs": [
+        "binding"
+      ],
+      "signature": "BoundValue{R<:BindingRole,T}: value::T"
+    },
+    {
+      "id": "role",
+      "label": "BindingRole",
+      "kind": "type",
+      "text": "Parent of the three role types. Used as a BoundValue type parameter.",
+      "refs": [
+        "binding"
+      ]
+    },
+    {
+      "id": "condition",
+      "label": "ConditionRole",
+      "kind": "type",
+      "text": "Explicit observation from condition. Adds likelihood.",
+      "refs": [
+        "binding",
+        "compile"
+      ]
+    },
+    {
+      "id": "argument",
+      "label": "ArgumentRole",
+      "kind": "type",
+      "text": "Argument binding. Bound values select observation.",
+      "refs": [
+        "binding",
+        "roles"
+      ]
+    },
+    {
+      "id": "fixed",
+      "label": "FixRole",
+      "kind": "type",
+      "text": "Fixed value. Read without adding density.",
+      "refs": [
+        "binding",
+        "compile"
+      ]
+    },
+    {
+      "id": "collection",
+      "label": "VarNamedTuple",
+      "kind": "type",
+      "text": "A collection addressed by variable names, fields and indices.",
+      "refs": [
+        "definition-head-3aa12a8fcd20"
+      ]
+    },
+    {
+      "id": "constraint",
+      "label": "BindingConstraint",
+      "kind": "type",
+      "text": "Retains role-specific storage and conversion constraints.",
+      "refs": [
+        "binding"
+      ]
+    },
+    {
+      "id": "no-binding",
+      "label": "NoBinding",
+      "kind": "type",
+      "text": "Marks the absence of a bound value.",
+      "refs": [
+        "binding"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "owns",
+      "from": "model",
+      "to": "table",
+      "label": "stores",
+      "status": "source",
+      "text": "Model.values is constrained to BindingTable.",
+      "refs": [
+        "model"
+      ]
+    },
+    {
+      "id": "whole",
+      "from": "root",
+      "to": "bound",
+      "label": "may store",
+      "status": "source",
+      "text": "Whole bindings may store BoundValue. Partial bindings may use trees.",
+      "refs": [
+        "binding",
+        "roles"
+      ]
+    },
+    {
+      "id": "role-param",
+      "from": "bound",
+      "to": "role",
+      "label": "constrains role by",
+      "status": "source",
+      "text": "R is constrained to BindingRole.",
+      "refs": [
+        "binding"
+      ]
+    },
+    {
+      "id": "condition-subtype",
+      "from": "condition",
+      "to": "role",
+      "label": "subtype of",
+      "status": "source",
+      "text": "Declared subtype.",
+      "refs": [
+        "binding"
+      ]
+    },
+    {
+      "id": "argument-subtype",
+      "from": "argument",
+      "to": "role",
+      "label": "subtype of",
+      "status": "source",
+      "text": "Declared subtype.",
+      "refs": [
+        "binding"
+      ]
+    },
+    {
+      "id": "fixed-subtype",
+      "from": "fixed",
+      "to": "role",
+      "label": "subtype of",
+      "status": "source",
+      "text": "Declared subtype.",
+      "refs": [
+        "binding"
+      ]
+    },
+    {
+      "id": "table-collection",
+      "from": "table",
+      "to": "collection",
+      "label": "stores roots in",
+      "text": "BindingTable.roots is a VarNamedTuple.",
+      "status": "source",
+      "refs": [
+        "binding"
+      ]
+    },
+    {
+      "id": "collection-root",
+      "from": "collection",
+      "to": "root",
+      "label": "holds",
+      "text": "Argument binding construction creates BindingRoot entries.",
+      "status": "source",
+      "refs": [
+        "roles"
+      ]
+    },
+    {
+      "id": "root-constraint",
+      "from": "root",
+      "to": "constraint",
+      "label": "stores",
+      "text": "BindingRoot retains conversion and storage constraints.",
+      "status": "source",
+      "refs": [
+        "binding"
+      ]
+    },
+    {
+      "id": "root-absent",
+      "from": "root",
+      "to": "no-binding",
+      "label": "may store",
+      "text": "An unbound argument can use NoBinding.",
+      "status": "source",
+      "refs": [
+        "roles"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "model",
+      "label": "Head: Model fields",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/2585c3bbf6667df8d2fa088fcbd270727889c469/src/model.jl#L90-L109"
+    },
+    {
+      "id": "binding",
+      "label": "Head: roots, roles and binding table",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/2585c3bbf6667df8d2fa088fcbd270727889c469/src/binding.jl#L1-L84"
+    },
+    {
+      "id": "roles",
+      "label": "Head: argument and local role lookup",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/2585c3bbf6667df8d2fa088fcbd270727889c469/src/conditionfix.jl#L17-L92"
+    },
+    {
+      "id": "compile",
+      "label": "Head: role branches emitted by the compiler",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/2585c3bbf6667df8d2fa088fcbd270727889c469/src/compiler.jl#L529-L650"
+    },
+    {
+      "id": "definition-head-3aa12a8fcd20",
+      "label": "Head: src/varnamedtuple.jl",
+      "url": "https://github.com/TuringLang/DynamicPPL.jl/blob/2585c3bbf6667df8d2fa088fcbd270727889c469/src/varnamedtuple.jl#L1"
+    }
+  ]
+}
