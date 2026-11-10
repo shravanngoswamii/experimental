@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "id": "pr-172-coin-flip-posterior",
+  "title": "Explain the coin flip posterior",
+  "summary": "A one-line documentation addition to the coin flip example README that names the closed-form posterior, Beta(24, 18).",
+  "review": {
+    "url": "https://github.com/mcmcjs/mcmcjs/pull/172",
+    "title": "Explain the coin flip posterior",
+    "base": "46b149329b3c4013e7a673f1525617fe11f3a357",
+    "head": "8baf68352d0bad0985bb2b7381c7e683623eecf6",
+    "checkedAt": "2026-11-10T20:43:20.731Z"
+  },
+  "sources": [
+    {
+      "id": "readme-head",
+      "label": "examples/coin_flip/README.md at head, lines 13-14",
+      "url": "https://github.com/mcmcjs/mcmcjs/blob/8baf68352d0bad0985bb2b7381c7e683623eecf6/examples/coin_flip/README.md#L13-L14"
+    },
+    {
+      "id": "readme-base",
+      "label": "examples/coin_flip/README.md at base, line 13",
+      "url": "https://github.com/mcmcjs/mcmcjs/blob/46b149329b3c4013e7a673f1525617fe11f3a357/examples/coin_flip/README.md#L13-L13"
+    }
+  ],
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Overview",
+      "group": "overview",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "MCMC.js is a command-line tool that runs Bayesian models, checks sampler convergence and reports results. The coin flip example is the introductory model: it estimates the heads probability p of a coin with a uniform Beta(1, 1) prior and the README states the data as 23 heads in 40 tosses.\n\nThis PR adds one sentence after the existing line that says p concentrates near 0.575. The new sentence states that the posterior is Beta(24, 18) with the Beta(1, 1) prior. Only examples/coin_flip/README.md changes. No code, model files or data files change, so there is no API or compatibility impact.",
+          "refs": [
+            "readme-base",
+            "readme-head"
+          ]
+        },
+        {
+          "type": "compare",
+          "title": "README text after the run command",
+          "before": "The data has 23 heads in 40 tosses, so `p` concentrates near 0.575.",
+          "after": "The data has 23 heads in 40 tosses, so `p` concentrates near 0.575.\nThe posterior is `Beta(24, 18)` with the `Beta(1, 1)` prior.",
+          "refs": [
+            "readme-head"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "review",
+      "title": "Review",
+      "group": "review",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Source review of the README text only. The conjugate update is correct for the stated inputs: a Beta(1, 1) prior plus 23 heads and 17 tails gives Beta(1+23, 1+17) = Beta(24, 18). The claim depends on the README's own statement of the data. I did not read coin_flip.jl, coin_flip.stan or data.csv to confirm that they match 23 heads in 40 tosses.",
+          "refs": [
+            "readme-head"
+          ]
+        },
+        {
+          "type": "finding",
+          "title": "0.575 is the posterior mode, not the mean",
+          "status": "suggestion",
+          "text": "For Beta(24, 18) the mode is (24-1)/(24+18-2) = 23/40 = 0.575 and the mean is 24/42 ≈ 0.571. The adjacent text says p concentrates near 0.575, which is accurate as a statement about the mode. Now that the posterior is named, a reader may compare the 0.575 figure with the mean in the mcmc run summary and see a small difference. If the PR's aim is to help readers relate the closed-form posterior to the sampler output, naming the quantity would avoid that. This is optional wording and not a defect.",
+          "refs": [
+            "readme-head"
+          ]
+        },
+        {
+          "type": "diff",
+          "title": "Optional wording: name the mode and the mean",
+          "text": "Keeps the PR's purpose of explaining the posterior. It only states which summary 0.575 is and adds the mean the sampler should be near.",
+          "path": "examples/coin_flip/README.md",
+          "before": "The data has 23 heads in 40 tosses, so `p` concentrates near 0.575.\nThe posterior is `Beta(24, 18)` with the `Beta(1, 1)` prior.",
+          "after": "The data has 23 heads in 40 tosses. With the `Beta(1, 1)` prior the posterior is\n`Beta(24, 18)`, with mode 0.575 and mean about 0.571.",
+          "scope": "suggestion",
+          "verification": "source-checked"
+        },
+        {
+          "type": "check",
+          "title": "Review scope",
+          "status": "unverified",
+          "text": "Source review only. PR code, package setup and runtime tests were not executed.\n\nLinked work: public repositories only, depth 2, at most 15 items. Read status describes collection, not semantic review."
+        }
+      ]
+    }
+  ]
+}
