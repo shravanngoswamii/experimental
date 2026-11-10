@@ -1,0 +1,194 @@
+{
+  "version": 1,
+  "id": "coin-flip-posterior-review",
+  "title": "Stating the exact coin flip posterior",
+  "summary": "The coin flip example README now names the closed-form posterior, Beta(24, 18). This gives readers an exact target to compare against MCMC output. A source check of data.csv and both model files supports the stated value.",
+  "review": {
+    "url": "https://github.com/mcmcjs/mcmcjs/pull/172",
+    "title": "Explain the coin flip posterior",
+    "base": "46b149329b3c4013e7a673f1525617fe11f3a357",
+    "head": "8baf68352d0bad0985bb2b7381c7e683623eecf6",
+    "checkedAt": "2026-11-10T19:53:54.057Z"
+  },
+  "sources": [
+    {
+      "id": "readme-head",
+      "label": "examples/coin_flip/README.md (head) L13-L14",
+      "url": "https://github.com/mcmcjs/mcmcjs/blob/8baf68352d0bad0985bb2b7381c7e683623eecf6/examples/coin_flip/README.md#L13-L14"
+    },
+    {
+      "id": "readme-head-prior",
+      "label": "examples/coin_flip/README.md (head) L3-L4",
+      "url": "https://github.com/mcmcjs/mcmcjs/blob/8baf68352d0bad0985bb2b7381c7e683623eecf6/examples/coin_flip/README.md#L3-L4"
+    },
+    {
+      "id": "readme-base",
+      "label": "examples/coin_flip/README.md (base) L13",
+      "url": "https://github.com/mcmcjs/mcmcjs/blob/46b149329b3c4013e7a673f1525617fe11f3a357/examples/coin_flip/README.md#L13-L13"
+    },
+    {
+      "id": "data-csv",
+      "label": "examples/coin_flip/data.csv (head) L1-L41",
+      "url": "https://github.com/mcmcjs/mcmcjs/blob/8baf68352d0bad0985bb2b7381c7e683623eecf6/examples/coin_flip/data.csv#L1-L41"
+    },
+    {
+      "id": "model-jl",
+      "label": "examples/coin_flip/coin_flip.jl (head) L7-L12",
+      "url": "https://github.com/mcmcjs/mcmcjs/blob/8baf68352d0bad0985bb2b7381c7e683623eecf6/examples/coin_flip/coin_flip.jl#L7-L12"
+    },
+    {
+      "id": "model-stan",
+      "label": "examples/coin_flip/coin_flip.stan (head) L8-L11",
+      "url": "https://github.com/mcmcjs/mcmcjs/blob/8baf68352d0bad0985bb2b7381c7e683623eecf6/examples/coin_flip/coin_flip.stan#L8-L11"
+    },
+    {
+      "id": "pr-comment",
+      "label": "PR #172 review request comment",
+      "url": "https://github.com/mcmcjs/mcmcjs/pull/172#issuecomment-6777647256"
+    }
+  ],
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Overview",
+      "group": "overview",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "MCMC.js is a command-line tool that runs Bayesian models in Turing.jl, JuliaBUGS or Stan, checks whether the sampler converged, and shows the results. The examples directory has small models that new users run with `mcmc run`.\n\nThis draft PR adds one line to the coin flip example README. The line names the exact posterior distribution for the example data. Only documentation changes. No code, data or model files change, so CLI users and library consumers are not affected."
+        }
+      ]
+    },
+    {
+      "id": "change",
+      "title": "Change",
+      "group": "changes",
+      "blocks": [
+        {
+          "type": "compare",
+          "title": "examples/coin_flip/README.md after the run command",
+          "before": "The data has 23 heads in 40 tosses, so `p` concentrates near 0.575.",
+          "after": "The data has 23 heads in 40 tosses, so `p` concentrates near 0.575.\nThe posterior is `Beta(24, 18)` with the `Beta(1, 1)` prior.",
+          "refs": [
+            "readme-base",
+            "readme-head"
+          ]
+        },
+        {
+          "type": "text",
+          "text": "The Beta prior is conjugate to the Bernoulli likelihood. With prior Beta(a, b), h heads and t tails, the posterior is Beta(a + h, b + t). Both model files use a Beta(1, 1) prior on `p` and an independent Bernoulli(p) likelihood for each toss, so the closed form applies to the Julia and Stan versions alike. With the new line, readers can compare the sampled mean and intervals with an exact answer instead of only the approximate 0.575.",
+          "refs": [
+            "model-jl",
+            "model-stan"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "findings",
+      "title": "Findings",
+      "group": "review",
+      "blocks": [
+        {
+          "type": "check",
+          "title": "Posterior parameters match the data and models",
+          "text": "This is a source check, not a test run. The 40 rows of `y` in data.csv were counted by hand: 23 are 1 and 17 are 0. Both models use p ~ Beta(1, 1) and Bernoulli(p) per observation. The conjugate update gives Beta(1 + 23, 1 + 17) = Beta(24, 18), which matches the new line.",
+          "status": "passed",
+          "refs": [
+            "data-csv",
+            "model-jl",
+            "model-stan",
+            "readme-head"
+          ]
+        },
+        {
+          "type": "finding",
+          "title": "0.575 is the posterior mode, not its mean",
+          "text": "Beta(24, 18) has mode 23/40 = 0.575 and mean 24/42 ≈ 0.571. The existing sentence says `p` concentrates near 0.575, which is correct for the mode. A reader comparing it with the `mean` column of `mcmc run` will see about 0.571. Stating the mean next to the new line would prevent that small mismatch. This is an optional wording suggestion. The text is not wrong as written.",
+          "status": "suggestion",
+          "refs": [
+            "readme-head"
+          ]
+        },
+        {
+          "type": "diff",
+          "title": "Optional wording for the new line",
+          "text": "This is a suggested edit, not part of the PR. It shows where the posterior parameters come from, gives the mean that `mcmc run` reports, and avoids repeating the prior already named on line 4.",
+          "path": "examples/coin_flip/README.md",
+          "before": "The posterior is `Beta(24, 18)` with the `Beta(1, 1)` prior.",
+          "after": "The exact posterior is `Beta(1 + 23, 1 + 17) = Beta(24, 18)`, with mean 24/42 ≈ 0.571 and mode 0.575.",
+          "scope": "suggestion",
+          "verification": "source-checked",
+          "refs": [
+            "readme-head",
+            "data-csv"
+          ]
+        },
+        {
+          "type": "proposal",
+          "title": "PR description",
+          "text": "The current body describes a bot test. If this PR is kept, a description of the change helps reviewers.",
+          "kind": "description",
+          "current": "Draft for testing the review-docs bot on a small documentation change.",
+          "suggested": "Adds the closed-form posterior `Beta(24, 18)` to the coin flip example README, so readers can compare MCMC output with an exact result. Documentation only."
+        },
+        {
+          "type": "text",
+          "text": "Conclusion: the change is small and correct, and it adds a useful reference point to the example. No defects were found."
+        },
+        {
+          "type": "check",
+          "title": "Review scope",
+          "status": "unverified",
+          "text": "Source review only. PR code, package setup and runtime tests were not executed.\n\nLinked work: public repositories only, depth 2, at most 15 items. Read status describes collection, not semantic review."
+        }
+      ]
+    },
+    {
+      "id": "checks",
+      "title": "Checks and limits",
+      "group": "review",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Reviewed revisions: base 46b14932 and head 8baf6835. Only source was reviewed. The models were not run, so no sampled posterior was compared with Beta(24, 18). The PR changes no declarations and no definition inventory was supplied, so there are no diagrams or inventory."
+        }
+      ]
+    },
+    {
+      "id": "linked",
+      "title": "Linked work",
+      "group": "details",
+      "blocks": [
+        {
+          "type": "linked-work",
+          "id": "linked-work",
+          "title": "Linked issues and pull requests",
+          "text": "The collector found only this PR. Its single comment is the request for this review. No issues or other PRs are referenced.",
+          "root": "gh-519bef6579c05a9401e4df4a78c24f2b0b4faeaaab6bc609da54c17454ca9052",
+          "checkedAt": "2026-11-10T19:53:54.056Z",
+          "scope": "Bodies, paginated comments, submitted/inline reviews and incoming timeline references. Mentions may be quoted or incidental.",
+          "analysis": "reviewed",
+          "complete": true,
+          "limits": {
+            "maxDepth": 2,
+            "maxItems": 15
+          },
+          "notes": [],
+          "nodes": [
+            {
+              "id": "gh-519bef6579c05a9401e4df4a78c24f2b0b4faeaaab6bc609da54c17454ca9052",
+              "url": "https://github.com/mcmcjs/mcmcjs/pull/172",
+              "title": "Explain the coin flip posterior",
+              "kind": "pr",
+              "state": "open",
+              "summary": "Draft documentation PR adding the exact Beta(24, 18) posterior to the coin flip example README. The discussion has only the review request.",
+              "status": "read"
+            }
+          ],
+          "edges": []
+        }
+      ]
+    }
+  ]
+}
